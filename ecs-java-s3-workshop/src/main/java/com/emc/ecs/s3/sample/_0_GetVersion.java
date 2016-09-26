@@ -17,7 +17,7 @@ package com.emc.ecs.s3.sample;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.bean.ListDataNode;
 
-public class _0_ListDataNodes {
+public class _0_GetVersion {
 
 	public static void main(String[] args) throws Exception {
     	// create the ECS S3 Client
