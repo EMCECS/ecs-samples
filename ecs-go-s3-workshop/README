@@ -1,0 +1,16 @@
+BUILD
+-----
+
+make # go is installed
+
+make docker-build # go is not installed
+
+CONFIG
+------
+
+Set access_key and secret_Key in config.yaml
+
+RUN
+---
+
+bin/<command>
