@@ -2,7 +2,7 @@
 s3:
   endpoint: https://object.ecstestdrive.com
   access_key: <your access key>
-  secret_Key: <your secret key>
+  secret_key: <your secret key>
   region: us-east-1
   demo_bucket_name: workshop-bucket
 # Empty for no logging, or
