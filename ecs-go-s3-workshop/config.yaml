@@ -1,0 +1,10 @@
+---
+s3:
+  endpoint: https://object.ecstestdrive.com
+  access_key: <your access key>
+  secret_key: <your secret key>
+  region: us-east-1
+  demo_bucket_name: workshop-bucket
+# Empty for no logging, or
+# LogDebugWithSigning/LogDebugWithHTTPBody/LogDebugWithRequestRetries/LogDebugWithRequestErrors
+loglevel:
