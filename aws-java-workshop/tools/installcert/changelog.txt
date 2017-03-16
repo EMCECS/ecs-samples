@@ -1,0 +1,7 @@
+2014-01-15 - discrimination logics for new certificates vs known improved
+           - reconfigured to be compiled for Java 1.6
+2013-11-23 - refactored to support individual modules for STARTTLS with
+             different protocols
+           - ability added to produce differential (extra) truststore
+2012-11-08 - initial release with ability to handle STARTTLS and multiple
+             certificates
