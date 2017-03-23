@@ -18,11 +18,36 @@ namespace aws_net_workshop.examples_bonus
                 BucketName = AWSS3Factory.S3_BUCKET
             };
 
-            Console.WriteLine(s3.GetBucketVersioning(gvr).VersioningConfig.Status);
+            GetBucketVersioningResponse gvrResponse = s3.GetBucketVersioning(gvr);
 
+            Console.WriteLine(string.Format("Bucket versioning status: {0}",
+                gvrResponse.VersioningConfig.Status));
+
+            if (gvrResponse.VersioningConfig.Status != VersionStatus.Enabled)
+            {
+                Console.Write(string.Format("Enabling bucket versioning for bucket '{0}'... ", AWSS3Factory.S3_BUCKET));
+
+                PutBucketVersioningRequest pvr = new PutBucketVersioningRequest()
+                {
+                    BucketName = AWSS3Factory.S3_BUCKET,
+                    VersioningConfig = new S3BucketVersioningConfig() { Status = VersionStatus.Enabled }
+                };
+
+                PutBucketVersioningResponse pvrResponse = s3.PutBucketVersioning(pvr);
+                if (pvrResponse.HttpStatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    Console.WriteLine("fail");
+                    Console.ReadLine();
+                    System.Environment.Exit(1);
+                }
+                Console.WriteLine("done");
+            }
+
+            Console.WriteLine("Getting object versions...");
 
             bool moreRecords = true;
             string nextMarker = string.Empty;
+            string nextVersionId = string.Empty;
             while (moreRecords)
             {
                 
@@ -32,11 +57,10 @@ namespace aws_net_workshop.examples_bonus
                     BucketName = AWSS3Factory.S3_BUCKET,
                 };
 
-                //if (nextMarker.Length > 0)
-                //request.KeyMarker = nextMarker;
-
-
-                request.VersionIdMarker = "1472739256446";
+                if (nextMarker.Length > 0)
+                {
+                    request.KeyMarker = nextMarker;
+                }
 
 
                 ListVersionsResponse response = new ListVersionsResponse();
@@ -45,14 +69,22 @@ namespace aws_net_workshop.examples_bonus
 
                 foreach (S3ObjectVersion key in response.Versions)
                 {
-                    Console.WriteLine(key.Key);
+                    Console.WriteLine(string.Format("-> Object Key: {0} - VersionId: {1} - IsDelete: {2} - {3}",
+                        key.Key,
+                        key.VersionId,
+                        key.IsDeleteMarker,
+                        key.LastModified));
                 }
-
-                Console.WriteLine(string.Format("Next Marker: {0} Version Count: {1}", response.NextKeyMarker, response.Versions.Count.ToString()));
 
                 if (response.IsTruncated)
                 {
+                    Console.WriteLine(string.Format("Next Marker: {0}:{1}. Version Count: {2}",
+                        response.NextKeyMarker,
+                        response.NextVersionIdMarker,
+                        response.Versions.Count.ToString()));
+
                     nextMarker = response.NextKeyMarker;
+                    nextVersionId = response.NextVersionIdMarker;
                 }
                 else
                 {
@@ -60,10 +92,7 @@ namespace aws_net_workshop.examples_bonus
                 }
             }
 
-            // print out object key/value for validation
-            //Console.WriteLine(string.Format("Copied object {0}/{1} to {2}/{3}", AWSS3Factory.S3_BUCKET, key_source, AWSS3Factory.S3_BUCKET, key_target));
             Console.ReadLine();
-
         }
     }
 }
