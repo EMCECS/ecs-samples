@@ -15,8 +15,12 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import org.apache.commons.codec.binary.Base64;
 
@@ -29,13 +33,28 @@ import java.security.SecureRandom;
  * Java ViPR S3 interface.
  */
 public class AWSS3Factory {
+/*
+    public static final String S3_ENDPOINT = "http://10.1.83.51:9020";
+    //public static final String S3_ENDPOINT = "http://127.0.0.1:9020";
+    public static final String S3_ACCESS_KEY_ID = "conerjuser1";
+    public static final String S3_SECRET_KEY = "/+S4kUpT6Ch9GsXXYjtUgGEVpBIgUPyFBt1II96X";
+    public static final String S3_BUCKET = "JMC_Test_Bucket2";
+*/
 
-	/* the S3 access key id - this is equivalent to the user */
-	public static final String S3_ACCESS_KEY_ID = "";
-	
-	/* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "";
-    
+
+    public static final String S3_ENDPOINT = "http://s3.amazonaws.com";
+    public static final String S3_ACCESS_KEY_ID = "AKIAJXGZ5HRUIYU74VBA";
+    public static final String S3_SECRET_KEY = "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";
+    public static final String S3_BUCKET = "stymie";
+
+
+    /*
+    public static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
+    public static final String S3_SECRET_KEY = "PcCwHF/lkWtFu9Slv0E0leDVBv6Ht0hXjmLA+pt7";
+    public static final String S3_ACCESS_KEY_ID = "130752486494102507@ecstestdrive.emc.com";
+    public static final String S3_BUCKET = "s3ben";
+     */
+
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
      * http://ecs-address:9020 or https://ecs-address:9021
@@ -47,28 +66,42 @@ public class AWSS3Factory {
      * or run the InstallCert program in the tools directory:
      * java -jar installcert-usn-20140115.jar object.ecstestdrive.com:443
      */
-    public static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
-    
-    /* a unique bucket name to store objects */
-    public static final String S3_BUCKET = "workshop-bucket";
-
-    public static AmazonS3Client getS3Client() {
+    //public static AmazonS3Client getS3Client() {
+    public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
 
+        /*
         ClientConfiguration cc = new ClientConfiguration();
         //cc.setProxyHost("localhost");
         //cc.setProxyPort(8888);
-
-        // Force use of v2 Signer.  ECS does not support v4 signatures yet.
-        cc.setSignerOverride("S3SignerType");
-
+        // Force use of v2 Signer.
+        //cc.setSignerOverride("S3SignerType");
 		AmazonS3Client client = new AmazonS3Client(creds, cc);
         client.setEndpoint(S3_ENDPOINT);
+*/
 
+/*
+        AwsClientBuilder.EndpointConfiguration ec = new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
+        AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
+                .withEndpointConfiguration(ec).build();
+*/
+
+
+        AmazonS3ClientBuilder.EndpointConfiguration ec = new AmazonS3ClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
+        AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
+                .withEndpointConfiguration(ec).withPathStyleAccessEnabled(true).build();
+
+/*
         // Path-style bucket naming is highly recommended
         S3ClientOptions opts = new S3ClientOptions();
         opts.setPathStyleAccess(true);
         client.setS3ClientOptions(opts);
+*/
+
+        /*
+        BasicAWSCredentials creds = new BasicAWSCredentials("access_key", "secret_key");
+AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds)).build();
+         */
 
 		return client;
     }

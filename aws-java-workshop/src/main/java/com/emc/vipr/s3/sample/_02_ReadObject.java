@@ -14,6 +14,7 @@
  */
 package com.emc.vipr.s3.sample;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -24,7 +25,7 @@ public class _02_ReadObject {
 
 	public static void main(String[] args) throws Exception {
     	// create the AWS S3 Client
-        AmazonS3Client s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3Client();
 
     	// retrieve the key value from user
         System.out.println( "Enter the object key:" );

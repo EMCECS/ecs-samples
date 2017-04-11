@@ -14,6 +14,7 @@
  */
 package com.emc.vipr.s3.sample;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.util.StringInputStream;
 
@@ -24,19 +25,26 @@ public class _01_CreateObject {
 
 	public static void main(String[] args) throws Exception {
     	// create the AWS S3 Client
-            AmazonS3Client s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3Client();
 
     	// retrieve object key/value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         System.out.println( "Enter the object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
-        // create the object in the demo bucket
-        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), null);
 
-        // print bucket key/value and content for validation
-    	System.out.println( String.format("created object [%s/%s] with content: [%s]",
-    			AWSS3Factory.S3_BUCKET, key, content));
+        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), null);
+        System.out.println(String.format("created object [%s/%s] with content: [%s]",
+                AWSS3Factory.S3_BUCKET, key, content));
+/*
+        for (int i=0; i<10;i++) {
+            // create the object in the demo bucket
+            s3.putObject(AWSS3Factory.S3_BUCKET, key + "_" + i, new StringInputStream(content), null);
+            // print bucket key/value and content for validation
+            System.out.println(String.format("created object [%s/%s] with content: [%s]",
+                    AWSS3Factory.S3_BUCKET, key, content));
+        }
+        */
+
     }
 }
