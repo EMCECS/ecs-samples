@@ -14,6 +14,7 @@
  */
 package com.emc.vipr.s3.sample;
 
+import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 
@@ -21,7 +22,7 @@ public class _99_DeleteBucket {
 
 	public static void main(String[] args) throws Exception {
     	// create the AWS S3 Client
-		AmazonS3Client s3 = AWSS3Factory.getS3Client();
+		AmazonS3 s3 = AWSS3Factory.getS3Client();
 
         // delete the demo bucket and all its content
 		for (S3ObjectSummary summary : s3.listObjects(AWSS3Factory.S3_BUCKET).getObjectSummaries())
