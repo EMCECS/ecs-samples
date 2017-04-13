@@ -15,28 +15,35 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.util.StringInputStream;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 
-public class _01_CreateObject {
+public class _09_ReadLargeObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3Client();
 
-    	// retrieve object key/value from user
+        // retrieve the key value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        System.out.println( "Enter the object content:" );
-        String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
-        // create the object in the demo bucket
-        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), null);
 
-        // print bucket key/value and content for validation
-    	System.out.println( String.format("created object [%s/%s] with content: [%s]",
-    			AWSS3Factory.S3_BUCKET, key, content));
+        // file will be placed in temp dir with .tmp extension
+        File file = File.createTempFile("read-large-object", null);
+
+        LargeFileDownloader downloader = new LargeFileDownloader(s3, AWSS3Factory.S3_BUCKET, key, file);
+        downloader.setThreads(24);
+        downloader.setPartSize(64 * 1024 * 1024); // 64MiB
+        downloader.run();
+
+        byte[] readData = new byte[(int)downloader.getObjectSize()];
+        RandomAccessFile raf = new RandomAccessFile(file, "rw");
+        raf.read(readData);
+        raf.close();
     }
 }
+
+

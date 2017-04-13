@@ -24,7 +24,7 @@ repositories {
 }
 
 dependencies {
-    compile "com.amazonaws:aws-java-sdk-s3:1.10.2"
+    compile "com.amazonaws:aws-java-sdk-s3:1.11.118"
 }
 
 task wrapper(type: Wrapper) {

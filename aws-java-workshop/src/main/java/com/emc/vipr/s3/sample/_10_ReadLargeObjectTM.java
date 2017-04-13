@@ -15,28 +15,38 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.util.StringInputStream;
+import com.amazonaws.services.s3.transfer.Download;
+import com.amazonaws.services.s3.transfer.TransferManager;
+import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStreamReader;
 
-public class _01_CreateObject {
+public class _10_ReadLargeObjectTM {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3Client();
 
-    	// retrieve object key/value from user
+        // retrieve the key value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        System.out.println( "Enter the object content:" );
-        String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
-        // create the object in the demo bucket
-        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), null);
 
-        // print bucket key/value and content for validation
-    	System.out.println( String.format("created object [%s/%s] with content: [%s]",
-    			AWSS3Factory.S3_BUCKET, key, content));
+        // file will be placed in temp dir with .tmp extension
+        File file = File.createTempFile("read-large-object-tm", null);
+
+        TransferManager tm = TransferManagerBuilder.standard()
+                .withS3Client(s3)
+                .build();
+
+        // download the object to file
+        Download download = tm.download(AWSS3Factory.S3_BUCKET, key, file);
+
+        // block until download finished
+        download.waitForCompletion();
+
+        tm.shutdownNow();
     }
+
 }

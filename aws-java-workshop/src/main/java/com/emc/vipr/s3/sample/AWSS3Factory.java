@@ -15,8 +15,11 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.ClientConfiguration;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import org.apache.commons.codec.binary.Base64;
 
@@ -31,10 +34,10 @@ import java.security.SecureRandom;
 public class AWSS3Factory {
 
 	/* the S3 access key id - this is equivalent to the user */
-	public static final String S3_ACCESS_KEY_ID = "";
+	public static final String S3_ACCESS_KEY_ID = "ben";
 	
 	/* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "";
+    public static final String S3_SECRET_KEY = "ByvV6Rmg1/u6b++fRqAjfoq8g+cYsjxkFFz4qTAs";
     
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
@@ -47,12 +50,12 @@ public class AWSS3Factory {
      * or run the InstallCert program in the tools directory:
      * java -jar installcert-usn-20140115.jar object.ecstestdrive.com:443
      */
-    public static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
+    public static final String S3_ENDPOINT = "http://10.1.83.51:9020";
     
     /* a unique bucket name to store objects */
-    public static final String S3_BUCKET = "workshop-bucket";
+    public static final String S3_BUCKET = "hsbc";
 
-    public static AmazonS3Client getS3Client() {
+    public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
 
         ClientConfiguration cc = new ClientConfiguration();
@@ -61,14 +64,14 @@ public class AWSS3Factory {
 
         // Force use of v2 Signer.  ECS does not support v4 signatures yet.
         cc.setSignerOverride("S3SignerType");
+        cc.setSocketTimeout(0);
 
-		AmazonS3Client client = new AmazonS3Client(creds, cc);
-        client.setEndpoint(S3_ENDPOINT);
-
-        // Path-style bucket naming is highly recommended
-        S3ClientOptions opts = new S3ClientOptions();
-        opts.setPathStyleAccess(true);
-        client.setS3ClientOptions(opts);
+        AmazonS3 client = AmazonS3ClientBuilder.standard()
+                .withCredentials(new AWSStaticCredentialsProvider(creds))
+                .withClientConfiguration(cc)
+                .withPathStyleAccessEnabled(true) // Path-style bucket naming is highly recommended
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT, null))
+                .build();
 
 		return client;
     }
