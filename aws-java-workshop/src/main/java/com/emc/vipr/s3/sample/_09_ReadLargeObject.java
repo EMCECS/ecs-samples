@@ -20,6 +20,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
+import java.util.Date;
 
 public class _09_ReadLargeObject {
 
@@ -31,18 +32,26 @@ public class _09_ReadLargeObject {
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
+        // print start time
+        Date start_date = new Date();
+        System.out.println(start_date.toString());
+
         // file will be placed in temp dir with .tmp extension
         File file = File.createTempFile("read-large-object", null);
 
         LargeFileDownloader downloader = new LargeFileDownloader(s3, AWSS3Factory.S3_BUCKET, key, file);
-        downloader.setThreads(24);
-        downloader.setPartSize(64 * 1024 * 1024); // 64MiB
+        downloader.setThreads(8);
+        downloader.setPartSize(128 * 1024 * 1024); // 64MiB
         downloader.run();
 
         byte[] readData = new byte[(int)downloader.getObjectSize()];
         RandomAccessFile raf = new RandomAccessFile(file, "rw");
         raf.read(readData);
         raf.close();
+
+        //print end time
+        Date end_date = new Date();
+        System.out.println(end_date.toString());
     }
 }
 

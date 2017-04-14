@@ -22,6 +22,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.util.Date;
 
 public class _10_ReadLargeObjectTM {
 
@@ -32,6 +33,10 @@ public class _10_ReadLargeObjectTM {
         // retrieve the key value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+
+        // print start time
+        Date start_date = new Date();
+        System.out.println(start_date.toString());
 
         // file will be placed in temp dir with .tmp extension
         File file = File.createTempFile("read-large-object-tm", null);
@@ -47,6 +52,9 @@ public class _10_ReadLargeObjectTM {
         download.waitForCompletion();
 
         tm.shutdownNow();
-    }
 
+        // print end time
+        Date end_date = new Date();
+        System.out.println(end_date.toString());
+    }
 }

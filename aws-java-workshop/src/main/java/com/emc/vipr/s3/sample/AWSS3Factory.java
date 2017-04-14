@@ -34,10 +34,10 @@ import java.security.SecureRandom;
 public class AWSS3Factory {
 
 	/* the S3 access key id - this is equivalent to the user */
-	public static final String S3_ACCESS_KEY_ID = "ben";
+	public static final String S3_ACCESS_KEY_ID = "";
 	
 	/* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "ByvV6Rmg1/u6b++fRqAjfoq8g+cYsjxkFFz4qTAs";
+    public static final String S3_SECRET_KEY = "";
     
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
@@ -50,10 +50,10 @@ public class AWSS3Factory {
      * or run the InstallCert program in the tools directory:
      * java -jar installcert-usn-20140115.jar object.ecstestdrive.com:443
      */
-    public static final String S3_ENDPOINT = "http://10.1.83.51:9020";
+    public static final String S3_ENDPOINT = "";
     
     /* a unique bucket name to store objects */
-    public static final String S3_BUCKET = "hsbc";
+    public static final String S3_BUCKET = "";
 
     public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
@@ -64,7 +64,6 @@ public class AWSS3Factory {
 
         // Force use of v2 Signer.  ECS does not support v4 signatures yet.
         cc.setSignerOverride("S3SignerType");
-        cc.setSocketTimeout(0);
 
         AmazonS3 client = AmazonS3ClientBuilder.standard()
                 .withCredentials(new AWSStaticCredentialsProvider(creds))
