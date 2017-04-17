@@ -15,7 +15,6 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.util.StringInputStream;
 
 import java.io.BufferedReader;

@@ -15,7 +15,6 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 
 import java.io.BufferedReader;
@@ -37,7 +36,7 @@ public class _08_CreateLargeObject {
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         
         // part size for chunking in multi-parts
-    	long partSize = 5 * 1024 * 1024; // Set part size to 5 MB.
+    	long partSize = 128 * 1024 * 1024; // Set part size to 5 MB.
 
     	// list of UploadPartResponse objects for each part that is uploaded
     	List<PartETag> partETags = new ArrayList<PartETag>();
