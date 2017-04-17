@@ -38,7 +38,7 @@ public class AWSS3Factory {
 	
 	/* the S3 secret key associated with the S3_ACCESS_KEY_ID */
     public static final String S3_SECRET_KEY = "";
-    
+	
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
      * http://ecs-address:9020 or https://ecs-address:9021
@@ -49,11 +49,12 @@ public class AWSS3Factory {
      * https://portal.ecstestdrive.com/Content/ECS%20Test%20Drive%20SSL%20issues%20with%20Java.docx
      * or run the InstallCert program in the tools directory:
      * java -jar installcert-usn-20140115.jar object.ecstestdrive.com:443
-     */
-    public static final String S3_ENDPOINT = "";
-    
-    /* a unique bucket name to store objects */
+     */	
+	public static final String S3_ENDPOINT = "";
+	
+	/* a unique bucket name to store objects */
     public static final String S3_BUCKET = "";
+	
 
     public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
@@ -62,7 +63,7 @@ public class AWSS3Factory {
         //cc.setProxyHost("localhost");
         //cc.setProxyPort(8888);
 
-        // Force use of v2 Signer.  ECS does not support v4 signatures yet.
+        // Force use of v2 Signer.
         cc.setSignerOverride("S3SignerType");
 
         AmazonS3 client = AmazonS3ClientBuilder.standard()
@@ -71,6 +72,7 @@ public class AWSS3Factory {
                 .withPathStyleAccessEnabled(true) // Path-style bucket naming is highly recommended
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT, null))
                 .build();
+
 
 		return client;
     }
