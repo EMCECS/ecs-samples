@@ -4,7 +4,7 @@ using Amazon.S3.Model;
 
 namespace aws_net_workshop.examples
 {
-    class _10_DeleteBucket
+    class _11_DeleteBucket
     {
         public static void Main(string[] args)
         {

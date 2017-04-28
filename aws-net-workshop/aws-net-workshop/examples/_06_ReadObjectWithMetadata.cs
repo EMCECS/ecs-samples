@@ -16,15 +16,15 @@ namespace aws_net_workshop.examples
             Console.Write("Enter the object key: ");
             string key = Console.ReadLine();
 
-            // create object request
-            GetObjectRequest request = new GetObjectRequest()
+            // create object metadata request
+            GetObjectMetadataRequest request = new GetObjectMetadataRequest()
             {
                 BucketName = AWSS3Factory.S3_BUCKET,
                 Key = key
             };
 
-            // create the object with metadata in the demo bucket
-            GetObjectResponse response = s3.GetObject(request);
+            // get object metadata - not actual content (HEAD request not GET).
+            GetObjectMetadataResponse response =  s3.GetObjectMetadata(request);
 
             // print out object key/value and metadata key/value for validation
             Console.WriteLine(string.Format("Metadata for {0}/{1}", AWSS3Factory.S3_BUCKET, key));
@@ -34,7 +34,7 @@ namespace aws_net_workshop.examples
             ICollection<string> metaKeys = metadataCollection.Keys;
             foreach (string metaKey in metaKeys)
             {
-                Console.WriteLine("     {0}={1}", metaKey, metadataCollection[metaKey]);
+                Console.WriteLine("{0}={1}", metaKey, metadataCollection[metaKey]);
             }
             Console.ReadLine();
         }

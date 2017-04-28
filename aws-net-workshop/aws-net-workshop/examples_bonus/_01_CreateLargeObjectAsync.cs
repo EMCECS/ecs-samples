@@ -40,7 +40,7 @@ namespace aws_net_workshop.examples_bonus
             AmazonS3Client s3 = AWSS3Factory.getS3Client();
 
             // part size for chunking in multi-part
-            long partSize = 1024 * 1024 * 16; // 16 MB
+            long partSize = 1024 * 1024 * 2; // 2 MB
 
             // list of upload part response objects for each part that is uploaded
             IEnumerable<PartETag> partETags = new List<PartETag>();

@@ -11,29 +11,34 @@ namespace aws_net_workshop.examples_bonus
             // create the AWS S3 client
             AmazonS3Client s3 = AWSS3Factory.getS3Client();
 
-            System.Net.ServicePointManager.ServerCertificateValidationCallback = ((sender, certificate, chain, sslPolicyErrors) => true);
-
+            // create bucket versioning request
             GetBucketVersioningRequest gvr = new GetBucketVersioningRequest()
             {
                 BucketName = AWSS3Factory.S3_BUCKET
             };
 
+            // submit get bucket versioning request
             GetBucketVersioningResponse gvrResponse = s3.GetBucketVersioning(gvr);
 
+            // print status
             Console.WriteLine(string.Format("Bucket versioning status: {0}",
                 gvrResponse.VersioningConfig.Status));
 
+            // enabled versioning if not yet enabled
             if (gvrResponse.VersioningConfig.Status != VersionStatus.Enabled)
             {
                 Console.Write(string.Format("Enabling bucket versioning for bucket '{0}'... ", AWSS3Factory.S3_BUCKET));
 
+                // create request to enable versioning on bucket
                 PutBucketVersioningRequest pvr = new PutBucketVersioningRequest()
                 {
                     BucketName = AWSS3Factory.S3_BUCKET,
                     VersioningConfig = new S3BucketVersioningConfig() { Status = VersionStatus.Enabled }
                 };
 
+                // submit request to enable versioning
                 PutBucketVersioningResponse pvrResponse = s3.PutBucketVersioning(pvr);
+
                 if (pvrResponse.HttpStatusCode != System.Net.HttpStatusCode.OK)
                 {
                     Console.WriteLine("fail");

@@ -25,7 +25,8 @@ namespace aws_net_workshop.examples_bonus
                 SourceBucket = AWSS3Factory.S3_BUCKET,
                 SourceKey = key_source,
                 DestinationBucket = AWSS3Factory.S3_BUCKET,
-                DestinationKey = key_target
+                DestinationKey = key_target,
+                MetadataDirective = S3MetadataDirective.COPY
             };
 
             // copy the object
