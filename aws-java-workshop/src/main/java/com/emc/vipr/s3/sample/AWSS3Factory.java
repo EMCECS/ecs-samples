@@ -15,10 +15,11 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider; //no 1.11-21
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.S3ClientOptions;
 import org.apache.commons.codec.binary.Base64;
@@ -33,12 +34,15 @@ import java.security.SecureRandom;
  */
 public class AWSS3Factory {
 
-	/* the S3 access key id - this is equivalent to the user */
-	public static final String S3_ACCESS_KEY_ID = "";
-	
-	/* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "";
-	
+
+    public static final String S3_ENDPOINT = "http://x.x.x.x:9020";
+    public static final String S3_ACCESS_KEY_ID = "xxxxxx";
+    public static final String S3_SECRET_KEY = "xxxxxx";
+    public static final String S3_BUCKET = "workshop-bucket";
+
+    public static final String S3_VERSIONBUCKET = "awsversionbucket";
+
+
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
      * http://ecs-address:9020 or https://ecs-address:9021
@@ -49,30 +53,50 @@ public class AWSS3Factory {
      * https://portal.ecstestdrive.com/Content/ECS%20Test%20Drive%20SSL%20issues%20with%20Java.docx
      * or run the InstallCert program in the tools directory:
      * java -jar installcert-usn-20140115.jar object.ecstestdrive.com:443
-     */	
-	public static final String S3_ENDPOINT = "";
-	
-	/* a unique bucket name to store objects */
-    public static final String S3_BUCKET = "";
-	
-
+     */
+    //public static AmazonS3Client getS3Client() {
     public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
 
+  /*
+  //old v1.10 client
         ClientConfiguration cc = new ClientConfiguration();
         //cc.setProxyHost("localhost");
         //cc.setProxyPort(8888);
-
         // Force use of v2 Signer.
+        //cc.setSignerOverride("S3SignerType");
+		AmazonS3Client client = new AmazonS3Client(creds, cc);
+        client.setEndpoint(S3_ENDPOINT);
+*/
+
+
+  // 1.11-100 good standard/basic with v4 auth doesn't work with 1.11-21 though
+        AwsClientBuilder.EndpointConfiguration ec = new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
+        AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
+                .withEndpointConfiguration(ec).build();
+
+
+/*
+// new client,but using v2 auth
+        ClientConfiguration cc = new ClientConfiguration();
         cc.setSignerOverride("S3SignerType");
 
-        AmazonS3 client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(creds))
+        AmazonS3ClientBuilder.EndpointConfiguration ec = new AmazonS3ClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
+        AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
                 .withClientConfiguration(cc)
-                .withPathStyleAccessEnabled(true) // Path-style bucket naming is highly recommended
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT, null))
+                .withEndpointConfiguration(ec).withPathStyleAccessEnabled(true)
                 .build();
+*/
 
+
+
+
+/*
+//new client but deprecated way of using path style bucket naming
+        S3ClientOptions opts = new S3ClientOptions();
+        opts.setPathStyleAccess(true);
+        client.setS3ClientOptions(opts);
+  */
 
 		return client;
     }

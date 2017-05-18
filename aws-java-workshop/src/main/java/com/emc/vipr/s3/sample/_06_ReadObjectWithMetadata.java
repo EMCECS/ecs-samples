@@ -15,6 +15,9 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -31,7 +34,16 @@ public class _06_ReadObjectWithMetadata {
     	// retrieve the object key from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
+        //GetObjectMetadataRequest gom = new GetObjectMetadataRequest(b, k, v)
+        try {
+            GetObjectMetadataRequest gom = new GetObjectMetadataRequest(AWSS3Factory.S3_BUCKET, key);
+            s3.getObjectMetadata(gom);
+        }
+        catch(com.amazonaws.services.s3.model.AmazonS3Exception e) {
+            System.out.println("What happened: " + e.getMessage());
+        }
+
         // read the specified object from the demo bucket
         S3Object object = s3.getObject(AWSS3Factory.S3_BUCKET, key);
 
@@ -41,10 +53,15 @@ public class _06_ReadObjectWithMetadata {
         // print out the object key/value and metadata for validation
     	System.out.println( String.format("Metadata for [%s/%s]",
     			AWSS3Factory.S3_BUCKET, key));
+
         Map<String,String> metadataList = metadata.getUserMetadata();
+        //String metaVal = metadataList.get("metakey1");
+        //System.out.println(String.format("    %s = %s", "metakey1", metaVal));
+
         for (Map.Entry<String, String> entry : metadataList.entrySet())
         {
         	System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));
         }
+
     }
 }

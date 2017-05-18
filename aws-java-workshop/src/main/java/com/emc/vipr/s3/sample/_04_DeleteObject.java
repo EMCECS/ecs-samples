@@ -33,6 +33,6 @@ public class _04_DeleteObject {
         
         // print out key/value for validation
     	System.out.println( String.format("object [%s/%s] deleted",
-    			AWSS3Factory.S3_BUCKET, key));
+                AWSS3Factory.S3_BUCKET, key));
     }
 }
