@@ -16,6 +16,7 @@ package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.BufferedReader;
@@ -30,7 +31,7 @@ public class _02_ReadObject {
     	// retrieve the key value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // read the object from the demo bucket
         S3Object object = s3.getObject(AWSS3Factory.S3_BUCKET, key);
         

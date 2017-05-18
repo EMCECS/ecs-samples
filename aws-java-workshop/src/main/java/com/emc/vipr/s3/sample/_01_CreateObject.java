@@ -16,6 +16,8 @@ package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.PutObjectResult;
 import com.amazonaws.util.StringInputStream;
 
 import java.io.BufferedReader;
@@ -33,18 +35,39 @@ public class _01_CreateObject {
         System.out.println( "Enter the object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
-        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), null);
-        System.out.println(String.format("created object [%s/%s] with content: [%s]",
-                AWSS3Factory.S3_BUCKET, key, content));
-/*
-        for (int i=0; i<10;i++) {
-            // create the object in the demo bucket
-            s3.putObject(AWSS3Factory.S3_BUCKET, key + "_" + i, new StringInputStream(content), null);
-            // print bucket key/value and content for validation
-            System.out.println(String.format("created object [%s/%s] with content: [%s]",
-                    AWSS3Factory.S3_BUCKET, key, content));
-        }
-        */
+        String theBucket = AWSS3Factory.S3_BUCKET;
 
+        PutObjectResult por = s3.putObject(theBucket, key, new StringInputStream(content), null);
+
+        _01_CreateObject example = new _01_CreateObject();
+
+        //PutObjectResult por = example.putObjectViaRequest(s3, theBucket, key, content);
+
+        //PutObjectResult por = example.putManyObjectsWithPrefix(s3, key, content, "demo-obj/", 9);
+
+        System.out.println(String.format("created object [%s/%s] with content: [%s]",
+                theBucket, key, content));
+
+
+
+    }
+
+    public PutObjectResult putObjectViaRequest(AmazonS3 s3, String bucket, String key, String content) throws Exception {
+        PutObjectRequest poReq = new PutObjectRequest(bucket, key, new StringInputStream(content), null);
+        PutObjectResult por = s3.putObject(poReq);
+        return por;
+    }
+
+    //will probably want to pass in a prefix ending in "/"
+    public void putManyObjectsWithPrefix(AmazonS3 s3, String key, String content, String prefix, int numberOfObjects)
+            throws java.io.IOException {
+
+            for (int i=0; i<numberOfObjects;i++) {
+                    // create the object in the demo bucket
+                    s3.putObject(AWSS3Factory.S3_BUCKET, prefix + key + "_" + i, new StringInputStream(content), null);
+                    // print bucket key/value and content for validation
+                    System.out.println(String.format("created object [%s/%s] with content: [%s]",
+                            AWSS3Factory.S3_BUCKET, key, content));
+            }
     }
 }

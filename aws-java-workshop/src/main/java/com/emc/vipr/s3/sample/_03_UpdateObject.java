@@ -37,6 +37,7 @@ public class _03_UpdateObject {
         // update the object in the demo bucket
         PutObjectRequest updateRequest = new PutObjectRequest(AWSS3Factory.S3_BUCKET, key,
         		new StringInputStream(content), null);
+
         s3.putObject(updateRequest);
 
         // print out object key/value for validation

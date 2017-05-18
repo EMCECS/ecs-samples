@@ -15,7 +15,7 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider; //no 1.11-21
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
@@ -33,27 +33,19 @@ import java.security.SecureRandom;
  * Java ViPR S3 interface.
  */
 public class AWSS3Factory {
-/*
-    public static final String S3_ENDPOINT = "http://10.1.83.51:9020";
-    //public static final String S3_ENDPOINT = "http://127.0.0.1:9020";
-    public static final String S3_ACCESS_KEY_ID = "conerjuser1";
-    public static final String S3_SECRET_KEY = "/+S4kUpT6Ch9GsXXYjtUgGEVpBIgUPyFBt1II96X";
-    public static final String S3_BUCKET = "JMC_Test_Bucket2";
-*/
 
 
-    public static final String S3_ENDPOINT = "http://s3.amazonaws.com";
-    public static final String S3_ACCESS_KEY_ID = "AKIAJXGZ5HRUIYU74VBA";
-    public static final String S3_SECRET_KEY = "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";
-    public static final String S3_BUCKET = "stymie";
+    public static final String S3_ENDPOINT = "http://x.x.x.x:9020";
+    //public static final String S3_ENDPOINT = "http://10.1.83.113:9020";
+    public static final String S3_ACCESS_KEY_ID = "userkey";
+    public static final String S3_SECRET_KEY = "secretkey";
 
+    //not required but should be all lowercase as per domain naming requirement for virtual hosted buckets
+    public static final String S3_BUCKET = "bucketname";
 
-    /*
-    public static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
-    public static final String S3_SECRET_KEY = "PcCwHF/lkWtFu9Slv0E0leDVBv6Ht0hXjmLA+pt7";
-    public static final String S3_ACCESS_KEY_ID = "130752486494102507@ecstestdrive.emc.com";
-    public static final String S3_BUCKET = "s3ben";
-     */
+    //a different bucket used in the 11_EnableVersioning example
+    public static final String S3_VERSIONBUCKET = "awsversionbucket";
+
 
     /*
      * The end point of the ViPR S3 REST interface - this should take the form of
@@ -70,7 +62,8 @@ public class AWSS3Factory {
     public static AmazonS3 getS3Client() {
         BasicAWSCredentials creds = new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY);
 
-        /*
+  /*
+  //old v1.10 client
         ClientConfiguration cc = new ClientConfiguration();
         //cc.setProxyHost("localhost");
         //cc.setProxyPort(8888);
@@ -80,28 +73,34 @@ public class AWSS3Factory {
         client.setEndpoint(S3_ENDPOINT);
 */
 
-/*
+
+  // 1.11-100 good standard/basic with v4 auth doesn't work with 1.11-21 though
         AwsClientBuilder.EndpointConfiguration ec = new AwsClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
         AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
                 .withEndpointConfiguration(ec).build();
-*/
 
+
+/*
+// new client,but using v2 auth
+        ClientConfiguration cc = new ClientConfiguration();
+        cc.setSignerOverride("S3SignerType");
 
         AmazonS3ClientBuilder.EndpointConfiguration ec = new AmazonS3ClientBuilder.EndpointConfiguration(S3_ENDPOINT,"us-east-1");
         AmazonS3 client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds))
-                .withEndpointConfiguration(ec).withPathStyleAccessEnabled(true).build();
+                .withClientConfiguration(cc)
+                .withEndpointConfiguration(ec).withPathStyleAccessEnabled(true)
+                .build();
+*/
+
+
+
 
 /*
-        // Path-style bucket naming is highly recommended
+//new client but deprecated way of using path style bucket naming
         S3ClientOptions opts = new S3ClientOptions();
         opts.setPathStyleAccess(true);
         client.setS3ClientOptions(opts);
-*/
-
-        /*
-        BasicAWSCredentials creds = new BasicAWSCredentials("access_key", "secret_key");
-AmazonS3 s3Client = AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(creds)).build();
-         */
+  */
 
 		return client;
     }
