@@ -17,7 +17,10 @@ Release/
 packages/
 .vs/
 
-# IntelliJ IDEA
+# IntelliJ IDEA #
+bin
+build
+.gradle
 .idea/
 *.iws
 out/

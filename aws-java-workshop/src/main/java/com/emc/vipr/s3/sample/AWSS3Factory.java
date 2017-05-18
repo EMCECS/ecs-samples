@@ -36,14 +36,10 @@ public class AWSS3Factory {
 
 
     public static final String S3_ENDPOINT = "http://x.x.x.x:9020";
-    //public static final String S3_ENDPOINT = "http://10.1.83.113:9020";
-    public static final String S3_ACCESS_KEY_ID = "userkey";
-    public static final String S3_SECRET_KEY = "secretkey";
+    public static final String S3_ACCESS_KEY_ID = "xxxxxx";
+    public static final String S3_SECRET_KEY = "xxxxxx";
+    public static final String S3_BUCKET = "workshop-bucket";
 
-    //not required but should be all lowercase as per domain naming requirement for virtual hosted buckets
-    public static final String S3_BUCKET = "bucketname";
-
-    //a different bucket used in the 11_EnableVersioning example
     public static final String S3_VERSIONBUCKET = "awsversionbucket";
 
 

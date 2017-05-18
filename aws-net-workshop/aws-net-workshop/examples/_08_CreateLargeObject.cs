@@ -19,8 +19,11 @@ namespace aws_net_workshop.examples
             Console.Write("Enter the file location: ");
             string filePath = Console.ReadLine();
 
+            // grab the start time of upload
+            DateTime startDate = DateTime.Now;
+
             // part size for chunking in multi-part
-            long partSize = 1024 * 1024 * 5; // 5 MB
+            long partSize = 1024 * 1024 * 2; // 2 MB
 
             // list of upload part response objects for each part that is uploaded
             List<PartETag> partETags = new List<PartETag>();
@@ -90,7 +93,11 @@ namespace aws_net_workshop.examples
                 });
             }
 
+            // grab the end time of upload
+            DateTime endDate = DateTime.Now;
+
             Console.WriteLine(string.Format("Completed multi-part upload for object {0}/{1} with file path: {2}", AWSS3Factory.S3_BUCKET, key, filePath));
+            Console.WriteLine(string.Format("Process took: {0} seconds.", (endDate - startDate).TotalSeconds.ToString()));
             Console.ReadLine();
         }
     }

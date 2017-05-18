@@ -31,7 +31,7 @@ public class _00_CreateBucket {
 
 
     	// create the AWS S3 Client
-    	AmazonS3 s3 = AWSS3Factory.getS3Client();
+		AmazonS3 s3 = AWSS3Factory.getS3Client();
 
     	// create the bucket - used for subsequent demo operations
 		s3.createBucket(bn);

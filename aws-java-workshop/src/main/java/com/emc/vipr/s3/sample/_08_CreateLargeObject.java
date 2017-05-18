@@ -15,7 +15,6 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 
 import java.io.BufferedReader;
@@ -41,9 +40,9 @@ public class _08_CreateLargeObject {
         System.out.println( "Enter the file location (C:\\Users\\vandrk\\EMC\\NameSpaceList.zip) :" );
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
-		_08_CreateLargeObject clo = new _08_CreateLargeObject();
-		clo.mpuSingleThreaded(key, filePath);
-		//clo.testMultiThreadMultipartUploadListPartsPagination(key, filePath);
+	_08_CreateLargeObject clo = new _08_CreateLargeObject();
+	clo.mpuSingleThreaded(key, filePath);
+	//clo.testMultiThreadMultipartUploadListPartsPagination(key, filePath);
     }
 
     public void mpuSingleThreaded(String key, String filePath) {

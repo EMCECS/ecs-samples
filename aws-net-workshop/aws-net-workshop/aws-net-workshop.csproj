@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>aws_net_workshop</RootNamespace>
     <AssemblyName>aws-net-workshop</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,16 +31,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>aws_net_workshop.examples._10_DeleteBucket</StartupObject>
+    <StartupObject>aws_net_workshop.examples_bonus._02_ListVersions</StartupObject>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AWSSDK.Core, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Projects\aws-sdk-net\sdk\src\Services\S3\bin\Debug\net45\AWSSDK.Core.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.Core.3.1.0.0\lib\net45\AWSSDK.Core.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="AWSSDK.S3, Version=3.1.0.0, Culture=neutral, PublicKeyToken=885c28607f98e604, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Projects\aws-sdk-net\sdk\src\Services\S3\bin\Debug\net45\AWSSDK.S3.dll</HintPath>
+      <HintPath>..\packages\AWSSDK.S3.3.1.0.0\lib\net45\AWSSDK.S3.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -61,11 +62,14 @@
     <Compile Include="examples\_06_ReadObjectWithMetadata.cs" />
     <Compile Include="examples\_07_PresignedURL.cs" />
     <Compile Include="examples\_08_CreateLargeObject.cs" />
-    <Compile Include="examples\_09_CreateLargeObject_TransferUtility.cs" />
-    <Compile Include="examples\_10_DeleteBucket.cs" />
+    <Compile Include="examples\_09_ListObjects.cs" />
+    <Compile Include="examples\_10_CreateLargeObject_TransferUtility.cs" />
+    <Compile Include="examples\_11_DeleteBucket.cs" />
     <Compile Include="examples_bonus\_00_CopyObject.cs" />
     <Compile Include="examples_bonus\_01_CreateLargeObjectAsync.cs" />
     <Compile Include="examples_bonus\_02_ListVersions.cs" />
+    <Compile Include="examples_bonus\_03_RestoreObjectVersion.cs" />
+    <Compile Include="examples_bonus\_04_Lifecycle.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
@@ -77,15 +81,13 @@
     <Content Include="obj\Debug\aws-net-workshop.pdb" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="bin\" />
     <Folder Include="obj\Debug\TempPE\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Analyzer Include="..\packages\AWSSDK.S3.3.1.9.0\analyzers\dotnet\cs\AWSSDK.S3.CodeAnalysis.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

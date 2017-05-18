@@ -2,20 +2,54 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="57bc130d-822f-4239-9aef-7195233e3fc9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/cache.properties.lock" afterPath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/cache.properties.lock" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileHashes.bin" afterPath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileHashes.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileSnapshots.bin" afterPath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileSnapshots.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/outputFileStates.bin" afterPath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/outputFileStates.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/taskArtifacts.bin" afterPath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/taskArtifacts.bin" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/aws-java-workshop.iws" afterPath="$PROJECT_DIR$/aws-java-workshop.iws" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/ecs-logo-1.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/ecspics-loader_TemporaryKey.pfx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/LargeFileDownloader.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_09_ReadLargeObject.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_10_ReadLargeObjectTM.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_09_ListObjects.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader.sln" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/App.config" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Main.Designer.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Main.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Main.resx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Pictures.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Program.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Properties/AssemblyInfo.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Properties/Resources.Designer.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Properties/Resources.resx" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Properties/Settings.Designer.cs" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/Properties/Settings.settings" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/ecspics-loader.csproj" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/../ecspics-loader/ecspics-loader/packages.config" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/cache.properties" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/cache.properties.lock" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileHashes.bin" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/fileSnapshots.bin" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/outputFileStates.bin" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.gradle/1.11/taskArtifacts/taskArtifacts.bin" afterPath="" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_09_CreateLargeObject_TransferUtility.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_10_CreateLargeObject_TransferUtility.cs" />
+      <change type="MOVED" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_10_DeleteBucket.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_11_DeleteBucket.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../.gitignore" afterPath="$PROJECT_DIR$/../.gitignore" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/build.gradle" afterPath="$PROJECT_DIR$/build.gradle" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_00_CreateBucket.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_00_CreateBucket.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_01_CreateObject.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_01_CreateObject.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_02_ReadObject.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_02_ReadObject.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_03_UpdateObject.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_03_UpdateObject.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_04_DeleteObject.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_04_DeleteObject.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_05_CreateObjectWithMetadata.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_05_CreateObjectWithMetadata.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_06_ReadObjectWithMetadata.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_06_ReadObjectWithMetadata.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_07_PresignedURL.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_07_PresignedURL.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_08_CreateLargeObject.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_08_CreateLargeObject.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_99_DeleteBucket.java" afterPath="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_99_DeleteBucket.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/aws-net-workshop.csproj" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/aws-net-workshop.csproj" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_00_CreateBucket.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_00_CreateBucket.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_06_ReadObjectWithMetadata.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_06_ReadObjectWithMetadata.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_08_CreateLargeObject.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples/_08_CreateLargeObject.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_00_CopyObject.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_00_CopyObject.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_01_CreateLargeObjectAsync.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_01_CreateLargeObjectAsync.cs" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_02_ListVersions.cs" afterPath="$PROJECT_DIR$/../aws-net-workshop/aws-net-workshop/examples_bonus/_02_ListVersions.cs" />
     </list>
     <ignored path="aws-java-workshop.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -134,11 +168,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="AWSS3Factory.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="195">
+              <caret line="45" column="64" lean-forward="false" selection-start-line="45" selection-start-column="64" selection-end-line="45" selection-end-column="64" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
       <file leaf-file-name="_06_ReadObjectWithMetadata.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_06_ReadObjectWithMetadata.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="-41">
-              <caret line="38" column="13" lean-forward="true" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+              <caret line="41" column="13" lean-forward="false" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
               <folding />
             </state>
           </provider>
@@ -147,9 +193,12 @@
       <file leaf-file-name="_04_DeleteObject.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_04_DeleteObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-              <folding />
+            <state relative-caret-position="60">
+              <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+              <folding>
+                <marker date="1495121614000" expanded="false" signature="615:715" ph="..." />
+                <marker date="1495121614000" expanded="true" signature="807:1367" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -168,8 +217,11 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_07_PresignedURL.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
-              <caret line="33" column="54" lean-forward="false" selection-start-line="33" selection-start-column="54" selection-end-line="33" selection-end-column="54" />
-              <folding />
+              <caret line="31" column="43" lean-forward="true" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
+              <folding>
+                <marker date="1495121614000" expanded="false" signature="615:861" ph="..." />
+                <marker date="1495121614000" expanded="true" signature="953:2242" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -177,24 +229,14 @@
       <file leaf-file-name="_10_CopyObject.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_10_CopyObject.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
+            <state relative-caret-position="420">
               <caret line="50" column="94" lean-forward="false" selection-start-line="50" selection-start-column="94" selection-end-line="50" selection-end-column="94" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="_03_UpdateObject.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_03_UpdateObject.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="24" column="13" lean-forward="false" selection-start-line="24" selection-start-column="13" selection-end-line="24" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="_11_EnableVersioning.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="_11_EnableVersioning.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_11_EnableVersioning.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="235">
@@ -208,7 +250,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_08_CreateLargeObject.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="479">
-              <caret line="65" column="43" lean-forward="false" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="43" />
+              <caret line="129" column="43" lean-forward="false" selection-start-line="129" selection-start-column="43" selection-end-line="129" selection-end-column="43" />
               <folding />
             </state>
           </provider>
@@ -217,9 +259,11 @@
       <file leaf-file-name="_99_DeleteBucket.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_99_DeleteBucket.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="75">
-              <caret line="20" column="13" lean-forward="false" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-              <folding />
+            <state relative-caret-position="60">
+              <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+              <folding>
+                <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -228,7 +272,7 @@
         <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_05_CreateObjectWithMetadata.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="139">
-              <caret line="30" column="54" lean-forward="false" selection-start-line="30" selection-start-column="54" selection-end-line="30" selection-end-column="54" />
+              <caret line="29" column="54" lean-forward="false" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="54" />
               <folding />
             </state>
           </provider>
@@ -533,10 +577,10 @@
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_99_DeleteBucket.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_10_CopyObject.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_08_CreateLargeObject.java" />
-        <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_00_CreateBucket.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_01_CreateObject.java" />
         <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_11_EnableVersioning.java" />
+        <option value="$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java" />
       </list>
     </option>
   </component>
@@ -545,8 +589,8 @@
     <option name="LAST_EDITED_TAB_NAME" />
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="304" />
-    <option name="y" value="74" />
+    <option name="x" value="29" />
+    <option name="y" value="44" />
     <option name="width" value="1244" />
     <option name="height" value="697" />
   </component>
@@ -1072,7 +1116,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="304" y="74" width="1244" height="697" extended-state="0" />
+    <frame x="29" y="44" width="1244" height="697" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -1084,7 +1128,7 @@
       <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.21322314" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21322314" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Properties" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -1176,7 +1220,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="20" column="33" lean-forward="false" selection-start-line="20" selection-start-column="33" selection-end-line="20" selection-end-column="33" />
-          <folding />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:715" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="807:1367" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1185,7 +1232,7 @@
         <state relative-caret-position="195">
           <caret line="32" column="8" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
           <folding>
-            <element signature="e#0#1765#0" expanded="false" />
+            <element signature="e#0#1801#0" expanded="false" />
             <element signature="imports" expanded="false" />
           </folding>
         </state>
@@ -1204,8 +1251,7 @@
         <state relative-caret-position="360">
           <caret line="39" column="0" lean-forward="false" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding>
-            <element signature="e#0#1461#0" expanded="false" />
-            <element signature="imports" expanded="false" />
+            <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1247,7 +1293,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="20" column="33" lean-forward="true" selection-start-line="20" selection-start-column="33" selection-end-line="20" selection-end-column="33" />
-          <folding />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:715" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="807:1367" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1256,7 +1305,7 @@
         <state relative-caret-position="195">
           <caret line="32" column="8" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
           <folding>
-            <element signature="e#0#1765#0" expanded="false" />
+            <element signature="e#0#1801#0" expanded="false" />
             <element signature="imports" expanded="false" />
           </folding>
         </state>
@@ -1275,8 +1324,7 @@
         <state relative-caret-position="360">
           <caret line="39" column="0" lean-forward="true" selection-start-line="39" selection-start-column="0" selection-end-line="39" selection-end-column="0" />
           <folding>
-            <element signature="e#0#1461#0" expanded="false" />
-            <element signature="imports" expanded="false" />
+            <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1339,7 +1387,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
           <caret line="52" column="8" lean-forward="false" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
-          <folding />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:861" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="953:2242" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1356,8 +1407,7 @@
         <state relative-caret-position="360">
           <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
           <folding>
-            <element signature="e#0#1461#0" expanded="false" />
-            <element signature="imports" expanded="false" />
+            <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1420,7 +1470,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
           <caret line="52" column="8" lean-forward="false" selection-start-line="52" selection-start-column="8" selection-end-line="52" selection-end-column="8" />
-          <folding />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:861" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="953:2242" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1437,8 +1490,7 @@
         <state relative-caret-position="360">
           <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
           <folding>
-            <element signature="e#0#1461#0" expanded="false" />
-            <element signature="imports" expanded="false" />
+            <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
           </folding>
         </state>
       </provider>
@@ -1506,7 +1558,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/AWSS3Factory.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
+        <state relative-caret-position="195">
           <caret line="45" column="64" lean-forward="false" selection-start-line="45" selection-start-column="64" selection-end-line="45" selection-end-column="64" />
           <folding>
             <element signature="imports" expanded="true" />
@@ -1535,7 +1587,7 @@
         <state relative-caret-position="195">
           <caret line="32" column="8" lean-forward="false" selection-start-line="32" selection-start-column="8" selection-end-line="32" selection-end-column="8" />
           <folding>
-            <element signature="e#0#1765#0" expanded="false" />
+            <element signature="e#0#1801#0" expanded="false" />
             <element signature="imports" expanded="false" />
           </folding>
         </state>
@@ -1551,16 +1603,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_04_DeleteObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="22" column="13" lean-forward="false" selection-start-line="22" selection-start-column="13" selection-end-line="22" selection-end-column="13" />
-          <folding />
+        <state relative-caret-position="60">
+          <caret line="19" column="0" lean-forward="true" selection-start-line="19" selection-start-column="0" selection-end-line="19" selection-end-column="0" />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:715" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="807:1367" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_05_CreateObjectWithMetadata.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="139">
-          <caret line="30" column="54" lean-forward="false" selection-start-line="30" selection-start-column="54" selection-end-line="30" selection-end-column="54" />
+          <caret line="29" column="54" lean-forward="false" selection-start-line="29" selection-start-column="54" selection-end-line="29" selection-end-column="54" />
           <folding />
         </state>
       </provider>
@@ -1568,7 +1623,7 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_06_ReadObjectWithMetadata.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-41">
-          <caret line="38" column="13" lean-forward="true" selection-start-line="38" selection-start-column="13" selection-end-line="38" selection-end-column="13" />
+          <caret line="41" column="13" lean-forward="false" selection-start-line="41" selection-start-column="13" selection-end-line="41" selection-end-column="13" />
           <folding />
         </state>
       </provider>
@@ -1576,15 +1631,18 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_07_PresignedURL.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
-          <caret line="33" column="54" lean-forward="false" selection-start-line="33" selection-start-column="54" selection-end-line="33" selection-end-column="54" />
-          <folding />
+          <caret line="31" column="43" lean-forward="true" selection-start-line="31" selection-start-column="43" selection-end-line="31" selection-end-column="43" />
+          <folding>
+            <marker date="1495121614000" expanded="false" signature="615:861" ph="..." />
+            <marker date="1495121614000" expanded="true" signature="953:2242" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_08_CreateLargeObject.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="479">
-          <caret line="65" column="43" lean-forward="false" selection-start-line="65" selection-start-column="43" selection-end-line="65" selection-end-column="43" />
+          <caret line="129" column="43" lean-forward="false" selection-start-line="129" selection-start-column="43" selection-end-line="129" selection-end-column="43" />
           <folding />
         </state>
       </provider>
@@ -1599,15 +1657,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_99_DeleteBucket.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="75">
-          <caret line="20" column="13" lean-forward="false" selection-start-line="20" selection-start-column="13" selection-end-line="20" selection-end-column="13" />
-          <folding />
+        <state relative-caret-position="60">
+          <caret line="18" column="0" lean-forward="true" selection-start-line="18" selection-start-column="0" selection-end-line="18" selection-end-column="0" />
+          <folding>
+            <marker date="1495121614000" expanded="true" signature="798:1409" ph="{...}" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/com/emc/vipr/s3/sample/_10_CopyObject.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
+        <state relative-caret-position="420">
           <caret line="50" column="94" lean-forward="false" selection-start-line="50" selection-start-column="94" selection-end-line="50" selection-end-column="94" />
           <folding />
         </state>

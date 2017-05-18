@@ -4,13 +4,10 @@ using Amazon.S3.Transfer;
 
 namespace aws_net_workshop.examples
 {
-    class _09_CreateLargeObject_TransferUtility
+    class _10_CreateLargeObject_TransferUtility
     {
         public static void Main(string[] args)
         {
-            // grab the start time of upload
-            DateTime startDate = DateTime.Now;
-
             // create the AWS S3 client
             AmazonS3Client s3 = AWSS3Factory.getS3Client();
 
@@ -29,9 +26,12 @@ namespace aws_net_workshop.examples
                 BucketName = AWSS3Factory.S3_BUCKET,
                 FilePath = filePath,
                 StorageClass = S3StorageClass.Standard,
-                PartSize = 1024 * 1024 * 16, // 16MB
+                PartSize = 1024 * 1024 * 2, // 2MB
                 Key = key,
             };
+
+            // grab the start time of upload
+            DateTime startDate = DateTime.Now;
 
             // upload the file
             fileTransferUtility.Upload(uploadRequest);
