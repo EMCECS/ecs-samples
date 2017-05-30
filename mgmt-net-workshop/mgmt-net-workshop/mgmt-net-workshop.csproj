@@ -60,11 +60,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AWSS3Factory.cs" />
     <Compile Include="examples\_00_CreateNamespaceAdmin.cs" />
     <Compile Include="examples\_01_CreateNamespace.cs" />
     <Compile Include="examples\_02_CreateObjectUser.cs" />
-    <Compile Include="examples\_12_Retention.cs" />
     <Compile Include="examples\_03_CreateBucket.cs" />
     <Compile Include="examples\_04_CreateSecretKey.cs" />
     <Compile Include="examples\_05_GetNamespaceBillingInfo.cs" />
@@ -74,6 +72,7 @@
     <Compile Include="examples\_09_DeleteObjectUser.cs" />
     <Compile Include="examples\_10_DeleteNamespace.cs" />
     <Compile Include="examples\_11_DeleteNamespaceAdmin.cs" />
+    <Compile Include="examples\_12_SetRetention.cs" />
     <Compile Include="MgmtFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
