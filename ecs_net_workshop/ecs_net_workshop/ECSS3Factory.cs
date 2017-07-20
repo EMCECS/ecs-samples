@@ -7,11 +7,11 @@ namespace ecs_net_workshop
     class ECSS3Factory
     {
         // credentials
-        public static string END_POINT = "https://object.ecstestdrive.com";
-        public static string ACCESS_KEY = "131118670375936839@ecstestdrive.emc.com";
-        public static string SECRET_KEY = "ZwxkNmXe94H+6djdHnR/zBtAlPKRIMWGQ3KAyjpQ";
+        public static string END_POINT = "";
+        public static string ACCESS_KEY = "";
+        public static string SECRET_KEY = "";
 
-        public static string S3_BUCKET = "24af0414-bbb3-4808-b1ba-0bc80fc67929";
+        public static string S3_BUCKET = "";
 
         public static volatile ECSS3Client client;
 
