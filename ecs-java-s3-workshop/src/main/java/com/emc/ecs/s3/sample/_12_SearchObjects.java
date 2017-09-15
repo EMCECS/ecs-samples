@@ -141,7 +141,7 @@ public class _12_SearchObjects {
 
         // Cleanup
         for(String key : KEY_LIST) {
-            s3.deleteObject(ECSS3Factory.S3_BUCKET, key);
+            s3.deleteObject(BUCKET_NAME, key);
         }
         s3.deleteBucket(BUCKET_NAME);
 
