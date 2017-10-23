@@ -14,7 +14,6 @@
  */
 package com.emc.ecs.s3.sample;
 
-import com.emc.object.Protocol;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.S3Config;
 import com.emc.object.s3.jersey.S3JerseyClient;
@@ -40,10 +39,7 @@ public class ECSS3Factory {
     
     /* the end point of the ECS S3 REST interface */
     public static final String S3_URI = "https://object.ecstestdrive.com";
-    public static final String S3_HOST = "10.10.10.10";
-    public static final Protocol S3_SCHEME = Protocol.HTTP;
-    public static final int S3_PORT = 80;
-    
+
     /* a unique bucket name to store objects */
     public static final String S3_BUCKET = "workshop-bucket";
     

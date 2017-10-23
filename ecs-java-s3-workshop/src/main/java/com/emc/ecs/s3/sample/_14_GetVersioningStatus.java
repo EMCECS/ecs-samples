@@ -15,21 +15,20 @@
 package com.emc.ecs.s3.sample;
 
 import com.emc.object.s3.S3Client;
-import com.emc.object.s3.bean.ListDataNode;
+import com.emc.object.s3.bean.VersioningConfiguration;
 
-public class _0_GetVersion {
+
+public class _14_GetVersioningStatus {
 
 	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+	// create the ECS S3 Client
+	S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// Get the list of data nodes.  This will also contain the version information.
- 		ListDataNode nodes = s3.listDataNodes();
+	// obtain versioning configuration
+        VersioningConfiguration vc = s3.getBucketVersioning(ECSS3Factory.S3_BUCKET);
 
-    	// print out the service name and endpoint for validation
-	System.out.println( String.format("Successfully connected to ECS:" +
-						"\n\t- Version info [%s]" +
-						"\n\t- Data nodes: [%s]",
-			nodes.getVersionInfo(), nodes.getDataNodes()));
+        // print bucket key/value and content for validation
+        System.out.println( String.format("Bucket [%s] versioning status [%s]",
+                ECSS3Factory.S3_BUCKET, vc.getStatus()));
     }
 }
