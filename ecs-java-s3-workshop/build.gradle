@@ -26,10 +26,10 @@ repositories {
 }
 
 dependencies {
-    compile "com.emc.ecs:object-client:3.0.0"
+    compile "com.emc.ecs:object-client:3.0.3"
     compile "com.sun.jersey:jersey-core:1.19"
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.11'
+    gradleVersion = '4.3.1'
 }
