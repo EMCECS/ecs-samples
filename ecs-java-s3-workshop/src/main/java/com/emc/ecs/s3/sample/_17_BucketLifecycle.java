@@ -17,27 +17,35 @@ package com.emc.ecs.s3.sample;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.bean.LifecycleConfiguration;
 import com.emc.object.s3.bean.LifecycleRule;
-import com.emc.object.s3.bean.VersioningConfiguration;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 
 
 public class _17_BucketLifecycle {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
 
-    LifecycleRule rule = new LifecycleRule("rule-a", "abc", LifecycleRule.Status.Enabled, 1);
-    LifecycleConfiguration lc = new LifecycleConfiguration()
-            .withRules(rule);
+        LifecycleRule rule = new LifecycleRule("rule-a", "abc", LifecycleRule.Status.Enabled, 1);
+        LifecycleConfiguration lc = new LifecycleConfiguration()
+                .withRules(rule);
 
-	s3.setBucketLifecycle(ECSS3Factory.S3_BUCKET, lc);
-        // print bucket key/value and content for validation
-        System.out.println( String.format("bucket [%s] lifecycle set",
+        s3.setBucketLifecycle(ECSS3Factory.S3_BUCKET, lc);
+        System.out.println(String.format("bucket [%s] lifecycle set",
                 ECSS3Factory.S3_BUCKET));
+
+        // print bucket key/value and content for validation
+        System.out.println(String.format("obtaining rules for bucket [%s]",
+                ECSS3Factory.S3_BUCKET));
+
+        LifecycleConfiguration lc2 = s3.getBucketLifecycle(ECSS3Factory.S3_BUCKET);
+
+        for (LifecycleRule lr : lc2.getRules()) {
+            System.out.println(String.format("\t- rule: [id: %s, prefix: %s, status: %s, expirationDays: %s",
+                    lr.getId(),
+                    lr.getPrefix(),
+                    lr.getStatus(),
+                    lr.getExpirationDays()));
+        }
     }
 }
