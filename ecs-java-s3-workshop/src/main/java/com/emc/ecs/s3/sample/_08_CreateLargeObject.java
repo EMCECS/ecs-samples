@@ -49,7 +49,7 @@ public class _08_CreateLargeObject {
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         
         // part size for chunking in multi-parts
-    	long partSize = 5 * 1024 * 1024; // Set part size to 5 MB.
+    	long partSize = 4 * 1024 * 1024; // Set part size to 5 MB.
 
         // list of MultipartPartETag objects for each part that is uploaded
         SortedSet<MultipartPartETag> eTags = new TreeSet<>();
