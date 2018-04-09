@@ -1,7 +1,6 @@
 ﻿using System;
 using Amazon.S3;
 using Amazon.S3.Model;
-using System.Net;
 
 namespace aws_net_workshop.examples
 {

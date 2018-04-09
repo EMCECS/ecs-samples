@@ -27,7 +27,7 @@ namespace aws_net_workshop.examples
                 FilePath = filePath,
                 StorageClass = S3StorageClass.Standard,
                 PartSize = 1024 * 1024 * 2, // 2MB
-                Key = key,
+                Key = key, 
             };
 
             // grab the start time of upload

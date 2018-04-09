@@ -126,6 +126,8 @@ namespace aws_net_workshop.examples_bonus
                     Key = key,
                     UploadId = initResponse.UploadId
                 });
+
+                Console.WriteLine(e);
             }
         }
 
