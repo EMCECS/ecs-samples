@@ -14,9 +14,11 @@
  */
 package com.emc.ecs.s3.sample;
 
+import com.emc.object.Protocol;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.S3Config;
 import com.emc.object.s3.jersey.S3JerseyClient;
+import com.emc.rest.smart.ecs.Vdc;
 import org.apache.commons.codec.binary.Base64;
 
 import java.net.URI;
@@ -49,16 +51,13 @@ public class ECSS3Factory {
 
     public static S3Client getS3Client() throws URISyntaxException {
         // for client-side load balancing
-        //S3Config config = new S3Config(S3_SCHEME, S3_HOST1, S3_HOST2);
+        //S3Config config = new S3Config(Protocol.HTTPS, S3_HOST1, S3_HOST2);
         // ditto with multiple VDCs
-        //S3Config config = new S3Config(S3_SCHEME, new Vdc(S3_V1_HOST), new Vdc(S3_V2_HOST));
+        //S3Config config = new S3Config(Protocol.HTTPS, new Vdc(S3_V1_HOST), new Vdc(S3_V2_HOST));
 
         S3Config config = new S3Config(new URI(S3_URI));
 
         config.withIdentity(S3_ACCESS_KEY_ID).withSecretKey(S3_SECRET_KEY);
-        if (S3_ECS_NAMESPACE != null) {
-            config.withNamespace(S3_ECS_NAMESPACE);
-        }
 
         S3Client client = new S3JerseyClient(config);
 
