@@ -14,6 +14,7 @@
  */
 package com.emc.vipr.s3.sample;
 
+import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.client.builder.AwsClientBuilder;
@@ -51,7 +52,7 @@ public class AWSS3Factory {
     public static final String S3_VERSIONBUCKET = "versioned-bucket";
 
     // this should be a namespace-enabled baseURL w/ wildcard DNS & SSL
-    public static final String PUBLIC_ENDPOINT = "https://public.ecstestdrive.com";
+    public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
 
     public static AmazonS3 getS3Client() {
         AmazonS3ClientBuilder builder = AmazonS3Client.builder();
@@ -63,7 +64,7 @@ public class AWSS3Factory {
         builder.setCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY)));
 
         // switch to v2 auth
-        //builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
+        builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
 
         // path-style bucket naming is highly recommended
         builder.setPathStyleAccessEnabled(true);
