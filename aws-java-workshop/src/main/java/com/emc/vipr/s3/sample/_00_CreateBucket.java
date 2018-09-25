@@ -15,29 +15,20 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.*;
-import com.amazonaws.util.StringInputStream;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.List;
+import com.amazonaws.services.s3.model.ObjectListing;
 
 public class _00_CreateBucket {
 
 	public static void main(String[] args) throws Exception {
-		System.out.println( "Enter the bucket name:" );
-		String bn = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
 
     	// create the AWS S3 Client
 		AmazonS3 s3 = AWSS3Factory.getS3Client();
 
     	// create the bucket - used for subsequent demo operations
-		s3.createBucket(bn);
+        s3.createBucket(AWSS3Factory.S3_BUCKET);
 
         // get bucket listing to retrieve the bucket name
-        ObjectListing objects = s3.listObjects(bn);
+        ObjectListing objects = s3.listObjects(AWSS3Factory.S3_BUCKET);
 
         // print bucket name for validation
     	System.out.println( String.format("Successfully created bucket [%s]", 

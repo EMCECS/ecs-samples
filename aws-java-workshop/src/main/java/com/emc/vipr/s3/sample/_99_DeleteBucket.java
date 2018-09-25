@@ -15,7 +15,9 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.BucketVersioningConfiguration;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import com.amazonaws.services.s3.model.S3VersionSummary;
 
 public class _99_DeleteBucket {
 
@@ -24,15 +26,23 @@ public class _99_DeleteBucket {
 		AmazonS3 s3 = AWSS3Factory.getS3Client();
 
         // delete the demo bucket and all its content
-		for (S3ObjectSummary summary : s3.listObjects(AWSS3Factory.S3_BUCKET).getObjectSummaries())
-		{
-			s3.deleteObject(AWSS3Factory.S3_BUCKET, summary.getKey());
-			System.out.println(String.format("Deleted [%s/%s]", AWSS3Factory.S3_BUCKET, summary.getKey()));
-		}
+        if (BucketVersioningConfiguration.OFF.equals(s3.getBucketVersioningConfiguration(AWSS3Factory.S3_BUCKET).getStatus())) {
+            // no versioning, so list objects
+            for (S3ObjectSummary summary : s3.listObjects(AWSS3Factory.S3_BUCKET).getObjectSummaries()) {
+                s3.deleteObject(AWSS3Factory.S3_BUCKET, summary.getKey());
+                System.out.println(String.format("Deleted [%s/%s]", AWSS3Factory.S3_BUCKET, summary.getKey()));
+            }
+        } else {
+            // versioning was enabled, list versions
+            for (S3VersionSummary summary : s3.listVersions(AWSS3Factory.S3_BUCKET, null).getVersionSummaries()) {
+                s3.deleteVersion(AWSS3Factory.S3_BUCKET, summary.getKey(), summary.getVersionId());
+                System.out.println(String.format("Deleted [%s/%s] (vId: %s)", AWSS3Factory.S3_BUCKET, summary.getKey(), summary.getVersionId()));
+            }
+        }
+
 		s3.deleteBucket(AWSS3Factory.S3_BUCKET);
 
-    	            // print bucket key/value and content for validation
-    	System.out.println( String.format("deleted bucket [%s]",
-    			AWSS3Factory.S3_BUCKET));
+        // print bucket key/value and content for validation
+        System.out.println(String.format("deleted bucket [%s]", AWSS3Factory.S3_BUCKET));
     }
 }
