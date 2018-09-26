@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -21,9 +21,9 @@ import com.amazonaws.services.s3.model.S3VersionSummary;
 
 public class _99_DeleteBucket {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
-		AmazonS3 s3 = AWSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         // delete the demo bucket and all its content
         if (BucketVersioningConfiguration.OFF.equals(s3.getBucketVersioningConfiguration(AWSS3Factory.S3_BUCKET).getStatus())) {
@@ -40,7 +40,7 @@ public class _99_DeleteBucket {
             }
         }
 
-		s3.deleteBucket(AWSS3Factory.S3_BUCKET);
+        s3.deleteBucket(AWSS3Factory.S3_BUCKET);
 
         // print bucket key/value and content for validation
         System.out.println(String.format("deleted bucket [%s]", AWSS3Factory.S3_BUCKET));

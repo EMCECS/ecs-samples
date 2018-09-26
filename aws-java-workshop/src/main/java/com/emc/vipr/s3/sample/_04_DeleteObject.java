@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -20,19 +20,19 @@ import java.io.InputStreamReader;
 
 public class _04_DeleteObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-    	// retrieve the object value from user
+        // retrieve the object value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // delete the object from the demo bucket
         s3.deleteObject(AWSS3Factory.S3_BUCKET, key);
-        
+
         // print out key/value for validation
-    	System.out.println( String.format("object [%s/%s] deleted",
+        System.out.println( String.format("object [%s/%s] deleted",
                 AWSS3Factory.S3_BUCKET, key));
     }
 }

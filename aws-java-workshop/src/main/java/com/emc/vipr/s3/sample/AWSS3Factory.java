@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -54,7 +54,8 @@ public class AWSS3Factory {
     // this should be a namespace-enabled baseURL w/ wildcard DNS & SSL
     public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
 
-    public static AmazonS3 getS3Client() {
+    private static AmazonS3ClientBuilder getBasicS3ClientBuilder() {
+
         AmazonS3ClientBuilder builder = AmazonS3Client.builder();
 
         // set endpoint
@@ -63,13 +64,26 @@ public class AWSS3Factory {
         // set credentials
         builder.setCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(S3_ACCESS_KEY_ID, S3_SECRET_KEY)));
 
-        // switch to v2 auth
-        builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
-
         // path-style bucket naming is highly recommended
         builder.setPathStyleAccessEnabled(true);
 
+        return builder;
+
+    }
+
+    public static AmazonS3 getS3ClientWithV4Signatures() {
+        return getBasicS3ClientBuilder().build();
+    }
+
+    public static AmazonS3 getS3ClientWithV2Signatures() {
+
+        AmazonS3ClientBuilder builder = getBasicS3ClientBuilder();
+
+        // switch to v2 auth
+        builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
+
         return builder.build();
+
     }
 
     // Generates a RSA key pair for testing.

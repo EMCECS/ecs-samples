@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -15,9 +15,7 @@
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectMetadataRequest;
-import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -27,11 +25,11 @@ import java.util.Map;
 
 public class _06_ReadObjectWithMetadata {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-    	// retrieve the object key from user
+        // retrieve the object key from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
@@ -49,10 +47,10 @@ public class _06_ReadObjectWithMetadata {
 
         // get the metadata for the object
         ObjectMetadata metadata = object.getObjectMetadata();
-        
+
         // print out the object key/value and metadata for validation
-    	System.out.println( String.format("Metadata for [%s/%s]",
-    			AWSS3Factory.S3_BUCKET, key));
+        System.out.println( String.format("Metadata for [%s/%s]",
+                AWSS3Factory.S3_BUCKET, key));
 
         Map<String,String> metadataList = metadata.getUserMetadata();
         //String metaVal = metadataList.get("metakey1");
@@ -60,7 +58,7 @@ public class _06_ReadObjectWithMetadata {
 
         for (Map.Entry<String, String> entry : metadataList.entrySet())
         {
-        	System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));
+            System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));
         }
 
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class _10_ReadLargeObjectTM {
 
     public static void main(String[] args) throws Exception {
         // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         // retrieve the key value from user
         System.out.println( "Enter the object key:" );

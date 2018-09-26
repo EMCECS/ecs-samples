@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ public class _13_CreateStaticWebsite {
     };
 
     public static void main(String[] args) throws Exception {
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         // upload static content
         for (String key : STATIC_FILES) {

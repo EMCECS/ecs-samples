@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -19,20 +19,20 @@ import com.amazonaws.services.s3.model.ObjectListing;
 
 public class _00_CreateBucket {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
 
-    	// create the AWS S3 Client
-		AmazonS3 s3 = AWSS3Factory.getS3Client();
+        // create the AWS S3 Client
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-    	// create the bucket - used for subsequent demo operations
+        // create the bucket - used for subsequent demo operations
         s3.createBucket(AWSS3Factory.S3_BUCKET);
 
         // get bucket listing to retrieve the bucket name
         ObjectListing objects = s3.listObjects(AWSS3Factory.S3_BUCKET);
 
         // print bucket name for validation
-    	System.out.println( String.format("Successfully created bucket [%s]", 
-    			objects.getBucketName()));
+        System.out.println( String.format("Successfully created bucket [%s]", 
+                objects.getBucketName()));
 
     }
 }

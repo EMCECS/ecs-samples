@@ -1,17 +1,27 @@
+/*
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.*;
 
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by conerj on 3/28/17.
- */
 //https://docs.aws.amazon.com/AmazonS3/latest/API/RESTBucketGET.html
 //https://docs.aws.amazon.com/AmazonS3/latest/API/v2-RESTBucketGET.html
 //http://docs.aws.amazon.com/AmazonS3/latest/dev/ListingObjectKeysUsingJava.html
@@ -19,7 +29,7 @@ public class _09_ListObjects {
 
     public static void main(String[] args) throws Exception {
         // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
         _09_ListObjects lo = new _09_ListObjects();
         //lo.listObjectsV2(s3);
         lo.listObjectsV1(s3);

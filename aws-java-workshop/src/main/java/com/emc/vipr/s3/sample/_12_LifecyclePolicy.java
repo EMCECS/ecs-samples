@@ -1,20 +1,26 @@
+/*
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.BucketLifecycleConfiguration;
-import com.amazonaws.services.s3.model.lifecycle.LifecycleFilter;
-import com.amazonaws.services.s3.model.lifecycle.LifecycleFilterPredicate;
-import com.amazonaws.services.s3.model.lifecycle.LifecyclePredicateVisitor;
-import com.amazonaws.services.s3.model.lifecycle.LifecyclePrefixPredicate;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Date;
 
-/**
- * Created by schumb on 8/14/2017.
- */
 public class _12_LifecyclePolicy {
 
     public static void main(String[] args) throws Exception {
@@ -25,7 +31,7 @@ public class _12_LifecyclePolicy {
         String prefix = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
         // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         // create the new rule
         BucketLifecycleConfiguration.Rule rule = new BucketLifecycleConfiguration.Rule()

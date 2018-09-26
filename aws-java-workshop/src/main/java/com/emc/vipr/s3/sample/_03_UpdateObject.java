@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EMC Corporation. All Rights Reserved.
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -23,24 +23,24 @@ import java.io.InputStreamReader;
 
 public class _03_UpdateObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the AWS S3 Client
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-    	// retrieve the object key and new object value from user
+        // retrieve the object key and new object value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         System.out.println( "Enter new object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // update the object in the demo bucket
         PutObjectRequest updateRequest = new PutObjectRequest(AWSS3Factory.S3_BUCKET, key,
-        		new StringInputStream(content), null);
+                new StringInputStream(content), null);
 
         s3.putObject(updateRequest);
 
         // print out object key/value for validation
-    	System.out.println( String.format("update object [%s/%s] with new content: [%s]",
-    			AWSS3Factory.S3_BUCKET, key, content));
+        System.out.println( String.format("update object [%s/%s] with new content: [%s]",
+                AWSS3Factory.S3_BUCKET, key, content));
     }
 }

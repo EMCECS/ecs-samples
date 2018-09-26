@@ -1,27 +1,32 @@
+/*
+ * Copyright 2013-2018 EMC Corporation. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * A copy of the License is located at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0.txt
+ *
+ * or in the "license" file accompanying this file. This file is distributed
+ * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+ * express or implied. See the License for the specific language governing
+ * permissions and limitations under the License.
+ */
 package com.emc.vipr.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
-import com.amazonaws.util.StringInputStream;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.util.StringInputStream;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by conerj on 4/12/17.
- */
-public class _10_CopyObject {
+public class _14_CopyObject {
 
     public static void main(String[] args) throws Exception {
-        _10_CopyObject co = new _10_CopyObject();
+        _14_CopyObject co = new _14_CopyObject();
         co.copy1();
         //co.copy2();
     }
@@ -29,7 +34,7 @@ public class _10_CopyObject {
     //can go to different bucket with same or different key name
     private void copy1() throws Exception {
         // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         // retrieve the key value from user
         System.out.println( "Enter the source object key:" );
@@ -56,7 +61,7 @@ public class _10_CopyObject {
     private void copy2() throws Exception {
         String destPrefix = "destprefix/";
         // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3Client();
+        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
         ListObjectsRequest req = new ListObjectsRequest().withBucketName(AWSS3Factory.S3_BUCKET)
         .withPrefix("vz/");
