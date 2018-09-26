@@ -34,10 +34,10 @@ import java.security.SecureRandom;
 public class ECSS3Factory {
 
 	/* the S3 access key id - this is equivalent to the user */
-    public static final String S3_ACCESS_KEY_ID = "XXXXXXXXXXXXXXXXX@ecstestdrive.emc.com";
+    public static final String S3_ACCESS_KEY_ID = "131123009294999359@ecstestdrive.emc.com";
 
     /* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "XXXXXXXXXXXXXXXXXXXXXXXXX";
+    public static final String S3_SECRET_KEY = "Ej816BbmYcy6SsBANKbSw1knSS8406aSKOsiV7+F";
     
     /* the end point of the ECS S3 REST interface */
     public static final String S3_URI = "https://object.ecstestdrive.com";
