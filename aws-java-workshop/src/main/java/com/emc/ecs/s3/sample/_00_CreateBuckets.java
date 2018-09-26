@@ -12,27 +12,32 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package com.emc.vipr.s3.sample;
+package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectListing;
 
-public class _00_CreateBucket {
+public class _00_CreateBuckets {
 
     public static void main(String[] args) throws Exception {
+        createBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET);
+        createBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_V4);
+    }
 
-        // create the AWS S3 Client
-        AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
-
+    /**
+     * @param s3Client
+     * @param s3Bucket
+     */
+    private static void createBucket(AmazonS3 s3Client, String s3Bucket) {
         // create the bucket - used for subsequent demo operations
-        s3.createBucket(AWSS3Factory.S3_BUCKET);
+        s3Client.createBucket(s3Bucket);
 
         // get bucket listing to retrieve the bucket name
-        ObjectListing objects = s3.listObjects(AWSS3Factory.S3_BUCKET);
+        ObjectListing objects = s3Client.listObjects(s3Bucket);
 
         // print bucket name for validation
         System.out.println( String.format("Successfully created bucket [%s]", 
                 objects.getBucketName()));
-
     }
+
 }

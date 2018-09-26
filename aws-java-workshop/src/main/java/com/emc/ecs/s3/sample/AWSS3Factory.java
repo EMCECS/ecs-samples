@@ -12,7 +12,7 @@
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
  */
-package com.emc.vipr.s3.sample;
+package com.emc.ecs.s3.sample;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
@@ -41,13 +41,16 @@ public class AWSS3Factory {
     static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
 
     // the S3 access key id - this is equivalent to the user
-    static final String S3_ACCESS_KEY_ID = "xxxxxx";
+    static final String S3_ACCESS_KEY_ID = "131123009294999359@ecstestdrive.emc.com";
 
     // the S3 secret key associated with the S3_ACCESS_KEY_ID
-    static final String S3_SECRET_KEY = "xxxxxx";
+    static final String S3_SECRET_KEY = "Ej816BbmYcy6SsBANKbSw1knSS8406aSKOsiV7+F";
 
     // a unique bucket name to store objects
     public static final String S3_BUCKET = "workshop-bucket";
+
+    // a unique bucket name to store objects
+    public static final String S3_BUCKET_V4 = "workshop-bucket-v4";
 
     public static final String S3_VERSIONBUCKET = "versioned-bucket";
 
