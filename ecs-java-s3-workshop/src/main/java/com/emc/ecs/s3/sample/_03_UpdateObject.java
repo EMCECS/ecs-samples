@@ -22,22 +22,22 @@ import java.io.InputStreamReader;
 
 public class _03_UpdateObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve the object key and new object value from user
+        // retrieve the object key and new object value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         System.out.println( "Enter new object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // update the object in the demo bucket
         PutObjectRequest updateRequest = new PutObjectRequest(ECSS3Factory.S3_BUCKET, key, content);
         s3.putObject(updateRequest);
 
         // print out object key/value for validation
-    	System.out.println( String.format("update object [%s/%s] with new content: [%s]",
-    			ECSS3Factory.S3_BUCKET, key, content));
+        System.out.println( String.format("update object [%s/%s] with new content: [%s]",
+                ECSS3Factory.S3_BUCKET, key, content));
     }
 }

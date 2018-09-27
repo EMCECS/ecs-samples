@@ -55,7 +55,7 @@ public class _11_ListObjects {
             "20141103/account-11122/bill.html",
             "20141103/account-11133/bill.xml",
             "20141103/account-11133/bill.pdf",
-            "20141103/account-11133/bill.html" };
+    "20141103/account-11133/bill.html" };
 
     public static void main(String[] args) throws Exception {
         // create the ECS S3 Client

@@ -21,19 +21,19 @@ import java.io.InputStreamReader;
 
 public class _02_ReadObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve the key value from user
+        // retrieve the key value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // read the object from the demo bucket
         String content = s3.readObject(ECSS3Factory.S3_BUCKET, key, String.class);
-        
+
         // print object key/value and content for validation
-    	System.out.println( String.format("object [%s/%s] content: [%s]",
+        System.out.println( String.format("object [%s/%s] content: [%s]",
                 ECSS3Factory.S3_BUCKET, key, content));
     }
 }

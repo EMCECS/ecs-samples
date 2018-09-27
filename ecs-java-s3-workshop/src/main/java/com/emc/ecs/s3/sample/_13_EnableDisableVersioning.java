@@ -23,11 +23,11 @@ import java.io.InputStreamReader;
 
 public class _13_EnableDisableVersioning {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-	// create the versioning configuration
+        // create the versioning configuration
         VersioningConfiguration vc = new VersioningConfiguration();
 
         System.out.print("Select an option:\n\t1. Enable\n\t2. Disable\n\nOption: ");
@@ -42,7 +42,7 @@ public class _13_EnableDisableVersioning {
         }
 
         // update the bucket versioning configuration
-	s3.setBucketVersioning(ECSS3Factory.S3_BUCKET, vc);
+        s3.setBucketVersioning(ECSS3Factory.S3_BUCKET, vc);
 
         // print bucket key/value and content for validation
         System.out.println( String.format("bucket [%s] versioning status [%s]",

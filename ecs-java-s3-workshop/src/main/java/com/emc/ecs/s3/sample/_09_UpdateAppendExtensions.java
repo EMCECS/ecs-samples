@@ -21,24 +21,24 @@ import java.io.IOException;
 
 public class _09_UpdateAppendExtensions {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// object key to create, update, and append
-    	String key = "update-append.txt";
-    	String bucketName = ECSS3Factory.S3_BUCKET;	// bucket to create object in
-    	String content = "Hello World!";				// initial object content
-    	int worldIndex = content.indexOf("World");		// Starting index
-    			
+        // object key to create, update, and append
+        String key = "update-append.txt";
+        String bucketName = ECSS3Factory.S3_BUCKET;	// bucket to create object in
+        String content = "Hello World!";				// initial object content
+        int worldIndex = content.indexOf("World");		// Starting index
+
         // first create an initial object
         System.out.println(String.format("creating initial object %s/%s", bucketName, key));
         s3.putObject(bucketName, key, content, "text/plain");
-        
+
         // read object and print content
         System.out.println(String.format("initial object %s/%s with content: [%s]",
                 bucketName, key, readObject(s3, bucketName, key)));
-        
+
         // update the object in the middle
         String content2 = "Universe!";
         System.out.println(String.format("updating object at offset %d", worldIndex));
@@ -70,10 +70,10 @@ public class _09_UpdateAppendExtensions {
                 bucketName, key, readObject(s3, bucketName, key)));
 
     }
-	
-	private static String readObject(S3Client s3, String bucketName, String key) throws IOException
-	{
-		// read the object from the demo bucket
-		return s3.readObject(bucketName, key, String.class);
-	}
+
+    private static String readObject(S3Client s3, String bucketName, String key) throws IOException
+    {
+        // read the object from the demo bucket
+        return s3.readObject(bucketName, key, String.class);
+    }
 }

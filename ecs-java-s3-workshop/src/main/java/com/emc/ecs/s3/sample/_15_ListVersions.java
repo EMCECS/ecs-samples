@@ -17,17 +17,15 @@ package com.emc.ecs.s3.sample;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.bean.AbstractVersion;
 import com.emc.object.s3.bean.ListVersionsResult;
-import com.emc.object.s3.bean.Version;
-import com.emc.object.s3.bean.VersioningConfiguration;
 
 
 public class _15_ListVersions {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-	// obtain all versions in bucket
+        // obtain all versions in bucket
         ListVersionsResult versions = s3.listVersions(ECSS3Factory.S3_BUCKET, null);
 
         System.out.println( String.format("Listing versions in bucket [%s]:", ECSS3Factory.S3_BUCKET));

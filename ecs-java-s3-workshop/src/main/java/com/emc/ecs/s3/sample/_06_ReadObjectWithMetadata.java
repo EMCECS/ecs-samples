@@ -25,28 +25,28 @@ import java.util.Map;
 
 public class _06_ReadObjectWithMetadata {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve the object key from user
+        // retrieve the object key from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // read the specified object from the demo bucket
         GetObjectRequest req = new GetObjectRequest(ECSS3Factory.S3_BUCKET, key);
         GetObjectResult object = s3.getObject(req, String.class);
 
         // get the metadata for the object
         S3ObjectMetadata metadata = object.getObjectMetadata();
-        
+
         // print out the object key/value and metadata for validation
-    	System.out.println( String.format("Metadata for [%s/%s]",
-    			ECSS3Factory.S3_BUCKET, key));
+        System.out.println( String.format("Metadata for [%s/%s]",
+                ECSS3Factory.S3_BUCKET, key));
         Map<String,String> metadataList = metadata.getUserMetadata();
         for (Map.Entry<String, String> entry : metadataList.entrySet())
         {
-        	System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));
+            System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));
         }
     }
 }

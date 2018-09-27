@@ -58,7 +58,7 @@ public class _12_SearchObjects {
             "20141103/account-11122/bill.html",
             "20141103/account-11133/bill.xml",
             "20141103/account-11133/bill.pdf",
-            "20141103/account-11133/bill.html" };
+    "20141103/account-11133/bill.html" };
 
     public static final String FIELD_ACCOUNT_ID = "account-id";
     public static final String FIELD_BILLING_DATE = "billing-date";

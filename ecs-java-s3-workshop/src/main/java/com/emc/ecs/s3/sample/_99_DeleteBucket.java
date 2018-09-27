@@ -20,9 +20,9 @@ import com.emc.object.s3.bean.S3Object;
 
 public class _99_DeleteBucket {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
         // delete the demo bucket and all its content
         if (s3.getBucketVersioning(ECSS3Factory.S3_BUCKET).getStatus() != null) {
@@ -36,8 +36,8 @@ public class _99_DeleteBucket {
         }
         s3.deleteBucket(ECSS3Factory.S3_BUCKET);
 
-    	// print bucket key/value and content for validation
-    	System.out.println( String.format("deleted bucket [%s]",
-    			ECSS3Factory.S3_BUCKET));
+        // print bucket key/value and content for validation
+        System.out.println( String.format("deleted bucket [%s]",
+                ECSS3Factory.S3_BUCKET));
     }
 }

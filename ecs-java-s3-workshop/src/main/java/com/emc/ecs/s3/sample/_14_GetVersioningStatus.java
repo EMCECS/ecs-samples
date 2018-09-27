@@ -20,11 +20,11 @@ import com.emc.object.s3.bean.VersioningConfiguration;
 
 public class _14_GetVersioningStatus {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-	// obtain versioning configuration
+        // obtain versioning configuration
         VersioningConfiguration vc = s3.getBucketVersioning(ECSS3Factory.S3_BUCKET);
 
         // print bucket key/value and content for validation

@@ -33,23 +33,23 @@ import java.util.TreeSet;
 
 public class _08_CreateLargeObject {
 
-	public static void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         theEasyWay();
     }
 
     public static void theHardWay() throws Exception {
 
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve object key/value from user
+        // retrieve object key/value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         System.out.println("Enter the file location:");
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // part size for chunking in multi-parts
-    	long partSize = 4 * 1024 * 1024; // Set part size to 5 MB.
+        long partSize = 4 * 1024 * 1024; // Set part size to 5 MB.
 
         // list of MultipartPartETag objects for each part that is uploaded
         SortedSet<MultipartPartETag> eTags = new TreeSet<>();
@@ -58,12 +58,12 @@ public class _08_CreateLargeObject {
         InitiateMultipartUploadRequest initRequest = new InitiateMultipartUploadRequest(ECSS3Factory.S3_BUCKET, key);
         InitiateMultipartUploadResult initResponse = s3.initiateMultipartUpload(initRequest);
 
-    	// get the file and file length
-    	File file = new File(filePath);
-    	long contentLength = file.length();
-    	
-    	System.out.println( String.format("starting mulit-part upload for object [%s/%s] with file path [%s] and size [%d] in [%d] MB size chunks ",
-    			ECSS3Factory.S3_BUCKET, key, filePath, contentLength, partSize / 1024 / 1024));
+        // get the file and file length
+        File file = new File(filePath);
+        long contentLength = file.length();
+
+        System.out.println( String.format("starting mulit-part upload for object [%s/%s] with file path [%s] and size [%d] in [%d] MB size chunks ",
+                ECSS3Factory.S3_BUCKET, key, filePath, contentLength, partSize / 1024 / 1024));
 
         // NOTE: this isn't even threaded (you would have to add that)
         try (FileInputStream fis = new FileInputStream(file)) {
@@ -118,10 +118,10 @@ public class _08_CreateLargeObject {
         LargeFileUploader uploader = new LargeFileUploader(s3, ECSS3Factory.S3_BUCKET, key, new File(filePath));
 
         // default part size, thread count, etc. can be overridden
-//        uploader.setPartSize(4 * 1024 * 1024);
-//        uploader.setThreads(8);
-//        uploader.setObjectMetadata(s3ObjectMetadata);
-//        uploader.setAcl(acl);
+        //        uploader.setPartSize(4 * 1024 * 1024);
+        //        uploader.setThreads(8);
+        //        uploader.setObjectMetadata(s3ObjectMetadata);
+        //        uploader.setAcl(acl);
 
         uploader.doMultipartUpload();
 

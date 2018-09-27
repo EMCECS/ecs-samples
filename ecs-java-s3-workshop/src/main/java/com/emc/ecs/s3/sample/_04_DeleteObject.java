@@ -21,19 +21,19 @@ import java.io.InputStreamReader;
 
 public class _04_DeleteObject {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve the object value from user
+        // retrieve the object value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         // delete the object from the demo bucket
         s3.deleteObject(ECSS3Factory.S3_BUCKET, key);
-        
+
         // print out key/value for validation
-    	System.out.println( String.format("object [%s/%s] deleted",
-    			ECSS3Factory.S3_BUCKET, key));
+        System.out.println( String.format("object [%s/%s] deleted",
+                ECSS3Factory.S3_BUCKET, key));
     }
 }

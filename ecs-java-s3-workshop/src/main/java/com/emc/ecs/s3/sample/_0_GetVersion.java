@@ -19,17 +19,17 @@ import com.emc.object.s3.bean.ListDataNode;
 
 public class _0_GetVersion {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// Get the list of data nodes.  This will also contain the version information.
- 		ListDataNode nodes = s3.listDataNodes();
+        // Get the list of data nodes.  This will also contain the version information.
+        ListDataNode nodes = s3.listDataNodes();
 
-    	// print out the service name and endpoint for validation
-	System.out.println( String.format("Successfully connected to ECS:" +
-						"\n\t- Version info [%s]" +
-						"\n\t- Data nodes: [%s]",
-			nodes.getVersionInfo(), nodes.getDataNodes()));
+        // print out the service name and endpoint for validation
+        System.out.println( String.format("Successfully connected to ECS:" +
+                "\n\t- Version info [%s]" +
+                "\n\t- Data nodes: [%s]",
+                nodes.getVersionInfo(), nodes.getDataNodes()));
     }
 }

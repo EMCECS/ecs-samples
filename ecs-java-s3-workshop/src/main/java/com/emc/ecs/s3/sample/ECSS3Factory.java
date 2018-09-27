@@ -14,11 +14,10 @@
  */
 package com.emc.ecs.s3.sample;
 
-import com.emc.object.Protocol;
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.S3Config;
 import com.emc.object.s3.jersey.S3JerseyClient;
-import com.emc.rest.smart.ecs.Vdc;
+
 import org.apache.commons.codec.binary.Base64;
 
 import java.net.URI;
@@ -33,18 +32,18 @@ import java.security.SecureRandom;
  */
 public class ECSS3Factory {
 
-	/* the S3 access key id - this is equivalent to the user */
-    public static final String S3_ACCESS_KEY_ID = "131123009294999359@ecstestdrive.emc.com";
+    /* the S3 access key id - this is equivalent to the user */
+    public static final String S3_ACCESS_KEY_ID = "";
 
     /* the S3 secret key associated with the S3_ACCESS_KEY_ID */
-    public static final String S3_SECRET_KEY = "Ej816BbmYcy6SsBANKbSw1knSS8406aSKOsiV7+F";
-    
+    public static final String S3_SECRET_KEY = "";
+
     /* the end point of the ECS S3 REST interface */
     public static final String S3_URI = "https://object.ecstestdrive.com";
 
     /* a unique bucket name to store objects */
     public static final String S3_BUCKET = "workshop-bucket";
-    
+
     /* the optional namespace within ECS - leave blank to use the default namespace */
     public static final String S3_ECS_NAMESPACE = null; // use default namespace
 
@@ -61,10 +60,10 @@ public class ECSS3Factory {
 
         S3Client client = new S3JerseyClient(config);
 
-		return client;
+        return client;
     }
 
-/*
+    /*
     private static void checkProxyConfig(AmazonS3Client client, Properties props) {
         String proxyHost = props.getProperty(PROP_PROXY_HOST);
         if (proxyHost != null && !proxyHost.isEmpty()) {
@@ -75,8 +74,8 @@ public class ECSS3Factory {
             client.setConfiguration(config);
         }
     }
-*/
-    
+     */
+
     // Generates a RSA key pair for testing.
     public static void main(String[] args) {
         try {

@@ -19,18 +19,18 @@ import com.emc.object.s3.bean.ListObjectsResult;
 
 public class _00_CreateBucket {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// create the bucket - used for subsequent demo operations
+        // create the bucket - used for subsequent demo operations
         s3.createBucket(ECSS3Factory.S3_BUCKET);
-        
+
         // get bucket listing to validate the bucket name
         ListObjectsResult objects = s3.listObjects(ECSS3Factory.S3_BUCKET);
 
         // print bucket name for validation
-    	System.out.println( String.format("Successfully created bucket [%s]", 
-    			objects.getBucketName()));
+        System.out.println( String.format("Successfully created bucket [%s]", 
+                objects.getBucketName()));
     }
 }

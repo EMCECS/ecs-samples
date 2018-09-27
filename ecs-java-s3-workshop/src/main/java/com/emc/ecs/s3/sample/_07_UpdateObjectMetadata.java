@@ -16,18 +16,17 @@ package com.emc.ecs.s3.sample;
 
 import com.emc.object.s3.S3Client;
 import com.emc.object.s3.S3ObjectMetadata;
-import com.emc.object.s3.request.PutObjectRequest;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 public class _07_UpdateObjectMetadata {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-	// retrieve the object key and value from user
+        // retrieve the object key and value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
@@ -45,7 +44,7 @@ public class _07_UpdateObjectMetadata {
         s3.setObjectMetadata(ECSS3Factory.S3_BUCKET, key, metadata);
 
         // print out object key/value and metadata key/value for validation
-	System.out.println( String.format("updated object [%s/%s] with metadata [%s=%s]",
-			ECSS3Factory.S3_BUCKET, key, metaKey, metaValue));
+        System.out.println( String.format("updated object [%s/%s] with metadata [%s=%s]",
+                ECSS3Factory.S3_BUCKET, key, metaKey, metaValue));
     }
 }

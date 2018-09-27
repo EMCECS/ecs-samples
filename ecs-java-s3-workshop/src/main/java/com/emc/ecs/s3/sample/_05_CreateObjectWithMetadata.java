@@ -23,16 +23,16 @@ import java.io.InputStreamReader;
 
 public class _05_CreateObjectWithMetadata {
 
-	public static void main(String[] args) throws Exception {
-    	// create the ECS S3 Client
-    	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
-    	// retrieve the object key and value from user
+        // retrieve the object key and value from user
         System.out.println( "Enter the object key:" );
         String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
         System.out.println( "Enter the object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        
+
         //retrieve the object metadata key and value from user
         System.out.println( "Enter the metadata key:" );
         String metaKey = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
@@ -42,13 +42,13 @@ public class _05_CreateObjectWithMetadata {
         // create the metadata
         S3ObjectMetadata metadata = new S3ObjectMetadata();
         metadata.addUserMetadata(metaKey, metaValue);
-        
+
         // create the object with the metadata in the demo bucket
         PutObjectRequest req = new PutObjectRequest(ECSS3Factory.S3_BUCKET, key, content).withObjectMetadata(metadata);
         s3.putObject(req);
 
         // print out object key/value and metadata key/value for validation
-    	System.out.println( String.format("created object [%s/%s] with metadata [%s=%s] and content: [%s]",
-    			ECSS3Factory.S3_BUCKET, key, metaKey, metaValue, content));
+        System.out.println( String.format("created object [%s/%s] with metadata [%s=%s] and content: [%s]",
+                ECSS3Factory.S3_BUCKET, key, metaKey, metaValue, content));
     }
 }

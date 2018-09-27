@@ -15,9 +15,7 @@
 package com.emc.ecs.s3.sample;
 
 import com.emc.object.s3.S3Client;
-import com.emc.object.s3.bean.AbstractVersion;
 import com.emc.object.s3.bean.CopyObjectResult;
-import com.emc.object.s3.bean.ListVersionsResult;
 import com.emc.object.s3.request.CopyObjectRequest;
 
 import java.io.BufferedReader;
@@ -26,9 +24,9 @@ import java.io.InputStreamReader;
 
 public class _16_RestoreVersion {
 
-	public static void main(String[] args) throws Exception {
-	// create the ECS S3 Client
-	S3Client s3 = ECSS3Factory.getS3Client();
+    public static void main(String[] args) throws Exception {
+        // create the ECS S3 Client
+        S3Client s3 = ECSS3Factory.getS3Client();
 
         // retrieve the object key and version values from user
         System.out.println( "Enter the object key:" );
@@ -43,7 +41,7 @@ public class _16_RestoreVersion {
                 key,
                 ECSS3Factory.S3_BUCKET,
                 key
-        );
+                );
         request.setSourceVersionId(versionId);
 
         // restore the version
