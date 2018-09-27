@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 EMC Corporation. All Rights Reserved.
+ * Copyright 2015-2018 Dell Inc. or its subsidiaries. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License").
  * You may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ import com.emc.object.s3.S3Client;
 import com.emc.object.s3.S3ObjectMetadata;
 import com.emc.object.s3.bean.*;
 import com.emc.object.s3.request.CreateBucketRequest;
-import com.emc.object.s3.request.ListObjectsRequest;
 import com.emc.object.s3.request.PutObjectRequest;
 import com.emc.object.s3.request.QueryObjectsRequest;
 
