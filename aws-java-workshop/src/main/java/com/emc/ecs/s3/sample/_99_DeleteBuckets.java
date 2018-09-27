@@ -23,7 +23,7 @@ public class _99_DeleteBuckets {
 
     public static void main(String[] args) throws Exception {
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
-        emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_V4);
+        emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
     }
 
     /**

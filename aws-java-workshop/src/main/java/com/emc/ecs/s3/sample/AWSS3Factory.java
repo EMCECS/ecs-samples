@@ -41,18 +41,22 @@ public class AWSS3Factory {
     static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
 
     // the S3 access key id - this is equivalent to the user
-    static final String S3_ACCESS_KEY_ID = "131123009294999359@ecstestdrive.emc.com";
+    static final String S3_ACCESS_KEY_ID = "";
 
     // the S3 secret key associated with the S3_ACCESS_KEY_ID
-    static final String S3_SECRET_KEY = "Ej816BbmYcy6SsBANKbSw1knSS8406aSKOsiV7+F";
+    static final String S3_SECRET_KEY = "";
 
     // a unique bucket name to store objects
     public static final String S3_BUCKET = "workshop-bucket";
 
-    // a unique bucket name to store objects
-    public static final String S3_BUCKET_V4 = "workshop-bucket-v4";
+    // another unique bucket name to store objects
+    public static final String S3_BUCKET_2 = "workshop-bucket-2";
 
-    public static final String S3_VERSIONBUCKET = "versioned-bucket";
+    // a unique bucket name to store versioned objects
+    public static final String S3_VERSIONBUCKET = "workshop-versioned-bucket";
+
+    // a unique object name
+    public static final String S3_OBJECT = "workshop-object";
 
     // this should be a namespace-enabled baseURL w/ wildcard DNS & SSL
     public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";

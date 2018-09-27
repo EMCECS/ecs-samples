@@ -27,9 +27,7 @@ public class _05_CreateObjectWithMetadata {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the object key and value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        // retrieve the object value from user
         System.out.println( "Enter the object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
@@ -47,10 +45,10 @@ public class _05_CreateObjectWithMetadata {
         metadata.setContentType("text/plain");
 
         // create the object with the metadata in the demo bucket
-        s3.putObject(AWSS3Factory.S3_BUCKET, key, new StringInputStream(content), metadata);
+        s3.putObject(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, new StringInputStream(content), metadata);
 
         // print out object key/value and metadata key/value for validation
         System.out.println( String.format("created object [%s/%s] with metadata [%s=%s] and content: [%s]",
-                AWSS3Factory.S3_BUCKET, key, metaKey, metaValue, content));
+                AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, metaKey, metaValue, content));
     }
 }

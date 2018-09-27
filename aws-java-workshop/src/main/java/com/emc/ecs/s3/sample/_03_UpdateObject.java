@@ -27,20 +27,18 @@ public class _03_UpdateObject {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the object key and new object value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        // retrieve new object value from user
         System.out.println( "Enter new object content:" );
         String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
         // update the object in the demo bucket
-        PutObjectRequest updateRequest = new PutObjectRequest(AWSS3Factory.S3_BUCKET, key,
+        PutObjectRequest updateRequest = new PutObjectRequest(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT,
                 new StringInputStream(content), null);
 
         s3.putObject(updateRequest);
 
         // print out object key/value for validation
         System.out.println( String.format("update object [%s/%s] with new content: [%s]",
-                AWSS3Factory.S3_BUCKET, key, content));
+                AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content));
     }
 }

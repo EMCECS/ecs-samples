@@ -23,24 +23,18 @@ import java.io.InputStreamReader;
 public class _02_ReadObjects {
 
     public static void main(String[] args) throws Exception {
-        // retrieve the key value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
-        readObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, key);
-        readObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_V4, key);
+        readObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
+        readObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
     }
 
     /**
      * @param s3Client
      * @param s3Bucket
-     * @param key
      */
-    private static void readObject(AmazonS3 s3Client, String s3Bucket, String key) {
+    private static void readObject(AmazonS3 s3Client, String s3Bucket) {
         try {
             // read the object from the demo bucket
-            S3Object object = s3Client.getObject(s3Bucket, key);
-    
+            S3Object object = s3Client.getObject(s3Bucket, AWSS3Factory.S3_OBJECT);
             // convert object to a text string
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
             String content = reader.readLine();

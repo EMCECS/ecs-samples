@@ -16,9 +16,7 @@ package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.io.RandomAccessFile;
 import java.util.Date;
 
@@ -28,10 +26,6 @@ public class _09_ReadLargeObject {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the key value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
         // print start time
         Date start_date = new Date();
         System.out.println(start_date.toString());
@@ -39,7 +33,7 @@ public class _09_ReadLargeObject {
         // file will be placed in temp dir with .tmp extension
         File file = File.createTempFile("read-large-object", null);
 
-        LargeFileDownloader downloader = new LargeFileDownloader(s3, AWSS3Factory.S3_BUCKET, key, file);
+        LargeFileDownloader downloader = new LargeFileDownloader(s3, AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, file);
         downloader.setThreads(8);
         downloader.setPartSize(128 * 1024 * 1024); // 64MiB
         downloader.run();

@@ -21,7 +21,7 @@ public class _00_CreateBuckets {
 
     public static void main(String[] args) throws Exception {
         createBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET);
-        createBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_V4);
+        createBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2);
     }
 
     /**

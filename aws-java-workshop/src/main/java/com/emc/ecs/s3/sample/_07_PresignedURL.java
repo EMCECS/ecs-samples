@@ -29,10 +29,6 @@ public class _07_PresignedURL {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the key value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
         // retrieve the expiration time for the object from user
         System.out.print( "How many hours should this tag be valid? " );
         String hours = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
@@ -45,7 +41,7 @@ public class _07_PresignedURL {
         expiration.setTime(curTime_msec); 
 
         // generate the object's pre-signed URL
-        GeneratePresignedUrlRequest presignedUrl = new GeneratePresignedUrlRequest(AWSS3Factory.S3_BUCKET, key);
+        GeneratePresignedUrlRequest presignedUrl = new GeneratePresignedUrlRequest(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
         presignedUrl.setMethod(HttpMethod.GET);
         presignedUrl.setExpiration(expiration);
 
@@ -53,6 +49,6 @@ public class _07_PresignedURL {
 
         // print object's pre-signed URL
         System.out.println( String.format("object [%s/%s] pre-signed URL: [%s]",
-                AWSS3Factory.S3_BUCKET, key, url.toString()));
+                AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, url.toString()));
     }
 }

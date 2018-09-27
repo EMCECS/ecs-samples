@@ -29,13 +29,9 @@ public class _06_ReadObjectWithMetadata {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the object key from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
         //GetObjectMetadataRequest gom = new GetObjectMetadataRequest(b, k, v)
         try {
-            GetObjectMetadataRequest gom = new GetObjectMetadataRequest(AWSS3Factory.S3_BUCKET, key);
+            GetObjectMetadataRequest gom = new GetObjectMetadataRequest(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
             s3.getObjectMetadata(gom);
         }
         catch(com.amazonaws.services.s3.model.AmazonS3Exception e) {
@@ -43,19 +39,16 @@ public class _06_ReadObjectWithMetadata {
         }
 
         // read the specified object from the demo bucket
-        S3Object object = s3.getObject(AWSS3Factory.S3_BUCKET, key);
+        S3Object object = s3.getObject(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
 
         // get the metadata for the object
         ObjectMetadata metadata = object.getObjectMetadata();
 
         // print out the object key/value and metadata for validation
         System.out.println( String.format("Metadata for [%s/%s]",
-                AWSS3Factory.S3_BUCKET, key));
+                AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT));
 
         Map<String,String> metadataList = metadata.getUserMetadata();
-        //String metaVal = metadataList.get("metakey1");
-        //System.out.println(String.format("    %s = %s", "metakey1", metaVal));
-
         for (Map.Entry<String, String> entry : metadataList.entrySet())
         {
             System.out.println(String.format("    %s = %s", entry.getKey(), entry.getValue()));

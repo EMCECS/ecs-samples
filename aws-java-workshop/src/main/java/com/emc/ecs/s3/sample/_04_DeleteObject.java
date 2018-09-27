@@ -15,8 +15,6 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 
 public class _04_DeleteObject {
 
@@ -24,15 +22,11 @@ public class _04_DeleteObject {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
 
-        // retrieve the object value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
         // delete the object from the demo bucket
-        s3.deleteObject(AWSS3Factory.S3_BUCKET, key);
+        s3.deleteObject(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
 
         // print out key/value for validation
         System.out.println( String.format("object [%s/%s] deleted",
-                AWSS3Factory.S3_BUCKET, key));
+                AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT));
     }
 }

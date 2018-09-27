@@ -27,16 +27,12 @@ public class _08_CreateLargeObject {
     protected final AmazonS3 client = AWSS3Factory.getS3ClientWithV2Signatures();
 
     public static void main(String[] args) throws Exception {
-        // retrieve object key/value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-
+        // retrieve object value from user
         System.out.println( "Enter the file location (C:\\Users\\EMC\\NameSpaceList.zip) :" );
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
         _08_CreateLargeObject clo = new _08_CreateLargeObject();
-        clo.mpuSingleThreaded(key, filePath);
-        //clo.testMultiThreadMultipartUploadListPartsPagination(key, filePath);
+        clo.mpuSingleThreaded(AWSS3Factory.S3_OBJECT, filePath);
     }
 
     public void mpuSingleThreaded(String key, String filePath) {

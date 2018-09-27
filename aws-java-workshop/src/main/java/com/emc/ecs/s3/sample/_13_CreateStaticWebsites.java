@@ -29,7 +29,7 @@ public class _13_CreateStaticWebsites {
 
     public static void main(String[] args) throws Exception {
         uploadStaticWebsite(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
-        uploadStaticWebsite(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_V4);
+        uploadStaticWebsite(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
     }
 
     /**

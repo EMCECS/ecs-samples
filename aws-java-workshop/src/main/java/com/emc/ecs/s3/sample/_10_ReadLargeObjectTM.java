@@ -19,9 +19,7 @@ import com.amazonaws.services.s3.transfer.Download;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 import java.util.Date;
 
 public class _10_ReadLargeObjectTM {
@@ -29,10 +27,6 @@ public class _10_ReadLargeObjectTM {
     public static void main(String[] args) throws Exception {
         // create the AWS S3 Client
         AmazonS3 s3 = AWSS3Factory.getS3ClientWithV2Signatures();
-
-        // retrieve the key value from user
-        System.out.println( "Enter the object key:" );
-        String key = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
         // print start time
         Date start_date = new Date();
@@ -46,7 +40,7 @@ public class _10_ReadLargeObjectTM {
                 .build();
 
         // download the object to file
-        Download download = tm.download(AWSS3Factory.S3_BUCKET, key, file);
+        Download download = tm.download(AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, file);
 
         // block until download finished
         download.waitForCompletion();
