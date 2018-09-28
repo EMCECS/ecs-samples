@@ -20,28 +20,28 @@ import com.amazonaws.util.StringInputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class _01_CreateObjects extends BucketAndObjectValidator {
+public class _03_UpdateObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        // get object content from user
-        System.out.println( "Enter the object content:" );
-        String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        // get new object content from user
+        System.out.println( "Enter new object content:" );
+        String newContent = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);
+        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent);
+        updateObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, newContent);
     }
 
     /**
      * @param s3Client
      * @param s3Bucket
      * @param s3Object
-     * @param content
+     * @param newContent
      */
-    private static void createObject(AmazonS3 s3Client, String s3Bucket, String s3Object, final String content) {
+    private static void updateObject(AmazonS3 s3Client, String s3Bucket, String s3Object, final String newContent) {
         try {
-            validateObjectDoesNotExist(s3Client, s3Bucket, s3Object);
+            validateObjectExists(s3Client, s3Bucket, s3Object);
 
-            s3Client.putObject(s3Bucket, s3Object, new StringInputStream( content ), null);
+            s3Client.putObject(s3Bucket, s3Object, new StringInputStream( newContent ), null);
 
             validateObjectExists(s3Client, s3Bucket, s3Object);
         } catch (Exception e) {
