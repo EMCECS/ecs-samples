@@ -58,6 +58,7 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
             for (String key : keys) {
                 System.out.println(key);
             }
+            System.out.println();
 
             keys = new ArrayList<String>();
             pages = 1;
@@ -70,7 +71,7 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
             }
             while (listing.isTruncated()) {
                 ++pages;
-                listObjectsV2Request.setContinuationToken(listing.getContinuationToken());
+                listObjectsV2Request.setContinuationToken(listing.getNextContinuationToken());
                 listing = s3Client.listObjectsV2(listObjectsV2Request);
                 for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
                     keys.add(objectSummary.getKey());
@@ -81,6 +82,7 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
             for (String key : keys) {
                 System.out.println(key);
             }
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
