@@ -22,7 +22,7 @@ import java.util.List;
 
 //you can't pass in an empty prefix
 //you can pass an object name in full
-public class _11_EnableVersioning {
+public class _13_EnableVersioning {
 
     public static void main(String[] args) throws Exception {
 
@@ -32,7 +32,7 @@ public class _11_EnableVersioning {
         // create the bucket - used for subsequent demo operations
         s3.createBucket(AWSS3Factory.S3_VERSIONBUCKET );
 
-        _11_EnableVersioning ev = new _11_EnableVersioning();
+        _13_EnableVersioning ev = new _13_EnableVersioning();
         ev.enableVersioning(s3, AWSS3Factory.S3_VERSIONBUCKET);
         String prefix = ev.createSampleObject(s3, AWSS3Factory.S3_VERSIONBUCKET);
 

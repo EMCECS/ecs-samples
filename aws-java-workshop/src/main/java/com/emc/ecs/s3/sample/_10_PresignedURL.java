@@ -22,7 +22,7 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Date;
 
-public class _08_PresignedURL {
+public class _10_PresignedURL {
 
     public static void main(String[] args) throws Exception {
         // get the expiration time for the object from user

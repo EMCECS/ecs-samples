@@ -23,10 +23,10 @@ import java.io.InputStreamReader;
 import java.util.Iterator;
 import java.util.List;
 
-public class _14_CopyObject {
+public class _12_CopyObject {
 
     public static void main(String[] args) throws Exception {
-        _14_CopyObject co = new _14_CopyObject();
+        _12_CopyObject co = new _12_CopyObject();
         co.copy1();
         //co.copy2();
     }

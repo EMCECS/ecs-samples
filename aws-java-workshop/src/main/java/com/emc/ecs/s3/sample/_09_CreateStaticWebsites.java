@@ -18,7 +18,7 @@ import com.amazonaws.services.s3.AmazonS3;
 
 import java.io.File;
 
-public class _13_CreateStaticWebsites {
+public class _09_CreateStaticWebsites {
     private static final String[] STATIC_FILES = {
             "main.html",
             "pages/page1.html",
@@ -34,25 +34,25 @@ public class _13_CreateStaticWebsites {
 
     /**
      * @param s3Client
-     * @param bucket
+     * @param bucketName
      */
-    private static void uploadStaticWebsite(AmazonS3 s3Client, String bucket) {
+    private static void uploadStaticWebsite(AmazonS3 s3Client, String bucketName) {
         try {
             // upload static content
             for (String key : STATIC_FILES) {
     
                 // load resource as file
-                File file = new File(_13_CreateStaticWebsites.class.getResource("/" + key).toURI());
+                File file = new File(_09_CreateStaticWebsites.class.getResource("/" + key).toURI());
     
                 // upload to bucket in the same path
-                s3Client.putObject(bucket, key, file);
+                s3Client.putObject(bucketName, key, file);
             }
     
             // set bucket policy for public read
-            s3Client.setBucketPolicy(bucket,
+            s3Client.setBucketPolicy(bucketName,
                     "{" +
                             "\"Version\":\"2012-10-17\"," +
-                            "\"Id\":\"StaticWebsitePolicy" + bucket + "\"," +
+                            "\"Id\":\"StaticWebsitePolicy" + bucketName + "\"," +
                             "\"Statement\":[{" +
                             "    \"Sid\":\"PublicReadGetObject\"," +
                             "    \"Effect\":\"Allow\"," +
@@ -61,14 +61,14 @@ public class _13_CreateStaticWebsites {
                             "        \"s3:GetObject\"" +
                             "    ]," +
                             "    \"Resource\":[" +
-                            "        \"" + bucket + "/*\"" +
+                            "        \"" + bucketName + "/*\"" +
                             "    ]" +
                             "}]" +
                             "}");
     
             // here is the link for the landing page
             // i.e. https://[namespace].baseURL/[bucket]/[main-html]
-            String landingPage = AWSS3Factory.PUBLIC_ENDPOINT + "/" + bucket + "/main.html";
+            String landingPage = AWSS3Factory.PUBLIC_ENDPOINT + "/" + bucketName + "/main.html";
     
             System.out.println("The URL for your website is:\n" + landingPage);
         } catch (Exception e) {

@@ -23,10 +23,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 
-public class _07_CreateLargeObject extends BucketAndObjectValidator {
+public class _07_CreateLargeObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        // retrieve object value from user
+        // get file name to upload from user
         System.out.println( "Enter the file location (C:\\Users\\EMC\\NameSpaceList.zip) :" );
         String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
 
@@ -44,8 +44,9 @@ public class _07_CreateLargeObject extends BucketAndObjectValidator {
         try {
             checkObjectMetadata(s3Client, bucketName, key);
 
-            TransferManagerBuilder builder = TransferManagerBuilder.standard();
-            TransferManager transferManager = builder.withS3Client(s3Client).build();
+            TransferManager transferManager = TransferManagerBuilder.standard()
+                    .withS3Client(s3Client)
+                    .build();
             Upload upload = transferManager.upload(bucketName, key, new File( filePath ));
             while (!upload.isDone()) {
                 System.out.println("Upload state: " + upload.getState().toString());
