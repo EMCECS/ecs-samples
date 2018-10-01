@@ -34,9 +34,9 @@ public class _13_CreateStaticWebsites {
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucket
      */
-    private static void uploadStaticWebsite(AmazonS3 s3Client, String s3Bucket) {
+    private static void uploadStaticWebsite(AmazonS3 s3Client, String bucket) {
         try {
             // upload static content
             for (String key : STATIC_FILES) {
@@ -45,14 +45,14 @@ public class _13_CreateStaticWebsites {
                 File file = new File(_13_CreateStaticWebsites.class.getResource("/" + key).toURI());
     
                 // upload to bucket in the same path
-                s3Client.putObject(s3Bucket, key, file);
+                s3Client.putObject(bucket, key, file);
             }
     
             // set bucket policy for public read
-            s3Client.setBucketPolicy(s3Bucket,
+            s3Client.setBucketPolicy(bucket,
                     "{" +
                             "\"Version\":\"2012-10-17\"," +
-                            "\"Id\":\"StaticWebsitePolicy" + s3Bucket + "\"," +
+                            "\"Id\":\"StaticWebsitePolicy" + bucket + "\"," +
                             "\"Statement\":[{" +
                             "    \"Sid\":\"PublicReadGetObject\"," +
                             "    \"Effect\":\"Allow\"," +
@@ -61,14 +61,14 @@ public class _13_CreateStaticWebsites {
                             "        \"s3:GetObject\"" +
                             "    ]," +
                             "    \"Resource\":[" +
-                            "        \"" + s3Bucket + "/*\"" +
+                            "        \"" + bucket + "/*\"" +
                             "    ]" +
                             "}]" +
                             "}");
     
             // here is the link for the landing page
             // i.e. https://[namespace].baseURL/[bucket]/[main-html]
-            String landingPage = AWSS3Factory.PUBLIC_ENDPOINT + "/" + s3Bucket + "/main.html";
+            String landingPage = AWSS3Factory.PUBLIC_ENDPOINT + "/" + bucket + "/main.html";
     
             System.out.println("The URL for your website is:\n" + landingPage);
         } catch (Exception e) {

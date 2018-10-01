@@ -16,62 +16,84 @@ package com.emc.ecs.s3.sample;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.Map.Entry;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectListing;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.S3Object;
 
 public class BucketAndObjectValidator {
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucketName
      */
-    protected static void validateBucketExists(AmazonS3 s3Client, String s3Bucket) {
-        ObjectListing objects = s3Client.listObjects(s3Bucket);
-        System.out.println( String.format("Bucket [%s] exists.", 
-                objects.getBucketName()));
-    }
-
-    /**
-     * @param s3Client
-     * @param s3Bucket
-     */
-    protected static void validateBucketDoesNotExist(AmazonS3 s3Client, String s3Bucket) {
+    protected static void checkBucketExistence(AmazonS3 s3Client, String bucketName) {
         try {
-            s3Client.listObjects(s3Bucket);
+            String state = s3Client.doesBucketExistV2(bucketName) ? "exists" : "does not exist";
+            System.out.println( String.format("Bucket [%s] %s.", 
+                    bucketName, state));
         } catch (Exception e) {
-            System.out.println( String.format("Bucket [%s] does not exist.", 
-                    s3Bucket));
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
         }
     }
 
     /**
      * @param s3Client
-     * @param s3Bucket
-     * @param s3Object
+     * @param bucketName
+     * @param key
      */
-    protected static void validateObjectDoesNotExist(AmazonS3 s3Client, String s3Bucket, String s3Object) {
+    protected static void checkObjectExistence(AmazonS3 s3Client, String bucketName, String key) {
         try {
-            s3Client.getObjectMetadata(s3Bucket, s3Object);
+            String state = s3Client.doesObjectExist(bucketName, key) ? "exists" : "does not exist";
+            System.out.println( String.format("Object [%s/%s] %s",
+                    bucketName, key, state));
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * @param s3Client
+     * @param bucketName
+     * @param key
+     */
+    protected static void checkObjectContent(AmazonS3 s3Client, String bucketName, String key) {
+        try {
+            S3Object object = s3Client.getObject(bucketName, key);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
+            String returnedContent = reader.readLine();
+            System.out.println( String.format("Object [%s/%s] exists with content: [%s]",
+                    object.getBucketName(), object.getKey(), returnedContent));
         } catch (Exception e) {
             System.out.println( String.format("Object [%s/%s] does not exist",
-                    s3Bucket, s3Object));
+                    bucketName, key));
         }
     }
 
     /**
      * @param s3Client
-     * @param s3Bucket
-     * @param s3Object
-     * @throws Exception 
+     * @param bucketName
+     * @param key
      */
-    protected static void validateObjectExists(AmazonS3 s3Client, String s3Bucket, String s3Object) throws Exception {
-        S3Object object = s3Client.getObject(s3Bucket, s3Object);
-        BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
-        String returnedContent = reader.readLine();
-        System.out.println( String.format("Object [%s/%s] exists with content: [%s]",
-                object.getBucketName(), object.getKey(), returnedContent));
+    protected static void checkObjectMetadata(AmazonS3 s3Client, String bucketName, String key) {
+        try {
+            ObjectMetadata metadata = s3Client.getObjectMetadata(bucketName, key);
+            System.out.println( String.format("Object [%s/%s] exists with system metadata:",
+                    bucketName, key));
+            for (Entry<String, Object> metaEntry : metadata.getRawMetadata().entrySet()) {
+                System.out.println( "    " + metaEntry.getKey() + " = " + metaEntry.getValue() );
+            }
+            System.out.println( "and user metadata:" );
+            for (Entry<String, String> metaEntry : metadata.getUserMetadata().entrySet()) {
+                System.out.println( "    " + metaEntry.getKey() + " = " + metaEntry.getValue() );
+            }
+        } catch (Exception e) {
+            System.out.println( String.format("Object [%s/%s] does not exist",
+                    bucketName, key));
+        }
     }
 
 }

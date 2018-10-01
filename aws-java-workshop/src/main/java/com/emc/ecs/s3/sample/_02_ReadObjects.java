@@ -23,22 +23,23 @@ import java.io.InputStreamReader;
 public class _02_ReadObjects {
 
     public static void main(String[] args) throws Exception {
-        readObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
-        readObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
+        readObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
+        readObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT);
     }
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucketName
+     * @param key
      */
-    private static void readObject(AmazonS3 s3Client, String s3Bucket) {
+    private static void readObject(AmazonS3 s3Client, String bucketName, String key) {
         try {
             // read the object from the demo bucket
-            S3Object object = s3Client.getObject(s3Bucket, AWSS3Factory.S3_OBJECT);
+            S3Object object = s3Client.getObject(bucketName, key);
             // convert object to a text string
             BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
             String content = reader.readLine();
-    
+
             // print object key/value and content for validation
             System.out.println( String.format("object [%s/%s] content: [%s]",
                     object.getBucketName(), object.getKey(), content));

@@ -19,7 +19,7 @@ import com.amazonaws.services.s3.model.BucketVersioningConfiguration;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
 import com.amazonaws.services.s3.model.S3VersionSummary;
 
-public class _99_DeleteBuckets {
+public class _99_DeleteBuckets extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
@@ -28,27 +28,35 @@ public class _99_DeleteBuckets {
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucketName
      */
-    private static void emptyAndDeleteBucket(AmazonS3 s3Client, String s3Bucket) {
-        // delete the demo bucket and all its content
-        if (BucketVersioningConfiguration.OFF.equals(s3Client.getBucketVersioningConfiguration(s3Bucket).getStatus())) {
-            // no versioning, so list objects
-            for (S3ObjectSummary summary : s3Client.listObjects(s3Bucket).getObjectSummaries()) {
-                s3Client.deleteObject(s3Bucket, summary.getKey());
-                System.out.println(String.format("Deleted [%s/%s]", s3Bucket, summary.getKey()));
+    private static void emptyAndDeleteBucket(AmazonS3 s3Client, String bucketName) {
+        try {
+            checkBucketExistence(s3Client, bucketName);
+    
+            // delete all bucket content
+            if (BucketVersioningConfiguration.OFF.equals(s3Client.getBucketVersioningConfiguration(bucketName).getStatus())) {
+                // no versioning, so delete all objects
+                for (S3ObjectSummary summary : s3Client.listObjects(bucketName).getObjectSummaries()) {
+                    System.out.println(String.format("Deleting object [%s/%s]", bucketName, summary.getKey()));
+                    s3Client.deleteObject(bucketName, summary.getKey());
+                }
+            } else {
+                // versioning was enabled, so delete all versions
+                for (S3VersionSummary summary : s3Client.listVersions(bucketName, null).getVersionSummaries()) {
+                    System.out.println(String.format("Deleting version [%s/%s/%s]", bucketName, summary.getKey(), summary.getVersionId()));
+                    s3Client.deleteVersion(bucketName, summary.getKey(), summary.getVersionId());
+                }
             }
-        } else {
-            // versioning was enabled, list versions
-            for (S3VersionSummary summary : s3Client.listVersions(s3Bucket, null).getVersionSummaries()) {
-                s3Client.deleteVersion(s3Bucket, summary.getKey(), summary.getVersionId());
-                System.out.println(String.format("Deleted [%s/%s] (vId: %s)", s3Bucket, summary.getKey(), summary.getVersionId()));
-            }
+    
+            // delete the bucket
+            s3Client.deleteBucket(bucketName);
+    
+            checkBucketExistence(s3Client, bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
         }
-
-        s3Client.deleteBucket(s3Bucket);
-
-        // print bucket key/value and content for validation
-        System.out.println(String.format("deleted bucket [%s]", s3Bucket));
     }
+
 }

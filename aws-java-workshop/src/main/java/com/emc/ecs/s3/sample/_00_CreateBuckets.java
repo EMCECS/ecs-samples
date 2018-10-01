@@ -25,15 +25,20 @@ public class _00_CreateBuckets extends BucketAndObjectValidator {
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucketName
      */
-    private static void createBucket(AmazonS3 s3Client, String s3Bucket) {
-        validateBucketDoesNotExist(s3Client, s3Bucket);
-
-        // create the bucket - used for subsequent demo operations
-        s3Client.createBucket(s3Bucket);
-
-        validateBucketExists(s3Client, s3Bucket);
+    private static void createBucket(AmazonS3 s3Client, String bucketName) {
+        try {
+            checkBucketExistence(s3Client, bucketName);
+    
+            // create the bucket - used for subsequent demo operations
+            s3Client.createBucket(bucketName);
+    
+            checkBucketExistence(s3Client, bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
     }
 
 }

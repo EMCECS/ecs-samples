@@ -33,17 +33,17 @@ public class _03_UpdateObjects extends BucketAndObjectValidator {
 
     /**
      * @param s3Client
-     * @param s3Bucket
-     * @param s3Object
+     * @param bucketName
+     * @param key
      * @param newContent
      */
-    private static void updateObject(AmazonS3 s3Client, String s3Bucket, String s3Object, final String newContent) {
+    private static void updateObject(AmazonS3 s3Client, String bucketName, String key, final String newContent) {
         try {
-            validateObjectExists(s3Client, s3Bucket, s3Object);
+            checkObjectContent(s3Client, bucketName, key);
 
-            s3Client.putObject(s3Bucket, s3Object, new StringInputStream( newContent ), null);
+            s3Client.putObject(bucketName, key, new StringInputStream( newContent ), null);
 
-            validateObjectExists(s3Client, s3Bucket, s3Object);
+            checkObjectContent(s3Client, bucketName, key);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
