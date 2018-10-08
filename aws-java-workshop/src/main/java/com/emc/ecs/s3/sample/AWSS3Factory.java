@@ -79,6 +79,7 @@ public class AWSS3Factory {
     }
 
     public static AmazonS3 getS3ClientWithV4Signatures() {
+        System.out.println("Running with V4 Signatures:\n");
         return getBasicS3ClientBuilder().build();
     }
 
@@ -88,6 +89,7 @@ public class AWSS3Factory {
 
         // switch to v2 auth
         builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
+        System.out.println("Running with V2 Signatures:\n");
 
         return builder.build();
 

@@ -35,6 +35,7 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
         try {
             List<String> keys = new ArrayList<String>();
             int pages = 1;
+
             String marker = null;
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
@@ -54,14 +55,10 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
                 }
             }
 
-            System.out.println("ListObjects found " + keys.size() + " objects on " + pages + " pages in " + bucketName);
-            for (String key : keys) {
-                System.out.println(key);
-            }
-            System.out.println();
-
-            keys = new ArrayList<String>();
+            checkKeyListing( "ListObjects", keys, pages, bucketName );
+            keys.clear();
             pages = 1;
+
             ListObjectsV2Request listObjectsV2Request = new ListObjectsV2Request();
             listObjectsV2Request.setBucketName(bucketName);
             listObjectsV2Request.setMaxKeys(1);
@@ -78,15 +75,25 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
                 }
             }
 
-            System.out.println("ListObjectsV2 found " + keys.size() + " objects on " + pages + " pages in " + bucketName);
-            for (String key : keys) {
-                System.out.println(key);
-            }
-            System.out.println();
+            checkKeyListing( "ListObjectsV2", keys, pages, bucketName );
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
         }
+    }
+
+    /**
+     * @param operation
+     * @param keys
+     * @param pages
+     * @param bucketName
+     */
+    private static void checkKeyListing(String operation, List<String> keys, int pages, String bucketName) {
+        System.out.println(operation + " found " + keys.size() + " objects on " + pages + " pages in " + bucketName);
+        for (String key : keys) {
+            System.out.println(key);
+        }
+        System.out.println();
     }
 
 }

@@ -14,6 +14,8 @@
  */
 package com.emc.ecs.s3.sample;
 
+import java.util.List;
+
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 
@@ -31,22 +33,29 @@ public class _21_ListObjects extends BucketAndObjectValidator {
     private static void listObjects(AmazonS3 s3Client, String bucketName) {
         try {
             ObjectListing objectListing = s3Client.listObjects(bucketName);
-            System.out.println("ListObjects found " + objectListing.getObjectSummaries().size() + " objects in " + bucketName);
-            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                System.out.println(objectSummary.getKey());
-            }
-            System.out.println();
+
+            checkListing( "ListObjects", objectListing.getObjectSummaries(), bucketName );
     
             ListObjectsV2Result listing = s3Client.listObjectsV2(bucketName);
-            System.out.println("ListObjectsV2 found " + listing.getObjectSummaries().size() + " objects in " + bucketName);
-            for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
-                System.out.println(objectSummary.getKey());
-            }
-            System.out.println();
+
+            checkListing( "ListObjectsV2", listing.getObjectSummaries(), bucketName );
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
         }
+    }
+
+    /**
+     * @param operation
+     * @param objectSummaries
+     * @param bucketName
+     */
+    private static void checkListing(String operation, List<S3ObjectSummary> objectSummaries, String bucketName) {
+        System.out.println(operation + " found " + objectSummaries.size() + " objects in " + bucketName);
+        for (S3ObjectSummary objectSummary : objectSummaries) {
+            System.out.println(objectSummary.getKey());
+        }
+        System.out.println();
     }
 
 }
