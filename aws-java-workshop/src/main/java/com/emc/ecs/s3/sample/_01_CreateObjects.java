@@ -17,15 +17,10 @@ package com.emc.ecs.s3.sample;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.StringInputStream;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 public class _01_CreateObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        // get object content from user
-        System.out.println( "Enter the object content:" );
-        String content = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        String content = "initial object content";
 
         createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
         createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);

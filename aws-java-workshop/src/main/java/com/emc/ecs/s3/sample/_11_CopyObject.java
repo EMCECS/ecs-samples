@@ -15,30 +15,32 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.util.StringInputStream;
 
-public class _03_UpdateObjects extends BucketAndObjectValidator {
+public class _11_CopyObject extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        String newContent = "new object content";
+        String newKey = "new-key";
 
-        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent);
-        updateObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, newContent);
+        copyObject( AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, newKey, AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT );
+        copyObject( AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, newKey, AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT );
     }
 
     /**
      * @param s3Client
+     * @param newBucketName
+     * @param newKey
      * @param bucketName
      * @param key
-     * @param newContent
      */
-    private static void updateObject(AmazonS3 s3Client, String bucketName, String key, final String newContent) {
+    private static void copyObject(AmazonS3 s3Client, String newBucketName, String newKey, String bucketName,
+            String key) {
         try {
-            checkObjectContent(s3Client, bucketName, key);
-
-            s3Client.putObject(bucketName, key, new StringInputStream( newContent ), null);
-
-            checkObjectContent(s3Client, bucketName, key);
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, newBucketName, newKey);
+    
+            s3Client.copyObject(bucketName, key, newBucketName, newKey);
+    
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, bucketName, key);
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, newBucketName, newKey);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

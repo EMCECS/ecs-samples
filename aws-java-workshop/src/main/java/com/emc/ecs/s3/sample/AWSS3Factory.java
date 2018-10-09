@@ -53,7 +53,7 @@ public class AWSS3Factory {
     public static final String S3_BUCKET_2 = "workshop-bucket-2";
 
     // a unique bucket name to store versioned objects
-    public static final String S3_VERSIONBUCKET = "workshop-versioned-bucket";
+    public static final String S3_VERSIONED_BUCKET = "workshop-versioned-bucket";
 
     // a unique object name
     public static final String S3_OBJECT = "workshop-object";

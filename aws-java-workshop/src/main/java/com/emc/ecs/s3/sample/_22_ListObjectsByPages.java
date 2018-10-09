@@ -36,23 +36,16 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
             List<String> keys = new ArrayList<String>();
             int pages = 1;
 
-            String marker = null;
             ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
             listObjectsRequest.setBucketName(bucketName);
             listObjectsRequest.setMaxKeys(1);
             ObjectListing objectListing = s3Client.listObjects(listObjectsRequest);
-            for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                marker = objectSummary.getKey();
-                keys.add(marker);
-            }
+            addKeys( keys, objectListing.getObjectSummaries() );
             while (objectListing.isTruncated()) {
                 ++pages;
-                listObjectsRequest.setMarker(marker);
+                listObjectsRequest.setMarker( keys.get( keys.size() - 1 ) );
                 objectListing = s3Client.listObjects(listObjectsRequest);
-                for (S3ObjectSummary objectSummary : objectListing.getObjectSummaries()) {
-                    marker = objectSummary.getKey();
-                    keys.add(marker);
-                }
+                addKeys( keys, objectListing.getObjectSummaries() );
             }
 
             checkKeyListing( "ListObjects", keys, pages, bucketName );
@@ -63,22 +56,28 @@ public class _22_ListObjectsByPages extends BucketAndObjectValidator {
             listObjectsV2Request.setBucketName(bucketName);
             listObjectsV2Request.setMaxKeys(1);
             ListObjectsV2Result listing = s3Client.listObjectsV2(listObjectsV2Request);
-            for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
-                keys.add(objectSummary.getKey());
-            }
+            addKeys( keys, listing.getObjectSummaries() );
             while (listing.isTruncated()) {
                 ++pages;
                 listObjectsV2Request.setContinuationToken(listing.getNextContinuationToken());
                 listing = s3Client.listObjectsV2(listObjectsV2Request);
-                for (S3ObjectSummary objectSummary : listing.getObjectSummaries()) {
-                    keys.add(objectSummary.getKey());
-                }
+                addKeys( keys, listing.getObjectSummaries() );
             }
 
             checkKeyListing( "ListObjectsV2", keys, pages, bucketName );
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
+        }
+    }
+
+    /**
+     * @param keys
+     * @param objectSummaries
+     */
+    private static void addKeys(List<String> keys, List<S3ObjectSummary> objectSummaries) {
+        for (S3ObjectSummary objectSummary : objectSummaries) {
+            keys.add(objectSummary.getKey());
         }
     }
 

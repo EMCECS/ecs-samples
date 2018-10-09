@@ -19,16 +19,12 @@ import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 
 public class _07_CreateLargeObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        // get file name to upload from user
-        System.out.println( "Enter the file location (C:\\Users\\EMC\\NameSpaceList.zip) :" );
-        String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        String filePath = "/Users/seibed/Downloads/formatter.xml";
 
         createLargeObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, filePath);
         createLargeObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, filePath);

@@ -19,34 +19,30 @@ import com.amazonaws.services.s3.transfer.Download;
 import com.amazonaws.services.s3.transfer.TransferManager;
 import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
 
 public class _08_ReadLargeObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        // get file name for storing the download from user
-        System.out.println( "Enter the file name prefix (this file will be stored in the temp dir with extension .tmp):" );
-        String filePath = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        String fileNamePrefix = "demo-file-";
 
-        downloadLargeFile(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, filePath);
-        downloadLargeFile(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, filePath);
+        downloadLargeFile(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, fileNamePrefix);
+        downloadLargeFile(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, fileNamePrefix);
     }
 
     /**
      * @param s3Client
      * @param bucketName
      * @param key
-     * @param filePath
+     * @param fileNamePrefix
      */
     private static void downloadLargeFile(AmazonS3 s3Client, String bucketName, String key,
-            String filePath) {
+            String fileNamePrefix) {
         try {
             checkObjectMetadata(s3Client, bucketName, key);
 
             // file will be placed in temp dir with .tmp extension
-            File file = File.createTempFile(filePath, null);
+            File file = File.createTempFile(fileNamePrefix, null);
     
             TransferManager transferManager = TransferManagerBuilder.standard()
                     .withS3Client(s3Client)
@@ -63,6 +59,7 @@ public class _08_ReadLargeObjects extends BucketAndObjectValidator {
 
             System.out.println("Download is finished, content is in the following file.");
             System.out.println(file.getAbsolutePath());
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

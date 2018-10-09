@@ -18,17 +18,11 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-
 public class _05_CreateObjectsWithMetadata extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        //get custom metadata key and value from the user
-        System.out.println( "Enter the user metadata key:" );
-        String metaKey = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        System.out.println( "Enter the user metadata value:" );
-        String metaValue = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
+        String metaKey = "myMetaKey";
+        String metaValue = "myMetaValue";
 
         createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, metaKey, metaValue);
         createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, metaKey, metaValue);

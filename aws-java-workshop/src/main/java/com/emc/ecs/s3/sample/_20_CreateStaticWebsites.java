@@ -18,7 +18,7 @@ import com.amazonaws.services.s3.AmazonS3;
 
 import java.io.File;
 
-public class _09_CreateStaticWebsites {
+public class _20_CreateStaticWebsites {
     private static final String[] STATIC_FILES = {
             "main.html",
             "pages/page1.html",
@@ -42,7 +42,7 @@ public class _09_CreateStaticWebsites {
             for (String key : STATIC_FILES) {
     
                 // load resource as file
-                File file = new File(_09_CreateStaticWebsites.class.getResource("/" + key).toURI());
+                File file = new File(_20_CreateStaticWebsites.class.getResource("/" + key).toURI());
     
                 // upload to bucket in the same path
                 s3Client.putObject(bucketName, key, file);

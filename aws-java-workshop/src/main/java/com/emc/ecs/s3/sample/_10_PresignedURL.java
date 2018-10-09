@@ -17,24 +17,15 @@ package com.emc.ecs.s3.sample;
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Date;
 
 public class _10_PresignedURL {
 
     public static void main(String[] args) throws Exception {
-        // get the expiration time for the object from user
-        System.out.print( "How many hours should this tag be valid? " );
-
-        String hours = new BufferedReader( new InputStreamReader( System.in ) ).readLine();
-        // convert hours to a date
+        long hours = 1;
         Date expiration = new Date();
-        long curTime_msec = expiration.getTime();
-        long nHours = Long.valueOf(hours);
-        curTime_msec += 60 * 60 * 1000 * nHours;
-        expiration.setTime(curTime_msec); 
+        expiration.setTime(expiration.getTime() + 60 * 60 * 1000 * hours); 
 
         createPresignedURL(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
         createPresignedURL(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
@@ -55,6 +46,7 @@ public class _10_PresignedURL {
             System.out.println( String.format("object [%s/%s] pre-signed URL:",
                     bucketName, key, url.toString()));
             System.out.println( url.toString() );
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

@@ -33,6 +33,7 @@ public class BucketAndObjectValidator {
             String state = s3Client.doesBucketExistV2(bucketName) ? "exists" : "does not exist";
             System.out.println( String.format("Bucket [%s] %s.", 
                     bucketName, state));
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
@@ -49,6 +50,7 @@ public class BucketAndObjectValidator {
             String state = s3Client.doesObjectExist(bucketName, key) ? "exists" : "does not exist";
             System.out.println( String.format("Object [%s/%s] %s",
                     bucketName, key, state));
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
@@ -71,6 +73,7 @@ public class BucketAndObjectValidator {
             System.out.println( String.format("Object [%s/%s] does not exist",
                     bucketName, key));
         }
+        System.out.println();
     }
 
     /**
@@ -94,6 +97,7 @@ public class BucketAndObjectValidator {
             System.out.println( String.format("Object [%s/%s] does not exist",
                     bucketName, key));
         }
+        System.out.println();
     }
 
 }
