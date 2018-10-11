@@ -30,10 +30,9 @@ public class _00_CreateBuckets extends BucketAndObjectValidator {
     private static void createBucket(AmazonS3 s3Client, String bucketName) {
         try {
             checkBucketExistence(s3Client, bucketName);
-    
             // create the bucket - used for subsequent demo operations
             s3Client.createBucket(bucketName);
-    
+
             checkBucketExistence(s3Client, bucketName);
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -15,44 +15,50 @@
 package com.emc.ecs.s3.sample;
 
 import com.emc.object.s3.S3Client;
-import com.emc.object.s3.bean.AccessControlList;
-import com.emc.object.s3.bean.CanonicalUser;
-import com.emc.object.s3.bean.Grant;
-import com.emc.object.s3.bean.Group;
-import com.emc.object.s3.bean.Permission;
-
+import com.emc.object.s3.bean.BucketInfo;
+import com.emc.object.s3.request.CreateBucketRequest;
 
 public class _50_BucketRetention {
 
     public static void main(String[] args) throws Exception {
-        // create the ECS S3 Client
-        S3Client s3 = ECSS3Factory.getS3Client();
+        long retentionPeriod = 5;
 
-        AccessControlList acl = new AccessControlList();
-        CanonicalUser owner = new CanonicalUser();
-        owner.setDisplayName(ECSS3Factory.S3_ACCESS_KEY_ID);
-        owner.setId(ECSS3Factory.S3_ACCESS_KEY_ID);
-        acl.setOwner(owner);
-        Grant grant = new Grant();
-        grant.setGrantee(owner);
-        grant.setPermission(Permission.FULL_CONTROL);
-        CanonicalUser other = new CanonicalUser();
-        acl.getGrants().add(grant);
-        other.setDisplayName(ECSS3Factory.S3_ACCESS_KEY_ID_2);
-        other.setId(ECSS3Factory.S3_ACCESS_KEY_ID_2);
-        grant = new Grant();
-        grant.setGrantee(other);
-        grant.setPermission(Permission.READ);
-        acl.getGrants().add(grant);
-        grant = new Grant();
-        grant.setGrantee(other);
-        grant.setPermission(Permission.WRITE);
-        acl.getGrants().add(grant);
-        grant = new Grant();
-        grant.setGrantee(Group.ALL_USERS);
-        grant.setPermission(Permission.READ);
-        acl.getGrants().add(grant);
-        s3.setBucketAcl(ECSS3Factory.S3_BUCKET, acl);
+        createBucket( ECSS3Factory.getS3Client(), ECSS3Factory.S3_BUCKET, ECSS3Factory.S3_OBJECT, retentionPeriod );
+    }
 
+    /**
+     * @param s3Client
+     * @param bucketName
+     * @param key
+     * @param retentionPeriod
+     */
+    private static void createBucket(S3Client s3Client, String bucketName, String key, long retentionPeriod) {
+        try {
+            CreateBucketRequest request = new CreateBucketRequest(bucketName);
+            request.setRetentionPeriod(retentionPeriod);
+            s3Client.createBucket(request);
+            BucketInfo bucketInfo = s3Client.getBucketInfo(bucketName);
+            System.out.println( "Created bucket " + bucketName + " with retention period " + bucketInfo.getRetentionPeriod() + " seconds." );
+
+            s3Client.putObject(bucketName, key, "some content", null);
+            try {
+                s3Client.deleteObject(bucketName, key);
+                System.out.println( "OOPS!!!! Successfully deleted!" );
+            } catch (Exception e) {
+                System.out.println( "Expected exception: " + e.getMessage() );
+                System.out.println();
+            }
+
+            System.out.println("Waiting " + retentionPeriod + " seconds...");
+            Thread.sleep(retentionPeriod * 1000);
+
+            s3Client.deleteObject(bucketName, key);
+            System.out.println( "Successfully deleted!" );
+            s3Client.deleteBucket(bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
+        System.out.println();
     }
 }

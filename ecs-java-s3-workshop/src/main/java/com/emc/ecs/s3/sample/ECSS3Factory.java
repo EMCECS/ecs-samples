@@ -47,6 +47,8 @@ public class ECSS3Factory {
     /* the optional namespace within ECS - leave blank to use the default namespace */
     public static final String S3_ECS_NAMESPACE = null; // use default namespace
 
+    /* a unique object name to store */
+    public static final String S3_OBJECT = "workshop-object";
 
     public static S3Client getS3Client() throws URISyntaxException {
         // for client-side load balancing
