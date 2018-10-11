@@ -39,7 +39,7 @@ public class ECSS3Factory {
     public static final String S3_SECRET_KEY = "";
 
     /* the end point of the ECS S3 REST interface */
-    public static final String S3_URI = "https://object.ecstestdrive.com";
+    public static final String S3_URI = "";
 
     /* a unique bucket name to store objects */
     public static final String S3_BUCKET = "workshop-bucket";

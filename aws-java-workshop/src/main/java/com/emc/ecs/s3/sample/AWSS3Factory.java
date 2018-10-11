@@ -46,6 +46,9 @@ public class AWSS3Factory {
     // the S3 access key id - this is equivalent to the user
     static final String S3_ACCESS_KEY_ID = "";
 
+    // the S3 access key id - this is equivalent to the user
+    static final String S3_ACCESS_KEY_ID_2 = "";
+
     // the S3 secret key associated with the S3_ACCESS_KEY_ID
     static final String S3_SECRET_KEY = "";
 

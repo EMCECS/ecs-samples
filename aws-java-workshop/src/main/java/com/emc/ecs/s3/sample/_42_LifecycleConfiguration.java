@@ -22,15 +22,15 @@ import com.amazonaws.services.s3.model.lifecycle.LifecyclePrefixPredicate;
 
 import java.util.Arrays;
 
-public class _40_LifecyclePolicy {
+public class _42_LifecycleConfiguration {
 
     public static void main(String[] args) throws Exception {
         int days = 1;
         int nonCurrentDays = 2;
         String prefix = "main/";
 
-        setBucketLifecyclePolicy( AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, prefix, days, nonCurrentDays );
-        setBucketLifecyclePolicy( AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, prefix, days, nonCurrentDays );
+        setBucketLifecycleConfiguration( AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, prefix, days, nonCurrentDays );
+        setBucketLifecycleConfiguration( AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, prefix, days, nonCurrentDays );
     }
 
 
@@ -41,7 +41,7 @@ public class _40_LifecyclePolicy {
      * @param days
      * @param nonCurrentDays
      */
-    private static void setBucketLifecyclePolicy(AmazonS3 s3Client, String bucketName, String prefix,
+    private static void setBucketLifecycleConfiguration(AmazonS3 s3Client, String bucketName, String prefix,
             int days, int nonCurrentDays) {
         try {
             checkBucketLifecycleConfiguration( s3Client, bucketName );
@@ -54,10 +54,10 @@ public class _40_LifecyclePolicy {
                     .withFilter(new LifecycleFilter().withPredicate(new LifecyclePrefixPredicate(prefix)))
                     .withStatus(BucketLifecycleConfiguration.ENABLED.toString());
     
-            // build the rule into configuration type
+            // add the rule to a configuration
             BucketLifecycleConfiguration configuration = new BucketLifecycleConfiguration(Arrays.asList(rule));
 
-            // save the lifecycle policy
+            // save the lifecycle configuration
             s3Client.setBucketLifecycleConfiguration(bucketName, configuration);
 
             checkBucketLifecycleConfiguration( s3Client, bucketName );
@@ -79,9 +79,9 @@ public class _40_LifecyclePolicy {
         try {
             BucketLifecycleConfiguration result = s3Client.getBucketLifecycleConfiguration(bucketName);
             if ( result == null ) {
-                System.out.println("bucket lifecycle configuration: none.");
+                System.out.println("bucket lifecycle configuration for " + bucketName + ": none.");
             } else if ( ( result.getRules() == null ) || ( result.getRules().size() == 0 ) ) {
-                    System.out.println("bucket lifecycle configuration: no rules.");
+                    System.out.println("bucket lifecycle configuration for " + bucketName + ": no rules.");
             } else {
                 Rule rule = result.getRules().get(0);
                 String filterInfo = "does not exist";
@@ -93,7 +93,7 @@ public class _40_LifecyclePolicy {
                         filterInfo = "covers prefix \"" + ( ( LifecyclePrefixPredicate) filter.getPredicate() ).getPrefix() + "\"";
                     }
                 }
-                System.out.println(String.format("bucket lifecycle configuration rule 0: filter %s, days %s, and non-current days %s.",
+                System.out.println(String.format("bucket lifecycle configuration rule 0 for " + bucketName + ": filter %s, days %s, and non-current days %s.",
                         filterInfo, rule.getExpirationInDays(), rule.getNoncurrentVersionExpirationInDays()));
             }
             System.out.println();
