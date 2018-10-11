@@ -16,7 +16,7 @@ package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
 
-public class _11_CopyObject extends BucketAndObjectValidator {
+public class _11_CopyObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
         String newKey = "new-key";

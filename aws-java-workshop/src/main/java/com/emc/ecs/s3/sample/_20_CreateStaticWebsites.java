@@ -19,6 +19,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import java.io.File;
 
 public class _20_CreateStaticWebsites {
+
     private static final String[] STATIC_FILES = {
             "main.html",
             "pages/page1.html",
@@ -71,6 +72,7 @@ public class _20_CreateStaticWebsites {
             String landingPage = AWSS3Factory.PUBLIC_ENDPOINT + "/" + bucketName + "/main.html";
     
             System.out.println("The URL for your website is:\n" + landingPage);
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

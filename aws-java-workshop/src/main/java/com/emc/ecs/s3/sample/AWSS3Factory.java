@@ -40,6 +40,9 @@ public class AWSS3Factory {
      */
     static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
 
+    // the S3 namespace for the user
+    static final String S3_NAMESPACE = "";
+
     // the S3 access key id - this is equivalent to the user
     static final String S3_ACCESS_KEY_ID = "";
 
@@ -59,7 +62,8 @@ public class AWSS3Factory {
     public static final String S3_OBJECT = "workshop-object";
 
     // this should be a namespace-enabled baseURL w/ wildcard DNS & SSL
-    public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
+    public static final String PUBLIC_ENDPOINT = "https://" + S3_NAMESPACE + ".public.ecstestdrive.com";
+//    public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
 
     private static AmazonS3ClientBuilder getBasicS3ClientBuilder() {
 

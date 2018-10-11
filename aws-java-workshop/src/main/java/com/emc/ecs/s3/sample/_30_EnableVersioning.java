@@ -18,10 +18,30 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.BucketVersioningConfiguration;
 import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
 
-public class _30_EnableVersioning {
+public class _30_EnableVersioning extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
         createVersionedBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_VERSIONED_BUCKET);
+        enableVersioningOnAnExistingBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
+    }
+
+    /**
+     * @param s3Client
+     * @param bucketName
+     */
+    private static void enableVersioningOnAnExistingBucket(AmazonS3 s3Client, String bucketName) {
+        try {
+            checkVersioningStatus(s3Client, bucketName);
+
+            BucketVersioningConfiguration bucketVersioningConfiguration = new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
+            SetBucketVersioningConfigurationRequest request = new SetBucketVersioningConfigurationRequest(bucketName, bucketVersioningConfiguration);
+            s3Client.setBucketVersioningConfiguration(request);
+
+            checkVersioningStatus(s3Client, bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
     }
 
     /**
@@ -29,12 +49,16 @@ public class _30_EnableVersioning {
      * @param s3Versionbucket
      */
     private static void createVersionedBucket(AmazonS3 s3Client, String bucketName) {
-        s3Client.createBucket(bucketName);
-        BucketVersioningConfiguration bucketVersioningConfiguration = new BucketVersioningConfiguration(BucketVersioningConfiguration.ENABLED);
-        SetBucketVersioningConfigurationRequest setBucketVersioningConfigurationRequest = new SetBucketVersioningConfigurationRequest(bucketName, bucketVersioningConfiguration);
-        s3Client.setBucketVersioningConfiguration(setBucketVersioningConfigurationRequest);
+        try {
+            checkBucketExistence(s3Client, bucketName);
 
-        checkVersioningStatus(s3Client, bucketName);
+            s3Client.createBucket(bucketName);
+    
+            enableVersioningOnAnExistingBucket(s3Client, bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
     }
 
     /**

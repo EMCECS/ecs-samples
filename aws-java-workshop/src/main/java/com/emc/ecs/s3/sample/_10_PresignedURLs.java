@@ -20,15 +20,15 @@ import com.amazonaws.services.s3.AmazonS3;
 import java.net.URL;
 import java.util.Date;
 
-public class _10_PresignedURL {
+public class _10_PresignedURLs {
 
     public static void main(String[] args) throws Exception {
         long hours = 1;
         Date expiration = new Date();
         expiration.setTime(expiration.getTime() + 60 * 60 * 1000 * hours); 
 
-        createPresignedURL(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
-        createPresignedURL(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
+        createPresignedURLs(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
+        createPresignedURLs(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, expiration);
     }
 
     /**
@@ -37,15 +37,16 @@ public class _10_PresignedURL {
      * @param key
      * @param expiration
      */
-    private static void createPresignedURL(AmazonS3 s3Client, String bucketName, String key,
+    private static void createPresignedURLs(AmazonS3 s3Client, String bucketName, String key,
             Date expiration) {
         try {
-            URL url = s3Client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
+            URL getUrl = s3Client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET);
+            URL putUrl = s3Client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT);
 
-            // print object's pre-signed URL
-            System.out.println( String.format("object [%s/%s] pre-signed URL:",
-                    bucketName, key, url.toString()));
-            System.out.println( url.toString() );
+            System.out.println( String.format("object [%s/%s] pre-signed GET URL:", bucketName, key));
+            System.out.println( getUrl.toString() );
+            System.out.println( String.format("object [%s/%s] pre-signed PUT URL:", bucketName, key));
+            System.out.println( putUrl.toString() );
             System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());

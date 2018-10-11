@@ -24,6 +24,7 @@ public class _99_DeleteBuckets extends BucketAndObjectValidator {
     public static void main(String[] args) throws Exception {
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET);
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2);
+        emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_VERSIONED_BUCKET);
     }
 
     /**
