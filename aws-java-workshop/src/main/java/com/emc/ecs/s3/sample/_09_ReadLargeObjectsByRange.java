@@ -15,37 +15,51 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
-public class _02_ReadObjects {
+public class _09_ReadLargeObjectsByRange extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        readObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT);
-        readObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT);
+        long start = 1000;
+        long end = 1300;
+        readLargeObjectRange(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, start, end);
+        readLargeObjectRange(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, start, end);
     }
 
     /**
      * @param s3Client
      * @param bucketName
      * @param key
+     * @param start
+     * @param end
      */
-    private static void readObject(AmazonS3 s3Client, String bucketName, String key) {
+    private static void readLargeObjectRange(AmazonS3 s3Client, String bucketName, String key, long start,
+            long end) {
         try {
-            // read the object from the demo bucket
-            S3Object object = s3Client.getObject(bucketName, key);
-            // convert object to a text string
-            BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
-            String content = reader.readLine();
+            GetObjectRequest getObjectRequest = new GetObjectRequest( bucketName, key ).withRange( start, end );
+            S3Object object = s3Client.getObject(getObjectRequest);
 
-            // print object key/value and content for validation
-            System.out.println( String.format("object [%s/%s] content: [%s]",
+            BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
+            String line = reader.readLine();
+            String separator = "";
+            StringBuilder content = new StringBuilder();
+            while (line != null) {
+                content.append(separator).append(line);
+                separator = "\n";
+                line = reader.readLine();
+            }
+
+            System.out.println( String.format("object [%s/%s] content:\n%s",
                     object.getBucketName(), object.getKey(), content));
+            System.out.println();
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);
         }
     }
+
 }

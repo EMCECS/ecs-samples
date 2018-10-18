@@ -15,15 +15,16 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
-public class _01_CreateObjects extends BucketAndObjectValidator {
+public class _13_CreateEncryptedObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        String content = "initial object content";
+        String content = "encrypted object content";
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);
+        createEncryptedObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
+        createEncryptedObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);
     }
 
     /**
@@ -32,13 +33,16 @@ public class _01_CreateObjects extends BucketAndObjectValidator {
      * @param key
      * @param content
      */
-    private static void createObject(AmazonS3 s3Client, String bucketName, String key, final String content) {
+    private static void createEncryptedObject(AmazonS3 s3Client, String bucketName, String key, final String content) {
         try {
             checkObjectExistence(s3Client, bucketName, key);
 
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), null);
+            ObjectMetadata objectMetadata = new ObjectMetadata();
+            objectMetadata.setSSEAlgorithm("AES256");
+            s3Client.putObject( bucketName, key, new StringInputStream( content ), objectMetadata );
 
             checkObjectContent(s3Client, bucketName, key);
+            checkObjectMetadata(s3Client, bucketName, key);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

@@ -40,8 +40,14 @@ public class AWSS3Factory {
      */
     static final String S3_ENDPOINT = "https://object.ecstestdrive.com";
 
+    // the S3 namespace for the user
+    static final String S3_NAMESPACE = "";
+
     // the S3 access key id - this is equivalent to the user
     static final String S3_ACCESS_KEY_ID = "";
+
+    // the S3 access key id - this is equivalent to the user
+    static final String S3_ACCESS_KEY_ID_2 = "";
 
     // the S3 secret key associated with the S3_ACCESS_KEY_ID
     static final String S3_SECRET_KEY = "";
@@ -53,13 +59,14 @@ public class AWSS3Factory {
     public static final String S3_BUCKET_2 = "workshop-bucket-2";
 
     // a unique bucket name to store versioned objects
-    public static final String S3_VERSIONBUCKET = "workshop-versioned-bucket";
+    public static final String S3_VERSIONED_BUCKET = "workshop-versioned-bucket";
 
     // a unique object name
     public static final String S3_OBJECT = "workshop-object";
 
     // this should be a namespace-enabled baseURL w/ wildcard DNS & SSL
-    public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
+    public static final String PUBLIC_ENDPOINT = "https://" + S3_NAMESPACE + ".public.ecstestdrive.com";
+//    public static final String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com";
 
     private static AmazonS3ClientBuilder getBasicS3ClientBuilder() {
 
@@ -79,6 +86,7 @@ public class AWSS3Factory {
     }
 
     public static AmazonS3 getS3ClientWithV4Signatures() {
+        System.out.println("Running with V4 Signatures:\n");
         return getBasicS3ClientBuilder().build();
     }
 
@@ -88,6 +96,7 @@ public class AWSS3Factory {
 
         // switch to v2 auth
         builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"));
+        System.out.println("Running with V2 Signatures:\n");
 
         return builder.build();
 

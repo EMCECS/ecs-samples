@@ -15,9 +15,8 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.model.ObjectListing;
 
-public class _00_CreateBuckets {
+public class _00_CreateBuckets extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
         createBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET);
@@ -26,18 +25,19 @@ public class _00_CreateBuckets {
 
     /**
      * @param s3Client
-     * @param s3Bucket
+     * @param bucketName
      */
-    private static void createBucket(AmazonS3 s3Client, String s3Bucket) {
-        // create the bucket - used for subsequent demo operations
-        s3Client.createBucket(s3Bucket);
+    private static void createBucket(AmazonS3 s3Client, String bucketName) {
+        try {
+            checkBucketExistence(s3Client, bucketName);
+            // create the bucket - used for subsequent demo operations
+            s3Client.createBucket(bucketName);
 
-        // get bucket listing to retrieve the bucket name
-        ObjectListing objects = s3Client.listObjects(s3Bucket);
-
-        // print bucket name for validation
-        System.out.println( String.format("Successfully created bucket [%s]", 
-                objects.getBucketName()));
+            checkBucketExistence(s3Client, bucketName);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace(System.out);
+        }
     }
 
 }

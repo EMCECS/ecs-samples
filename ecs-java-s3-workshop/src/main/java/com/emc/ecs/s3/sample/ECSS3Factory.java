@@ -39,7 +39,7 @@ public class ECSS3Factory {
     public static final String S3_SECRET_KEY = "";
 
     /* the end point of the ECS S3 REST interface */
-    public static final String S3_URI = "https://object.ecstestdrive.com";
+    public static final String S3_URI = "";
 
     /* a unique bucket name to store objects */
     public static final String S3_BUCKET = "workshop-bucket";
@@ -47,6 +47,8 @@ public class ECSS3Factory {
     /* the optional namespace within ECS - leave blank to use the default namespace */
     public static final String S3_ECS_NAMESPACE = null; // use default namespace
 
+    /* a unique object name to store */
+    public static final String S3_OBJECT = "workshop-object";
 
     public static S3Client getS3Client() throws URISyntaxException {
         // for client-side load balancing

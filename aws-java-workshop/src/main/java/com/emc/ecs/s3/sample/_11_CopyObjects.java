@@ -15,30 +15,32 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.util.StringInputStream;
 
-public class _01_CreateObjects extends BucketAndObjectValidator {
+public class _11_CopyObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        String content = "initial object content";
+        String newKey = "new-key";
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);
+        copyObject( AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, newKey, AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT );
+        copyObject( AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, newKey, AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT );
     }
 
     /**
      * @param s3Client
+     * @param newBucketName
+     * @param newKey
      * @param bucketName
      * @param key
-     * @param content
      */
-    private static void createObject(AmazonS3 s3Client, String bucketName, String key, final String content) {
+    private static void copyObject(AmazonS3 s3Client, String newBucketName, String newKey, String bucketName,
+            String key) {
         try {
-            checkObjectExistence(s3Client, bucketName, key);
-
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), null);
-
-            checkObjectContent(s3Client, bucketName, key);
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, newBucketName, newKey);
+    
+            s3Client.copyObject(bucketName, key, newBucketName, newKey);
+    
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, bucketName, key);
+            BucketAndObjectValidator.checkObjectMetadata(s3Client, newBucketName, newKey);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             e.printStackTrace(System.out);

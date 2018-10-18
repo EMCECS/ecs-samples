@@ -17,26 +17,26 @@ package com.emc.ecs.s3.sample;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.util.StringInputStream;
 
-public class _01_CreateObjects extends BucketAndObjectValidator {
+public class _32_UpdateVersions extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        String content = "initial object content";
+        String newContent = "new object content";
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content);
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content);
+        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent);
+        updateObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, newContent);
     }
 
     /**
      * @param s3Client
      * @param bucketName
      * @param key
-     * @param content
+     * @param newContent
      */
-    private static void createObject(AmazonS3 s3Client, String bucketName, String key, final String content) {
+    private static void updateObject(AmazonS3 s3Client, String bucketName, String key, final String newContent) {
         try {
-            checkObjectExistence(s3Client, bucketName, key);
+            checkObjectContent(s3Client, bucketName, key);
 
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), null);
+            s3Client.putObject(bucketName, key, new StringInputStream( newContent ), null);
 
             checkObjectContent(s3Client, bucketName, key);
         } catch (Exception e) {
