@@ -15,6 +15,7 @@
 package com.emc.ecs.s3.sample;
 
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.util.StringInputStream;
 
 public class _01_CreateObjects extends BucketAndObjectValidator {
@@ -36,7 +37,9 @@ public class _01_CreateObjects extends BucketAndObjectValidator {
         try {
             checkObjectExistence(s3Client, bucketName, key);
 
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), null);
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(content.length());
+            s3Client.putObject(bucketName, key, new StringInputStream( content ), metadata);
 
             checkObjectContent(s3Client, bucketName, key);
         } catch (Exception e) {
