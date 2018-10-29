@@ -24,7 +24,7 @@ import java.io.File;
 public class _07_CreateLargeObjects extends BucketAndObjectValidator {
 
     public static void main(String[] args) throws Exception {
-        String filePath = "/Users/seibed/Downloads/formatter.xml";
+        String filePath = "/Users/seibed/Downloads/SSL-Certificates.arf";
 
         createLargeObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, filePath);
         createLargeObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, filePath);
@@ -49,6 +49,7 @@ public class _07_CreateLargeObjects extends BucketAndObjectValidator {
                 System.out.println("Percent transferred: " + upload.getProgress().getPercentTransferred());
                 Thread.sleep(1000);
             }
+            transferManager.shutdownNow(false);
 
             checkObjectMetadata(s3Client, bucketName, key);
         } catch (Exception e) {
