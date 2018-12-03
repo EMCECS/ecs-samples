@@ -18,7 +18,8 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Map.Entry
 
-import scala.collection.JavaConversions._
+import scala.collection.JavaConversions.`deprecated asScalaSet`
+import scala.collection.JavaConversions.`deprecated mutableSetAsJavaSet`
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata

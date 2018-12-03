@@ -18,24 +18,28 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.util.StringInputStream
 
-object _01_CreateObjects extends BucketAndObjectValidator {
+object _05_CreateObjectsWithMetadata extends BucketAndObjectValidator {
 
     def main(args: Array[String]): Unit = {
-        val content: String = "initial object content"
+        val metaKey: String = "myMetaKey"
+        val metaValue: String = "myMetaValue"
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content)
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content)
+        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, metaKey, metaValue)
+        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, metaKey, metaValue)
     }
 
-    def createObject(s3Client: AmazonS3, bucketName: String, key: String, content: String) = {
+    def createObject(s3Client: AmazonS3, bucketName: String, key: String, metaKey: String, metaValue: String) = {
         try {
-            checkObjectExistence(s3Client, bucketName, key)
+            checkObjectMetadata(s3Client, bucketName, key)
 
+            // create the metadata
             val metadata: ObjectMetadata = new ObjectMetadata()
-            metadata.setContentLength(content.length())
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), metadata)
+            metadata.addUserMetadata(metaKey, metaValue)
+            metadata.setContentLength(0)
+            // create the object with the metadata in the demo bucket
+            s3Client.putObject(bucketName, key, new StringInputStream(""), metadata)
 
-            checkObjectContent(s3Client, bucketName, key)
+            checkObjectMetadata(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
         System.out.println()
     }

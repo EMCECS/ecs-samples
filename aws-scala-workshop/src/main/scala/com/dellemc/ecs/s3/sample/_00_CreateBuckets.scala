@@ -31,6 +31,7 @@ object _00_CreateBuckets extends BucketAndObjectValidator {
 
             checkBucketExistence(s3Client, bucketName)
         } catch { case e: Exception => outputException(e) }
+        System.out.println()
     }
 
 }

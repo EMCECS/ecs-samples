@@ -18,22 +18,22 @@ import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 import com.amazonaws.util.StringInputStream
 
-object _01_CreateObjects extends BucketAndObjectValidator {
+object _03_UpdateObjects extends BucketAndObjectValidator {
 
     def main(args: Array[String]): Unit = {
-        val content: String = "initial object content"
+        val newContent: String = "new object content"
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content)
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content)
+        updateObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent)
+        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, newContent)
     }
 
-    def createObject(s3Client: AmazonS3, bucketName: String, key: String, content: String) = {
+    def updateObject(s3Client: AmazonS3, bucketName: String, key: String, newContent: String) = {
         try {
-            checkObjectExistence(s3Client, bucketName, key)
+            checkObjectContent(s3Client, bucketName, key)
 
             val metadata: ObjectMetadata = new ObjectMetadata()
-            metadata.setContentLength(content.length())
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), metadata)
+            metadata.setContentLength(newContent.length())
+            s3Client.putObject(bucketName, key, new StringInputStream( newContent ), metadata)
 
             checkObjectContent(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }

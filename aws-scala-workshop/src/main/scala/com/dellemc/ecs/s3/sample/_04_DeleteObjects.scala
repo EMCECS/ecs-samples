@@ -15,25 +15,19 @@
 package com.dellemc.ecs.s3.sample
 
 import com.amazonaws.services.s3.AmazonS3
-import com.amazonaws.services.s3.model.ObjectMetadata
-import com.amazonaws.util.StringInputStream
 
-object _01_CreateObjects extends BucketAndObjectValidator {
+object _04_DeleteObjects extends BucketAndObjectValidator {
 
     def main(args: Array[String]): Unit = {
-        val content: String = "initial object content"
-
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content)
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content)
+        deleteObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT)
+        deleteObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT)
     }
 
-    def createObject(s3Client: AmazonS3, bucketName: String, key: String, content: String) = {
+    def deleteObject(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             checkObjectExistence(s3Client, bucketName, key)
 
-            val metadata: ObjectMetadata = new ObjectMetadata()
-            metadata.setContentLength(content.length())
-            s3Client.putObject(bucketName, key, new StringInputStream( content ), metadata)
+            s3Client.deleteObject(bucketName, key)
 
             checkObjectContent(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
