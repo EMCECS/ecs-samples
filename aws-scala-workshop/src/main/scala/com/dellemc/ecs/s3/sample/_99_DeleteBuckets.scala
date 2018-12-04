@@ -14,7 +14,7 @@
  */
 package com.dellemc.ecs.s3.sample
 
-import scala.collection.JavaConversions.`deprecated asScalaBuffer`
+import scala.collection.JavaConversions._
 
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.BucketVersioningConfiguration
@@ -49,14 +49,14 @@ object _99_DeleteBuckets extends BucketAndObjectValidator {
                 // no versioning, so delete all objects
                 val summaries: scala.collection.mutable.Iterable[S3ObjectSummary] = s3Client.listObjects(bucketName).getObjectSummaries()
                 summaries.foreach((i:S3ObjectSummary) => {
-                    println(String.format("Deleting object [%s/%s]", bucketName, i.getKey()))
+                    println( s"Deleting object [${bucketName}/${i.getKey()}]" )
                     s3Client.deleteObject(bucketName, i.getKey())
                 })
             } else {
                 // versioning was enabled, so delete all versions
                 val summaries: scala.collection.mutable.Iterable[S3VersionSummary] = s3Client.listVersions(bucketName, null).getVersionSummaries()
                 summaries.foreach((i:S3VersionSummary) => {
-                    println(String.format("Deleting version [%s/%s/%s]", bucketName, i.getKey(), i.getVersionId()))
+                    println( s"Deleting version ${bucketName}/${i.getKey()}/${i.getVersionId()}]" )
                     s3Client.deleteVersion(bucketName, i.getKey(), i.getVersionId())
                 })
             }

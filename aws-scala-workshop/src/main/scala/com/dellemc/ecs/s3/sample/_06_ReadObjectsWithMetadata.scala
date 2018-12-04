@@ -39,12 +39,10 @@ object _06_ReadObjectsWithMetadata extends BucketAndObjectValidator {
         try {
             val metadata: ObjectMetadata = s3Client.getObjectMetadata(bucketName, key)
 
-            println(String.format(
-                "Object [%s/%s] has system metadata:",
-                bucketName, key))
-            println(metadata.getRawMetadata())
-            println("and user metadata:")
-            println(metadata.getUserMetadata())
+            println( s"Object [$bucketName/$key] has system metadata:" )
+            println( metadata.getRawMetadata() )
+            println( "and user metadata:" )
+            println( metadata.getUserMetadata() )
         } catch { case e: Exception => outputException(e) }
         println()
     }

@@ -43,7 +43,7 @@ object _02_ReadObjects extends BucketAndObjectValidator {
             val content: String = scala.io.Source.fromInputStream(myObject.getObjectContent(), "UTF-8").mkString
 
             // print object key/value and content for validation
-            println( String.format("object [%s/%s] content: [%s]", myObject.getBucketName(), myObject.getKey(), content))
+            println( s"object [${myObject.getBucketName()}/${myObject.getKey()}] content: [$content]" )
         } catch { case e: Exception => outputException(e) }
         println()
     }

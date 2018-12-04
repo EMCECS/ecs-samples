@@ -45,9 +45,9 @@ object _09_ReadLargeObjectsByRange extends BucketAndObjectValidator {
         try {
             val getObjectRequest: GetObjectRequest = new GetObjectRequest(bucketName, key).withRange(start, end)
             val myObject: S3Object = s3Client.getObject(getObjectRequest)
-            val returnedContent: String = scala.io.Source.fromInputStream(myObject.getObjectContent(), "UTF-8").mkString
+            val content: String = scala.io.Source.fromInputStream(myObject.getObjectContent(), "UTF-8").mkString
 
-            println(String.format("object [%s/%s] content:\n%s", myObject.getBucketName(), myObject.getKey(), returnedContent))
+            println( s"object [${myObject.getBucketName()}/${myObject.getKey()}] content:\n$content" )
         } catch { case e: Exception => outputException(e) }
         println()
     }

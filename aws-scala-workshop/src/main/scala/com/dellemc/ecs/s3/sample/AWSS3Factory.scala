@@ -81,7 +81,7 @@ object AWSS3Factory {
      * @return a basic client that will use V4 signatures
      */
     def getS3ClientWithV4Signatures(): AmazonS3 = {
-        println("Running with V4 Signatures:\n")
+        println( "Running with V4 Signatures:\n" )
         return getBasicS3ClientBuilder().build()
     }
 
@@ -94,7 +94,7 @@ object AWSS3Factory {
 
         // switch to v2 auth
         builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"))
-        println("Running with V2 Signatures:\n")
+        println( "Running with V2 Signatures:\n" )
 
         return builder.build()
     }

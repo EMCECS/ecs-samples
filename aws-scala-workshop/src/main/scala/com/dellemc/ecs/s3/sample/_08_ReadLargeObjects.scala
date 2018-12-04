@@ -57,13 +57,13 @@ object _08_ReadLargeObjects extends BucketAndObjectValidator {
             val download: Download = transferManager.download(bucketName, key, file)
 
             while (!download.isDone()) {
-                println("Download state: " + download.getState().toString())
-                println("Percent transferred: " + download.getProgress().getPercentTransferred())
+                println( s"Download state: ${download.getState().toString()}" )
+                println( s"Percent transferred: ${download.getProgress().getPercentTransferred()}" )
                 Thread.sleep(1000)
             }
 
-            println("Download is finished, content is in the following file.")
-            println(file.getAbsolutePath())
+            println( "Download is finished, content is in the following file." )
+            println( file.getAbsolutePath() )
         } catch { case e: Exception => outputException(e) }
         println()
     }

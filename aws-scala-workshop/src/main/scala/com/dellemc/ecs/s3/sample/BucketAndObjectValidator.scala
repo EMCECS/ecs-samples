@@ -32,7 +32,7 @@ class BucketAndObjectValidator {
     protected def checkBucketExistence(s3Client: AmazonS3, bucketName: String) = {
         try {
             def state = if (s3Client.doesBucketExistV2(bucketName)) "exists" else "does not exist"
-            println(String.format("Bucket [%s] %s.", bucketName, state))
+            println( s"Bucket [$bucketName] $state." )
         } catch { case e: Exception => outputException(e) }
         println()
     }
@@ -47,7 +47,7 @@ class BucketAndObjectValidator {
     protected def checkObjectExistence(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             val state: String = if (s3Client.doesObjectExist(bucketName, key)) "exists" else "does not exist"
-            println(String.format("Object [%s/%s] %s", bucketName, key, state))
+            println( s"Object [$bucketName/$key] $state." )
         } catch { case e: Exception => outputException(e) }
         println()
     }
@@ -62,11 +62,11 @@ class BucketAndObjectValidator {
     protected def checkObjectContent(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             val s3Object: S3Object = s3Client.getObject(bucketName, key)
-            val returnedContent: String = scala.io.Source.fromInputStream(s3Object.getObjectContent(), "UTF-8").mkString
-            println(String.format("Object [%s/%s] exists with content: [%s]", s3Object.getBucketName(), s3Object.getKey(), returnedContent))
+            val content: String = scala.io.Source.fromInputStream(s3Object.getObjectContent(), "UTF-8").mkString
+            println( s"Object [${s3Object.getBucketName()}/${s3Object.getKey()}] exists with content: [$content]" )
         } catch {
             case e: Exception =>
-                println(String.format("Object [%s/%s] does not exist", bucketName, key))
+                println( s"Object [$bucketName/$key] does not exist" )
         }
         println()
     }
@@ -81,13 +81,13 @@ class BucketAndObjectValidator {
     protected def checkObjectMetadata(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             val metadata: ObjectMetadata = s3Client.getObjectMetadata(bucketName, key)
-            println(String.format("Object [%s/%s] exists with system metadata:", bucketName, key))
-            println(metadata.getRawMetadata())
-            println("and user metadata:")
-            println(metadata.getUserMetadata())
+            println( s"Object [$bucketName/$key] exists with system metadata:" )
+            println( metadata.getRawMetadata() )
+            println( "and user metadata:" )
+            println( metadata.getUserMetadata() )
         } catch {
             case e: Exception =>
-                println(String.format("Object [%s/%s] does not exist", bucketName, key))
+                println( s"Object [$bucketName/$key] does not exist" )
         }
         println()
     }

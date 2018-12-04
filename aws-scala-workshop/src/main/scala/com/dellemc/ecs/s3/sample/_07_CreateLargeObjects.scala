@@ -51,10 +51,11 @@ object _07_CreateLargeObjects extends BucketAndObjectValidator {
                 .build()
             val upload: Upload = transferManager.upload(bucketName, key, new File(filePath))
             while (!upload.isDone()) {
-                println("Upload state: " + upload.getState().toString())
-                println("Percent transferred: " + upload.getProgress().getPercentTransferred())
+                println( s"Upload state: ${upload.getState().toString()}" )
+                println( s"Percent transferred: ${upload.getProgress().getPercentTransferred()}" )
                 Thread.sleep(1000)
             }
+            println( "Upload is finished" )
 
             checkObjectMetadata(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }

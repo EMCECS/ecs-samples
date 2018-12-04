@@ -52,9 +52,9 @@ object _10_PresignedUrls extends BucketAndObjectValidator {
             val getUrl: URL = s3Client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.GET)
             val putUrl: URL = s3Client.generatePresignedUrl(bucketName, key, expiration, HttpMethod.PUT)
 
-            println( String.format("object [%s/%s] pre-signed GET URL:", bucketName, key))
+            println( s"object [$bucketName/$key] pre-signed GET URL:" )
             println( getUrl.toString() )
-            println( String.format("object [%s/%s] pre-signed PUT URL:", bucketName, key))
+            println( s"object [$bucketName/$key] pre-signed PUT URL:" )
             println( putUrl.toString() )
         } catch { case e: Exception => outputException(e) }
         println()
