@@ -61,7 +61,7 @@ object _08_ReadLargeObjects extends BucketAndObjectValidator {
                 println( s"Percent transferred: ${download.getProgress().getPercentTransferred()}" )
                 Thread.sleep(1000)
             }
-
+            transferManager.shutdownNow(false)
             println( "Download is finished, content is in the following file." )
             println( file.getAbsolutePath() )
         } catch { case e: Exception => outputException(e) }

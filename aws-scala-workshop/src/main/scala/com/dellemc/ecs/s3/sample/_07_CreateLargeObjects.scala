@@ -55,6 +55,7 @@ object _07_CreateLargeObjects extends BucketAndObjectValidator {
                 println( s"Percent transferred: ${upload.getProgress().getPercentTransferred()}" )
                 Thread.sleep(1000)
             }
+            transferManager.shutdownNow(false)
             println( "Upload is finished" )
 
             checkObjectMetadata(s3Client, bucketName, key)
