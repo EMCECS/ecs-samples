@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECS Static Website Test - CORS Page</title>
+    <script src="../js/main.js"></script>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+<h1>This is a sub-page of a static website</h1>
+<p>All of the images, stylesheets and links you see are hosted within a bucket and publicly readable.
+    Note that all references are relative.  This is because the namespace is included in the host name, which consumes
+    the wildcard portion of the SSL certificate.  Therefore the bucket must be in the path, which would mess up any
+    absolute references.</p>
+<p><a href="../main.html">Back to main page</a></p>
+<p><a href="page1.html">Page 1</a></p>
+<iframe src="https://object.ecstestdrive.com/workshop-bucket/workshop-object?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Date=20181015T153935Z&X-Amz-SignedHeaders=host&X-Amz-Expires=3598&X-Amz-Credential=131123009294999359%40ecstestdrive.emc.com%2F20181015%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Signature=3ad31de50894a9c9130d830f58c2393c1f915ad6ab65c2304954835c2f468ff9">This is my iframe with the object</iframe>
+</body>
+</html>
