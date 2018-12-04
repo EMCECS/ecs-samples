@@ -59,6 +59,9 @@ object AWSS3Factory {
     def PUBLIC_ENDPOINT = "https://" + S3_NAMESPACE + ".public.ecstestdrive.com"
     //    public String PUBLIC_ENDPOINT = "https://<namespace>.public.ecstestdrive.com"
 
+    /**
+     * @return a basic builder that will use V4 signatures
+     */
     def getBasicS3ClientBuilder(): AmazonS3ClientBuilder = {
         val builder: AmazonS3ClientBuilder = AmazonS3Client.builder()
 
@@ -74,18 +77,24 @@ object AWSS3Factory {
         return builder
     }
 
+    /**
+     * @return a basic client that will use V4 signatures
+     */
     def getS3ClientWithV4Signatures(): AmazonS3 = {
-        System.out.println("Running with V4 Signatures:\n")
+        println("Running with V4 Signatures:\n")
         return getBasicS3ClientBuilder().build()
     }
 
+    /**
+     * @return a client that will use V2 signatures
+     */
     def getS3ClientWithV2Signatures(): AmazonS3 = {
 
         val builder: AmazonS3ClientBuilder = getBasicS3ClientBuilder()
 
         // switch to v2 auth
         builder.setClientConfiguration(new ClientConfiguration().withSignerOverride("S3SignerType"))
-        System.out.println("Running with V2 Signatures:\n")
+        println("Running with V2 Signatures:\n")
 
         return builder.build()
     }

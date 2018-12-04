@@ -20,13 +20,25 @@ import com.amazonaws.util.StringInputStream
 
 object _03_UpdateObjects extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         val newContent: String = "new object content"
 
-        updateObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent)
-        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, newContent)
+        updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent)
     }
 
+    /**
+     * Check the element content, update it, then verify that it has changed.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to change
+     * @param newContent the new content
+     */
     def updateObject(s3Client: AmazonS3, bucketName: String, key: String, newContent: String) = {
         try {
             checkObjectContent(s3Client, bucketName, key)
@@ -37,7 +49,7 @@ object _03_UpdateObjects extends BucketAndObjectValidator {
 
             checkObjectContent(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

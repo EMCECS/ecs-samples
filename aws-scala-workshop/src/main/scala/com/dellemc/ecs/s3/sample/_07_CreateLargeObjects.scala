@@ -23,13 +23,25 @@ import com.amazonaws.services.s3.transfer.Upload
 
 object _07_CreateLargeObjects extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         val filePath: String = "/Users/seibed/Downloads/formatter.xml"
 
-        createLargeObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, filePath)
-        createLargeObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, filePath)
+        createLargeObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, filePath)
     }
 
+    /**
+     * Check the initial object metadata, upload a large amount of content from a file, then recheck the metadata.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to modify
+     * @param filePath the file to use
+     */
     def createLargeObject(s3Client: AmazonS3, bucketName: String, key: String, filePath: String) = {
         try {
             checkObjectMetadata(s3Client, bucketName, key)
@@ -39,14 +51,14 @@ object _07_CreateLargeObjects extends BucketAndObjectValidator {
                 .build()
             val upload: Upload = transferManager.upload(bucketName, key, new File(filePath))
             while (!upload.isDone()) {
-                System.out.println("Upload state: " + upload.getState().toString())
-                System.out.println("Percent transferred: " + upload.getProgress().getPercentTransferred())
+                println("Upload state: " + upload.getState().toString())
+                println("Percent transferred: " + upload.getProgress().getPercentTransferred())
                 Thread.sleep(1000)
             }
 
             checkObjectMetadata(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

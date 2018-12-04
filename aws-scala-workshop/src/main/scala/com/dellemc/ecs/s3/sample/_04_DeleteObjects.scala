@@ -18,11 +18,22 @@ import com.amazonaws.services.s3.AmazonS3
 
 object _04_DeleteObjects extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         deleteObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT)
-        deleteObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT)
     }
 
+    /**
+     * Check that the object exists, delete it, then check that it does not exist.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to delete
+     */
     def deleteObject(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             checkObjectExistence(s3Client, bucketName, key)
@@ -31,7 +42,7 @@ object _04_DeleteObjects extends BucketAndObjectValidator {
 
             checkObjectContent(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

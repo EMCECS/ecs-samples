@@ -20,14 +20,27 @@ import com.amazonaws.util.StringInputStream
 
 object _05_CreateObjectsWithMetadata extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         val metaKey: String = "myMetaKey"
         val metaValue: String = "myMetaValue"
 
         createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, metaKey, metaValue)
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, metaKey, metaValue)
     }
 
+    /**
+     * Create an object with user metadata and verify that the metadata is correct.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to create
+     * @param metaKey the custom metadata key to add
+     * @param metaValue the metadata value for the custom key
+     */
     def createObject(s3Client: AmazonS3, bucketName: String, key: String, metaKey: String, metaValue: String) = {
         try {
             checkObjectMetadata(s3Client, bucketName, key)
@@ -41,7 +54,7 @@ object _05_CreateObjectsWithMetadata extends BucketAndObjectValidator {
 
             checkObjectMetadata(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

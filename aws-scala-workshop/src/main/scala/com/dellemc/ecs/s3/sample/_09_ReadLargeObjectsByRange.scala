@@ -14,41 +14,42 @@
  */
 package com.dellemc.ecs.s3.sample
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
-
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.GetObjectRequest
 import com.amazonaws.services.s3.model.S3Object
 
 object _09_ReadLargeObjectsByRange extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         val start: Long = 1000
         val end: Long = 1300
 
         readLargeObjectRange(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, start, end)
-        readLargeObjectRange(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, start, end)
     }
 
+    /**
+     * Read and output part of the content from a large object.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to read
+     * @param start the start byte
+     * @param end the end byte
+     */
     def readLargeObjectRange(s3Client: AmazonS3, bucketName: String, key: String, start: Long, end: Long) = {
         try {
             val getObjectRequest: GetObjectRequest = new GetObjectRequest(bucketName, key).withRange(start, end)
             val myObject: S3Object = s3Client.getObject(getObjectRequest)
+            val returnedContent: String = scala.io.Source.fromInputStream(myObject.getObjectContent(), "UTF-8").mkString
 
-            val reader: BufferedReader = new BufferedReader(new InputStreamReader(myObject.getObjectContent()))
-            var line: String = reader.readLine()
-            var separator: String = ""
-            val content: StringBuilder = new StringBuilder()
-            while (line != null) {
-                content.append(separator).append(line)
-                separator = "\n"
-                line = reader.readLine()
-            }
-
-            System.out.println(String.format("object [%s/%s] content:\n%s", myObject.getBucketName(), myObject.getKey(), content))
+            println(String.format("object [%s/%s] content:\n%s", myObject.getBucketName(), myObject.getKey(), returnedContent))
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

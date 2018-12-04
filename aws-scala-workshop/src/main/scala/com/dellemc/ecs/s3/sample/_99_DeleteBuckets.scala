@@ -23,12 +23,23 @@ import com.amazonaws.services.s3.model.S3VersionSummary
 
 object _99_DeleteBuckets extends BucketAndObjectValidator {
 
+    /**
+     * Delete all demo buckets
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET)
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET_2)
         emptyAndDeleteBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_VERSIONED_BUCKET)
     }
 
+    /**
+     * Check that the bucket exists, delete all objects or versopns in the bucket, delete the bucket, then check again for existence.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to delete
+     */
     def emptyAndDeleteBucket(s3Client: AmazonS3, bucketName: String) = {
         try {
             checkBucketExistence(s3Client, bucketName)
@@ -38,14 +49,14 @@ object _99_DeleteBuckets extends BucketAndObjectValidator {
                 // no versioning, so delete all objects
                 val summaries: scala.collection.mutable.Iterable[S3ObjectSummary] = s3Client.listObjects(bucketName).getObjectSummaries()
                 summaries.foreach((i:S3ObjectSummary) => {
-                    System.out.println(String.format("Deleting object [%s/%s]", bucketName, i.getKey()))
+                    println(String.format("Deleting object [%s/%s]", bucketName, i.getKey()))
                     s3Client.deleteObject(bucketName, i.getKey())
                 })
             } else {
                 // versioning was enabled, so delete all versions
                 val summaries: scala.collection.mutable.Iterable[S3VersionSummary] = s3Client.listVersions(bucketName, null).getVersionSummaries()
                 summaries.foreach((i:S3VersionSummary) => {
-                    System.out.println(String.format("Deleting version [%s/%s/%s]", bucketName, i.getKey(), i.getVersionId()))
+                    println(String.format("Deleting version [%s/%s/%s]", bucketName, i.getKey(), i.getVersionId()))
                     s3Client.deleteVersion(bucketName, i.getKey(), i.getVersionId())
                 })
             }
@@ -55,7 +66,7 @@ object _99_DeleteBuckets extends BucketAndObjectValidator {
 
             checkBucketExistence(s3Client, bucketName)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

@@ -20,13 +20,25 @@ import com.amazonaws.util.StringInputStream
 
 object _01_CreateObjects extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         val content: String = "initial object content"
 
-        createObject(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content)
-        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT, content)
+        createObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, content)
     }
 
+    /**
+     * Verify that the object does not exist, create it, then verify that it does exist with the correct content.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to create
+     * @param content the content to insert
+     */
     def createObject(s3Client: AmazonS3, bucketName: String, key: String, content: String) = {
         try {
             checkObjectExistence(s3Client, bucketName, key)
@@ -37,7 +49,7 @@ object _01_CreateObjects extends BucketAndObjectValidator {
 
             checkObjectContent(s3Client, bucketName, key)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

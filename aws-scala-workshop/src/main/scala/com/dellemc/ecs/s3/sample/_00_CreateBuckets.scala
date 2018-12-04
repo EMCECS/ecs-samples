@@ -18,11 +18,22 @@ import com.amazonaws.services.s3.AmazonS3
 
 object _00_CreateBuckets extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         createBucket(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET)
         createBucket(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2)
     }
 
+    /**
+     * Verify that the bucket does not exist, create it, and then verify that it does exist.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the name to use
+     */
     def createBucket(s3Client: AmazonS3, bucketName: String) = {
         try {
             checkBucketExistence(s3Client, bucketName)
@@ -31,7 +42,7 @@ object _00_CreateBuckets extends BucketAndObjectValidator {
 
             checkBucketExistence(s3Client, bucketName)
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }

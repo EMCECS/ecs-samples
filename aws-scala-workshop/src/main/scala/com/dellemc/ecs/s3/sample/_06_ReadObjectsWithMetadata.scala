@@ -14,35 +14,39 @@
  */
 package com.dellemc.ecs.s3.sample
 
-import java.util.Map.Entry
-
-import scala.collection.JavaConversions.`deprecated asScalaSet`
-import scala.collection.JavaConversions.`deprecated mutableSetAsJavaSet`
-
 import com.amazonaws.services.s3.AmazonS3
 import com.amazonaws.services.s3.model.ObjectMetadata
 
 object _06_ReadObjectsWithMetadata extends BucketAndObjectValidator {
 
+    /**
+     * Run the class.
+     * 
+     * @param args
+     */
     def main(args: Array[String]): Unit = {
         readObjectMetadata(AWSS3Factory.getS3ClientWithV2Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT)
-        readObjectMetadata(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET_2, AWSS3Factory.S3_OBJECT)
     }
 
+    /**
+     * Read and output the object metadata.
+     * 
+     * @param s3Client the client to use
+     * @param bucketName the bucket to use
+     * @param key the object to use
+     */
     def readObjectMetadata(s3Client: AmazonS3, bucketName: String, key: String) = {
         try {
             val metadata: ObjectMetadata = s3Client.getObjectMetadata(bucketName, key)
 
-            System.out.println(String.format(
+            println(String.format(
                 "Object [%s/%s] has system metadata:",
                 bucketName, key))
-            val rawEntries: scala.collection.mutable.Set[java.util.Map.Entry[String, Object]] = metadata.getRawMetadata().entrySet()
-            rawEntries.forEach((i: Entry[String, Object]) => System.out.println("    " + i.getKey() + " = " + i.getValue()))
-            System.out.println("and user metadata:")
-            val userEntries: scala.collection.mutable.Set[java.util.Map.Entry[String, String]] = metadata.getUserMetadata().entrySet()
-            userEntries.forEach((i: Entry[String, String]) => System.out.println("    " + i.getKey() + " = " + i.getValue()))
+            println(metadata.getRawMetadata())
+            println("and user metadata:")
+            println(metadata.getUserMetadata())
         } catch { case e: Exception => outputException(e) }
-        System.out.println()
+        println()
     }
 
 }
