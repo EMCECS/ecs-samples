@@ -56,7 +56,7 @@ public class _08_ReadLargeObjects extends BucketAndObjectValidator {
                 System.out.println("Percent transferred: " + download.getProgress().getPercentTransferred());
                 Thread.sleep(1000);
             }
-
+            transferManager.shutdownNow(false);
             System.out.println("Download is finished, content is in the following file.");
             System.out.println(file.getAbsolutePath());
             System.out.println();

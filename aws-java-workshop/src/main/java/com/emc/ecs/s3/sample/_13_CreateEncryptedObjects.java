@@ -39,6 +39,7 @@ public class _13_CreateEncryptedObjects extends BucketAndObjectValidator {
 
             ObjectMetadata objectMetadata = new ObjectMetadata();
             objectMetadata.setSSEAlgorithm("AES256");
+            objectMetadata.setContentLength(content.length());
             s3Client.putObject( bucketName, key, new StringInputStream( content ), objectMetadata );
 
             checkObjectContent(s3Client, bucketName, key);

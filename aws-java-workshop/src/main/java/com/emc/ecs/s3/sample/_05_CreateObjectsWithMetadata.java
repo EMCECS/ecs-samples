@@ -43,6 +43,7 @@ public class _05_CreateObjectsWithMetadata extends BucketAndObjectValidator {
             // create the metadata
             ObjectMetadata metadata = new ObjectMetadata();
             metadata.addUserMetadata(metaKey, metaValue);
+            metadata.setContentLength(0);
             // create the object with the metadata in the demo bucket
             s3Client.putObject(bucketName, key, new StringInputStream( "" ), metadata);
     
