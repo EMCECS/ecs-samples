@@ -45,8 +45,8 @@ object _32_ListVersions extends BucketAndObjectValidator {
         try {
             val summaries: scala.collection.mutable.Iterable[S3VersionSummary] = s3Client.listVersions(bucketName, null).getVersionSummaries()
             println( s"Version listing found ${summaries.size()} versions in $bucketName" )
-            summaries.foreach((i:S3VersionSummary) => {
-                println( s"${i.getKey()} (${i.getVersionId()})")
+            summaries.foreach((summary:S3VersionSummary) => {
+                println( s"${summary.getKey()} (${summary.getVersionId()})")
             })
         } catch { case e: Exception => outputException(e) }
         println()

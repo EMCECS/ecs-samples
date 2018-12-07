@@ -47,17 +47,15 @@ object _99_DeleteBuckets extends BucketAndObjectValidator {
             // delete all bucket content
             if (BucketVersioningConfiguration.OFF.equals(s3Client.getBucketVersioningConfiguration(bucketName).getStatus())) {
                 // no versioning, so delete all objects
-                val summaries: scala.collection.mutable.Iterable[S3ObjectSummary] = s3Client.listObjects(bucketName).getObjectSummaries()
-                summaries.foreach((i:S3ObjectSummary) => {
-                    println( s"Deleting object [${bucketName}/${i.getKey()}]" )
-                    s3Client.deleteObject(bucketName, i.getKey())
+                s3Client.listObjects(bucketName).getObjectSummaries().foreach((summary:S3ObjectSummary) => {
+                    println( s"Deleting object [${bucketName}/${summary.getKey()}]" )
+                    s3Client.deleteObject(bucketName, summary.getKey())
                 })
             } else {
                 // versioning was enabled, so delete all versions
-                val summaries: scala.collection.mutable.Iterable[S3VersionSummary] = s3Client.listVersions(bucketName, null).getVersionSummaries()
-                summaries.foreach((i:S3VersionSummary) => {
-                    println( s"Deleting version ${bucketName}/${i.getKey()}/${i.getVersionId()}]" )
-                    s3Client.deleteVersion(bucketName, i.getKey(), i.getVersionId())
+                s3Client.listVersions(bucketName, null).getVersionSummaries().foreach((summary:S3VersionSummary) => {
+                    println( s"Deleting version ${bucketName}/${summary.getKey()}/${summary.getVersionId()}]" )
+                    s3Client.deleteVersion(bucketName, summary.getKey(), summary.getVersionId())
                 })
             }
     

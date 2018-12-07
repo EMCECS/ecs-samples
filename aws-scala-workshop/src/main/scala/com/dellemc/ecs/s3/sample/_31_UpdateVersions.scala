@@ -26,8 +26,8 @@ object _31_UpdateVersions extends BucketAndObjectValidator {
      * @param args
      */
     def main(args: Array[String]): Unit = {
-        val newContent: String = "new object content";
-        val otherNewContent: String = "other new object content";
+        val newContent: String = "new object content"
+        val otherNewContent: String = "other new object content"
 
         // update on a bucket that was never versioned
         updateObject(AWSS3Factory.getS3ClientWithV4Signatures(), AWSS3Factory.S3_BUCKET, AWSS3Factory.S3_OBJECT, newContent, otherNewContent)
