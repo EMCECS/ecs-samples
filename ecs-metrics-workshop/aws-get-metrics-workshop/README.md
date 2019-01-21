@@ -1,5 +1,6 @@
 #
 #  AWS Get Metrics api sample for metrics published from on-premise instances
 # 
-#  Details: https://1drv.ms/w/s!Ashlm-Nw-wnWuDSAzBSGbG3Wy6aG
+#  Details: http://github.com/EMCECS/ecs-samples/files/2779641/AzureMetrics.docx
+The file referred in details, was originally intended for Azure but includes both AWS and Azure
 
