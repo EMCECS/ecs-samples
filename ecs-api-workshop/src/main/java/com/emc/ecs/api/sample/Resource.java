@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 public class Resource {
     private static final Logger logger = LoggerFactory.getLogger(Resource.class);
 
-    protected static Map<String, String> getHeaders(String token) {
+    public static Map<String, String> getHeaders(String token) {
         Map<String, String> headers = new HashMap<>();
         headers.put("X-SDS-AUTH-TOKEN", token);
         headers.put("Content-Type", "application/json");
