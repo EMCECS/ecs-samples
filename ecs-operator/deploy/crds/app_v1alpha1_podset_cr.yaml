@@ -1,0 +1,7 @@
+apiVersion: ecs.dellemc.com/v1alpha1
+kind: PodSet
+metadata:
+  name: ecs-dellemc-podset
+spec:
+  # Add fields here
+  size: 3
