@@ -132,41 +132,6 @@
 //        return response;
 //    }
 //
-//
-//    private static String getToken(String accessKeyId, String accessSecret, String ARMResource, String tenantId, String spnPayload) {
-//        String TokenEndpoint = "https://login.windows.net/{0}/oauth2/token";
-//        String address = "https://login.windows.net/" + tenantId + "/oauth2/token";
-//        logger.info("address="+address);
-//        String token = "";
-//        try {
-//            String payload = "resource=" +
-//                    java.net.URLEncoder.encode(ARMResource,"UTF-8") +
-//                    "&client_id=" + java.net.URLEncoder.encode(accessKeyId, "UTF-8") +
-//                    "&grant_type=client_credentials&client_secret=" +
-//                    java.net.URLEncoder.encode(accessSecret, "UTF-8");
-//            logger.info("payload="+payload);
-//            Map<String, String> headers = getHeaders();
-//            String response = getResponse(address, headers, payload, "POST");
-//            int start = response.indexOf("\"access_token\":\"");
-//            if ( start != -1 ) {
-//                start += 16;
-//                int end = response.indexOf("\"", start);
-//                if ( end != -1  && end > start) {
-//                    token = response.substring(start, end);
-//                    logger.info("response:" + response);
-//                } else {
-//                    logger.info("token not found in response.");
-//                }
-//            } else {
-//                logger.info("access_token not found in response.");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            logger.error("Exception:", e);
-//        }
-//        return token;
-//    }
-//
 //    private static FPPool getFP(String connectionString) throws Exception {
 //        FPPool fpPool = null;
 //        try {
