@@ -30,12 +30,11 @@ repositories {
 }
 
 dependencies {
-    // https://docs.gradle.org/current/userguide/declaring_dependencies.html
-    // compile files ('lib/fplibrary-3.3.718.jar'),
+    compile files ('./Centera_SDK/lib/FPLibrary.jar')
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.24'
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.24'
     compile group: 'com.jayway.jsonpath', name:'json-path', version:'2.1.0'
-    compile group: 'com.filepool.fplibrary', name: 'json-path', version:'3.3.718'
+    compile group: 'com.apache.commons', name: 'commons-io', version:'2.7'
     compile group: 'com.google.gms', name:'google-services', version:'4.2.0'
     implementation 'org.springframework:spring-web:5.0.2.RELEASE'
  
