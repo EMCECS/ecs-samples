@@ -1,4 +1,4 @@
-package com.emc.ecs.monitoring.sample;
+package com.emc.ecs.cas.sample;
 import com.filepool.fplibrary.*;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
@@ -8,8 +8,6 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +20,6 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static java.util.Arrays.stream;
 import static org.apache.commons.lang3.ArrayUtils.EMPTY_BYTE_ARRAY;
-import static org.joda.time.format.ISODateTimeFormat.basicDateTime;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.security.InvalidKeyException;
@@ -36,12 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /*
-* This class is a standalone utility to test the DELL ECS CAS Head Service from command-line
-* It lists the helper methods required to test the CAS Head Service.
-*/
+ * This class is a standalone utility to test the DELL ECS CAS Head Service from command-line
+ * It lists the helper methods required to test the CAS Head Service.
+ */
 public class CasTester {
     private static final Logger logger = LoggerFactory.getLogger(CasTester.class);
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = basicDateTime().withZoneUTC();
     public static final int blobSize = 1024 * 16 * 2; //32768
     private static final String DEFAULT_BLOB_TAG_NAME = "blob";
     private static final String CLIP_LIST_TAG_NAME = "clip_list";
@@ -175,7 +171,7 @@ public class CasTester {
 
     public static String getProfilePea(String ip, String port, String user, String namespace){
         String peaEndpoint = fillParams("https://{ip}:{port}/object/user-cas/secret/{namespace}/{userId}/pea",
-                                        ip, port, user, namespace);
+                ip, port, user, namespace);
         logger.info("address={}", peaEndpoint);
         String response = null;
         try {
@@ -190,9 +186,9 @@ public class CasTester {
     }
 
     public static File fetchPeaFile(String ip,
-                              String port,
-                              final String user,
-                              final String namespace) {
+                                    String port,
+                                    final String user,
+                                    final String namespace) {
         final File peaFile = new File(
                 FileUtils.getTempDirectory(),
                 String.join("-", user, ip, port) + ".pea"
@@ -250,7 +246,6 @@ public class CasTester {
         public Void call() throws Exception {
             try {
                 for (int i = 0; i < 10; i++) {
-                    final Optional<DateTime> dateTimeOp = Optional.empty();
                     final FPClip fpClip = new FPClip(casConnection.getFpPool());
                     try {
                         accept(casConnection.getFpPool(), fpClip);
@@ -295,7 +290,7 @@ public class CasTester {
         casConnection.Close();
     }
 
-    public void main(String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
         String ip = "10.247.142.111"; // NetworkUtility.getNodeIp();
         String user = "apiuser";
         String port = "3218";
@@ -304,7 +299,9 @@ public class CasTester {
         String bucket = "b6";
         try {
 
-            writeClips(ip, port, user, password, namespace);
+            CasTester tester = new CasTester();
+
+            tester.writeClips(ip, port, user, password, namespace);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,3 +309,6 @@ public class CasTester {
         }
     }
 }
+// [main] INFO com.emc.ecs.cas.sample.CasTester - address=https://10.247.142.111:3218/object/user-cas/secret/s3/apiuser
+// [main] INFO com.emc.ecs.cas.sample.CasTester - Sending a GET request to:https://10.247.142.111:3218/object/user-cas/secret/s3/apiuser
+

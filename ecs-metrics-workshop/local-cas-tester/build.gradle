@@ -27,6 +27,7 @@ repositories {
       url 'https://maven.fabric.io/public'
     }
     maven { url 'https://dl.bintray.com/android/android-tools' }
+    maven { url 'https://mvnrepository.com/artifact/org.apache.commons/commons-lang3' }
 }
 
 dependencies {
@@ -34,8 +35,10 @@ dependencies {
     compile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.24'
     compile group: 'org.slf4j', name:'slf4j-api', version: '1.7.24'
     compile group: 'com.jayway.jsonpath', name:'json-path', version:'2.1.0'
-    compile group: 'com.apache.commons', name: 'commons-io', version:'2.7'
+    compile group: 'commons-io', name:'commons-io', version:'2.5'
     compile group: 'com.google.gms', name:'google-services', version:'4.2.0'
+    compile group: 'com.google.guava', name:'guava', version:'14.0'
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
     implementation 'org.springframework:spring-web:5.0.2.RELEASE'
  
 }
@@ -45,6 +48,11 @@ task wrapper(type: Wrapper) {
 }
 
 jar {
+    // from {
+    //    configurations.compile.collect {
+    //        it.isDirectory() ? it : zipTree(it)
+    //    }
+    // }
     from {
         configurations.compile.collect {
             it.isDirectory() ? it : zipTree(it)
