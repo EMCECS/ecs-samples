@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"github.com/operator-framework/operator-sdk/podset-operator/pkg/apis/app/v1alpha1"
+	"github.com/operator-framework/operator-sdk/storagearray-operator/pkg/apis/app/v1alpha1"
 )
 
 func init() {
