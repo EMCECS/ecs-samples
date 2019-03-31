@@ -12,9 +12,9 @@ data:
     - apiVersion: apiextensions.k8s.io/v1beta1
       kind: CustomResourceDefinition
       metadata:
-        name: ecsclusters.ecs.com
+        name: ecsclusters.dellemc.com
       spec:
-        group: ecs.com
+        group: dellemc.com
         names:
           kind: ECSCluster
           listKind: ECSClusterList
@@ -130,9 +130,9 @@ data:
     - apiVersion: apiextensions.k8s.io/v1beta1
       kind: CustomResourceDefinition
       metadata:
-        name: jobs.ecs.com
+        name: jobs.dellemc.com
       spec:
-        group: ecs.com
+        group: dellemc.com
         names:
           kind: Job
           listKind: JobList
@@ -143,9 +143,9 @@ data:
     - apiVersion: apiextensions.k8s.io/v1beta1
       kind: CustomResourceDefinition
       metadata:
-        name: ecsupgrades.ecs.com
+        name: ecsupgrades.dellemc.com
       spec:
-        group: ecs.com
+        group: dellemc.com
         names:
           kind: ECSUpgrade
           listKind: ECSUpgradeList
@@ -165,7 +165,7 @@ data:
         annotations:
           capabilities: Full Lifecycle
           categories: "Storage"
-          alm-examples: '[{"apiVersion":"ecs.com/v1","kind":"ECSCluster","metadata":{"name":"example-ecs","namespace":"default"},"spec":{"secretRefName":"ecs-api","secretRefNamespace":"default"}},{"apiVersion":"ecs.com/v1","kind":"Job","metadata":{"name":"example-job","namespace":"default"},"spec":{"image":"ecs/cluster-operator:latest","args":["/var/lib/ecs"],"mountPath":"/var/lib","hostPath":"/var/lib","completionWord":"done"}},{"apiVersion":"ecs.com/v1","kind":"ECSUpgrade","metadata":{"name":"example-upgrade","namespace":"default"},"spec":{"newImage":"ecs/node:latest"}}]'
+          alm-examples: '[{"apiVersion":"dellemc.com/v1","kind":"ECSCluster","metadata":{"name":"example-ecs","namespace":"default"},"spec":{"secretRefName":"ecs-api","secretRefNamespace":"default"}},{"apiVersion":"dellemc.com/v1","kind":"Job","metadata":{"name":"example-job","namespace":"default"},"spec":{"image":"ecs/cluster-operator:latest","args":["/var/lib/ecs"],"mountPath":"/var/lib","hostPath":"/var/lib","completionWord":"done"}},{"apiVersion":"dellemc.com/v1","kind":"ECSUpgrade","metadata":{"name":"example-upgrade","namespace":"default"},"spec":{"newImage":"ecs/node:latest"}}]'
           description: Cloud-native, persistent storage for containers.
           containerImage: ecs/cluster-operator:test
           repository: https://github.com/ecs/cluster-operator
@@ -195,7 +195,7 @@ data:
 
           ECS is free to use up to 100GB of presented Storage, increasing to
           500GB after registration.  For additional capacity and support plans contact
-          sales@ecs.com.
+          sales@dellemc.com.
 
           ## Supported Features
 
@@ -242,7 +242,7 @@ data:
 
           ## Required Parameters
 
-          * `secretRefName` - the name of a secret that contains two keys for the `apiUsername` and `apiPassword` to be used as api credentials ([documentation](https://docs.ecs.com/docs/reference/cluster-operator/examples))
+          * `secretRefName` - the name of a secret that contains two keys for the `apiUsername` and `apiPassword` to be used as api credentials ([documentation](https://docs.dellemc.com/docs/reference/cluster-operator/examples))
           * `secretRefNamespace` - the namespace where the api credentials secret is stored
 
           ## About ECS
@@ -260,7 +260,7 @@ data:
         maturity: stable
         maintainers:
         - name: ECS, Inc
-          email: support@ecs.com
+          email: support@dellemc.com
 
         provider:
           name: ECS, Inc
@@ -274,7 +274,7 @@ data:
 
         links:
         - name: Documentation
-          url: https://docs.ecs.com/
+          url: https://docs.dellemc.com/
         - name: ECS Operator Source Code
           url: https://github.com/ecs/cluster-operator
 
@@ -299,7 +299,7 @@ data:
             - serviceAccountName: ecs-operator
               rules:
               - apiGroups:
-                - ecs.com
+                - dellemc.com
                 resources:
                 - ecsclusters
                 - ecsupgrades
@@ -419,7 +419,7 @@ data:
                         name: metrics
         customresourcedefinitions:
           owned:
-          - name: ecsclusters.ecs.com
+          - name: ecsclusters.dellemc.com
             version: v1
             kind: ECSCluster
             displayName: ECS Cluster
@@ -448,12 +448,12 @@ data:
             - description: Ready Nodes
               displayName: Ready
               path: ready
-          - name: jobs.ecs.com
+          - name: jobs.dellemc.com
             version: v1
             kind: Job
             displayName: ECS Job
             description: ECS Job creates special pods that run on all the node and perform an administrative task. This could be used for cluster maintenance tasks.
-          - name: ecsupgrades.ecs.com
+          - name: ecsupgrades.dellemc.com
             version: v1
             kind: ECSUpgrade
             displayName: ECS Upgrade

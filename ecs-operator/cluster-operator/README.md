@@ -18,7 +18,7 @@ chart](https://github.com/ecs/charts/tree/master/stable/ecscluster-operator).
     `--feature-gates MountPropagation=true` to the kube-apiserver and kubelet
     services.
 
-Refer to the [ECS prerequisites docs](https://docs.ecs.com/docs/prerequisites/overview)
+Refer to the [ECS prerequisites docs](https://www.dellemc.com/en-us/collaterals/unauth/data-sheets/products/storage/h13117-emc-ecs-appliance-ss.pdf)
 for more information.
 
 ## Setup/Development
@@ -37,7 +37,7 @@ for more information.
      custom resource.
 
 **NOTE**: Installing ECS on Minikube is not currently supported due to
-missing [kernel prerequisites](https://docs.ecs.com/docs/prerequisites/systemconfiguration).
+missing [kernel prerequisites](https://www.dellemc.com/en-us/collaterals/unauth/data-sheets/products/storage/h13117-emc-ecs-appliance-ss.pdf).
 
 For development, run the operator outside of the k8s cluster by running:
 
@@ -70,14 +70,14 @@ $ kubectl describe ecscluster/example-ecs
 Name:         example-ecs
 Namespace:    default
 Labels:       <none>
-Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"ecs.com/v1","kind":"ECSCluster","metadata":{"annotations":{},"name":"example-ecs","namespace":"default"},"spec":{"...
-API Version:  ecs.com/v1
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"dellemc.com/v1","kind":"ECSCluster","metadata":{"annotations":{},"name":"example-ecs","namespace":"default"},"spec":{"...
+API Version:  dellemc.com/v1
 Kind:         ECSCluster
 Metadata:
   Creation Timestamp:  2018-07-21T12:57:11Z
   Generation:          1
   Resource Version:    10939030
-  Self Link:           /apis/ecs.com/v1/namespaces/default/ecsclusters/example-ecs
+  Self Link:           /apis/dellemc.com/v1/namespaces/default/ecsclusters/example-ecs
   UID:                 955b24a4-8ce5-11e8-956a-1866da35eee2
 Spec:
   Join:  test07
@@ -164,8 +164,8 @@ $ kubectl describe ecsupgrades example-ecsupgrade
 Name:         example-ecsupgrade
 Namespace:    default
 Labels:       <none>
-Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"ecs.com/v1","kind":"ECSUpgrade","metadata":{"annotations":{},"name":"example-ecsupgrade","namespace":"default"},...
-API Version:  ecs.com/v1
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"dellemc.com/v1","kind":"ECSUpgrade","metadata":{"annotations":{},"name":"example-ecsupgrade","namespace":"default"},...
+API Version:  dellemc.com/v1
 Kind:         ECSUpgrade
 ...
 Spec:
@@ -208,12 +208,12 @@ all nodes or on selected nodes. This can be used to easily perform cleanup
 task. An example would be to create a `Job` resource:
 
 ```yaml
-apiVersion: ecs.com/v1
+apiVersion: dellemc.com/v1
 kind: Job
 metadata:
   name: cleanup-job
 spec:
-  image: darkowlzz/cleanup:v0.0.2
+  image: ecs/cleanup:v0.0.2
   args: ["/var/lib/ecs"]
   mountPath: "/var/lib"
   hostPath: "/var/lib"
@@ -226,7 +226,7 @@ spec:
         - "true"
 ```
 
-When applied, this job will run `darkowlzz/cleanup` container on the nodes that
+When applied, this job will run `ecs/cleanup` container on the nodes that
 have label `node-role.kubernetes.io/worker` with value `"true"`, mounting
 `/var/lib` and passing the argument `/var/lib/ecs`. This will run
 `rm -rf /var/lib/ecs` in the selected nodes and cleanup all the ecs
@@ -235,7 +235,7 @@ On completion, the resource description shows that the task is completed and
 can be deleted.
 
 ```bash
-$ kubectl describe jobs.ecs.com cleanup-job
+$ kubectl describe jobs.dellemc.com cleanup-job
 Name:         cleanup-job
 Namespace:    default
 ...
@@ -245,7 +245,7 @@ Spec:
   Args:
     /var/lib/ecs
   Host Path:            /var/lib
-  Image:                darkowlzz/cleanup:v0.0.2
+  Image:                ecs/cleanup:v0.0.2
   ...
 Status:
   Completed:  true
@@ -302,7 +302,7 @@ completed the task, the Job status is completed and it can be deleted.
 This can be extended to do other similar cluster management operations. This is
 also used internally in the cluster upgrade process.
 
-## Job (jobs.ecs.com) Resource Configuration
+## Job (jobs.dellemc.com) Resource Configuration
 
 The following table lists the configurable spec parameters of the
 Job custom resource and their default values.
@@ -352,7 +352,7 @@ To enable CSI, set `csi.enable` to `true` in the `ECSCluster` resource
 config.
 
 ```yaml
-apiVersion: "ecs.com/v1"
+apiVersion: "dellemc.com/v1"
 kind: "ECSCluster"
 metadata:
   name: "example-ecs"
@@ -371,7 +371,7 @@ To enable CSI Credentials, ensure that CSI is enabled by setting `csi.enable` to
 `true`:
 
 ```yaml
-apiVersion: "ecs.com/v1"
+apiVersion: "dellemc.com/v1"
 kind: "ECSCluster"
 metadata:
   name: "example-ecs"

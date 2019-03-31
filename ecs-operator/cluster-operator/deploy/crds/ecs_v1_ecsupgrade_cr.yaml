@@ -1,4 +1,4 @@
-apiVersion: ecs.com/v1
+apiVersion: dellemc.com/v1
 kind: ECSUpgrade
 metadata:
   name: example-ecsupgrade

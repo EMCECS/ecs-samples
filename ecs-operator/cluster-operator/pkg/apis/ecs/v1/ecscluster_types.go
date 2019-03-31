@@ -126,7 +126,7 @@ type ECSClusterSpec struct {
 	// the Pod has been marked as killed.  In practice this means that failover
 	// of a StatefulSet pod is a manual operation.
 	//
-	// By enabling Pod Fencing and setting the `ecs.com/fenced=true` label
+	// By enabling Pod Fencing and setting the `dellemc.com/fenced=true` label
 	// on a Pod, ECS will enable automated Pod failover (by killing the
 	// application Pod on the failed node) if the following conditions exist:
 	//
@@ -136,7 +136,7 @@ type ECSClusterSpec struct {
 	//   seconds.  At this point all volumes on the failed node are marked
 	//   offline (irrespective of whether fencing is enabled) and volume
 	//   failover starts.
-	// - The Pod has the label `ecs.com/fenced=true` set.
+	// - The Pod has the label `dellemc.com/fenced=true` set.
 	// - The Pod has at least one ECS volume attached.
 	// - Each ECS volume has at least 1 healthy replica.
 	//

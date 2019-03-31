@@ -15,7 +15,7 @@ metadata:
     alm-examples: |-
       [
         {
-          "apiVersion": "ecs.com/v1",
+          "apiVersion": "dellemc.com/v1",
           "kind": "ECSCluster",
           "metadata": {
             "name": "example-ecs",
@@ -27,7 +27,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "ecs.com/v1",
+          "apiVersion": "dellemc.com/v1",
           "kind": "Job",
           "metadata": {
             "name": "example-job",
@@ -42,7 +42,7 @@ metadata:
           }
         },
         {
-          "apiVersion": "ecs.com/v1",
+          "apiVersion": "dellemc.com/v1",
           "kind": "ECSUpgrade",
           "metadata": {
             "name": "example-upgrade",
@@ -77,7 +77,7 @@ spec:
 
     ECS is free to use up to 100GB of presented Storage, increasing to
     500GB after registration.  For additional capacity and support plans contact
-    sales@ecs.com.
+    sales@dellemc.com.
 
     ## Supported Features
 
@@ -124,7 +124,7 @@ spec:
 
     ## Required Parameters
 
-    * `secretRefName` - the name of a secret that contains two keys for the `apiUsername` and `apiPassword` to be used as api credentials ([documentation](https://docs.ecs.com/docs/reference/cluster-operator/examples))
+    * `secretRefName` - the name of a secret that contains two keys for the `apiUsername` and `apiPassword` to be used as api credentials ([documentation](https://docs.dellemc.com/docs/reference/cluster-operator/examples))
     * `secretRefNamespace` - the namespace where the api credentials secret is stored
 
     ## About ECS
@@ -142,7 +142,7 @@ spec:
   maturity: stable
   maintainers:
   - name: ECS, Inc
-    email: support@ecs.com
+    email: support@dellemc.com
 
   provider:
     name: ECS, Inc
@@ -156,7 +156,7 @@ spec:
 
   links:
   - name: Documentation
-    url: https://docs.ecs.com/
+    url: https://docs.dellemc.com/
   - name: ECS Operator Source Code
     url: https://github.com/ecs/cluster-operator
 
@@ -181,7 +181,7 @@ spec:
       - serviceAccountName: ecs-operator
         rules:
         - apiGroups:
-          - ecs.com
+          - dellemc.com
           resources:
           - ecsclusters
           - ecsupgrades
@@ -301,7 +301,7 @@ spec:
                   name: metrics
   customresourcedefinitions:
     owned:
-    - name: ecsclusters.ecs.com
+    - name: ecsclusters.dellemc.com
       version: v1
       kind: ECSCluster
       displayName: ECS Cluster
@@ -330,12 +330,12 @@ spec:
       - description: Ready Nodes
         displayName: Ready
         path: ready
-    - name: jobs.ecs.com
+    - name: jobs.dellemc.com
       version: v1
       kind: Job
       displayName: ECS Job
       description: ECS Job creates special pods that run on all the node and perform an administrative task. This could be used for cluster maintenance tasks.
-    - name: ecsupgrades.ecs.com
+    - name: ecsupgrades.dellemc.com
       version: v1
       kind: ECSUpgrade
       displayName: ECS Upgrade

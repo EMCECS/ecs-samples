@@ -25,7 +25,7 @@ import (
 )
 
 var gvk = schema.GroupVersionKind{
-	Group:   "ecs.com",
+	Group:   "dellemc.com",
 	Version: "v1",
 	Kind:    "ECSCluster",
 }

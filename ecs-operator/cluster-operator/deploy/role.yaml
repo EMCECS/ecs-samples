@@ -4,7 +4,7 @@ metadata:
   name: ecs-operator
 rules:
 - apiGroups:
-  - ecs.com
+  - dellemc.com
   resources:
   - ecsclusters
   - ecsupgrades

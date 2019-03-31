@@ -543,7 +543,7 @@ func newClusterRole(name string, rules []rbacv1.PolicyRule) *rbacv1.ClusterRole 
 	}
 }
 
-// newImagePullJob creates a jobs.ecs.com instance for pulling container
+// newImagePullJob creates a jobs.dellemc.com instance for pulling container
 // image and return. It uses the cluster instance to set the NodeSelectorTerm,
 // in order to pull the image only on the nodes that are part of the cluster.
 func newImagePullJob(cr *ecsv1.ECSUpgrade, cluster *ecsv1.ECSCluster) *ecsv1.Job {

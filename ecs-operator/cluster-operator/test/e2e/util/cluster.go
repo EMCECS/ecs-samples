@@ -32,7 +32,7 @@ func NewECSCluster(namespace string, clusterSpec ecs.ECSClusterSpec) *ecs.ECSClu
 	return &ecs.ECSCluster{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ECSCluster",
-			APIVersion: "ecs.com/v1",
+			APIVersion: "dellemc.com/v1",
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      "example-ecs",
@@ -50,7 +50,7 @@ func SetupOperator(t *testing.T, ctx *framework.TestCtx) {
 	clusterList := &ecs.ECSClusterList{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       "ECSCluster",
-			APIVersion: "ecs.com/v1",
+			APIVersion: "dellemc.com/v1",
 		},
 	}
 	err := framework.AddToFrameworkScheme(apis.AddToScheme, clusterList)
