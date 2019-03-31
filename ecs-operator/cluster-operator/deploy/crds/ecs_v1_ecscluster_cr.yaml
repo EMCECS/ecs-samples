@@ -1,0 +1,96 @@
+apiVersion: ecs.com/v1
+kind: ECSCluster
+metadata:
+  name: example-ecscluster
+  namespace: "default"
+spec:
+  secretRefName: "ecs-api"
+  secretRefNamespace: "default"
+  namespace: "ecs"
+  # disableTelemetry: true
+  # images:
+  #   nodeContainer:
+  #   initContainer:
+  #   csiNodeDriverRegistrarContainer:
+  #   csiClusterDriverRegistrarContainer:
+  #   csiExternalProvisionerContainer:
+  #   csiExternalAttacherContainer:
+  csi:
+    enable: true
+  #   endpoint: /var/lib/kubelet/device-plugins/
+  #   registrarSocketDir: /var/lib/kubelet/device-plugins/
+  #   kubeletDir: /var/lib/kubelet
+  #   pluginDir: /var/lib/kubelet/plugins/ecs/
+  #   deviceDir: /dev
+  #   registrationDir: /var/lib/kubelet/plugins
+  #   enableProvisionCreds: false
+  #   enableControllerPublishCreds: false
+  #   enableNodePublishCreds: false
+  #   kubeletRegistrationPath: /var/lib/kubelet/plugins/ecs/csi.sock
+  #   driverRegisterationMode: node-register
+  #   DriverRequiresAttachment: "true"
+  # service:
+  #   name: "ecs"
+  #   type: "ClusterIP"
+  #   externalPort: 5705
+  #   internalPort: 5705
+  #   annotations:
+  #     service.beta.kubernetes.io/aws-load-balancer-backend-protocol: http
+  #     service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443,8443"
+  # ingress:
+  #   enable: false
+  #   hostname: ecs.local
+  #   tls: false
+  #   annotations:
+  #     kubernetes.io/ingress.class: nginx
+  #     kubernetes.io/tls-acme: true
+  # sharedDir should be set if running kubelet in a container.  This should
+  # be the path shared into to kubelet container, typically:
+  # "/var/lib/kubelet/plugins/kubernetes.io~ecs".  If not set, defaults
+  # will be used.
+  # sharedDir:
+  # kvBackend:
+  #   address:
+  #   backend:
+  # nodeSelectorTerms:
+  #   - matchExpressions:
+  #     - key: somekey
+  #       operator: In
+  #       values:
+  #       - nodefoo
+  # tolerations:
+  #   - key: somekey 
+  #     operator: "Equal"
+  #     value: nodefoo
+  #     effect: "NoSchedule"
+  # resources:
+  #   limits:
+  #     memory: "1Gi"
+  #   requests:
+  #     memory: "702Mi"
+  # disableFencing: false
+
+
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "ecs-api"
+  namespace: "default"
+  labels:
+    app: "ecs"
+type: "kubernetes.io/ecs"
+data:
+  # echo -n '<secret>' | base64
+  apiUsername: c3RvcmFnZW9z
+  apiPassword: c3RvcmFnZW9z
+  # Add base64 encoded TLS cert and key below if ingress.tls is set to true.
+  # tls.crt:
+  # tls.key:
+  # Add base64 encoded creds below for CSI credentials.
+  # csiProvisionUsername:
+  # csiProvisionPassword:
+  # csiControllerPublishUsername:
+  # csiControllerPublishPassword:
+  # csiNodePublishUsername:
+  # csiNodePublishPassword:
