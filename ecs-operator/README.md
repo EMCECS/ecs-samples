@@ -2,14 +2,8 @@
 This is a Kubernetes operator for DELLEMC ECS Object Storage
 https://www.dellemc.com/en-us/storage/ecs/index.htm
 
+A guide to writing a Kubernetes operator for DellEMC Elastic Cloud Storage now follows:
 This ECS operator manages ECS clusters deployed to Kubernetes and automates tasks related to an ECS cluster.
-
-#Requirements
-Kubernetes 1.8+
-An existing Apache Zookeeper 3.5 cluster. 
-
-# Description
-A guide to writing a Kubernetes operator for DellEMC Elastic Cloud Storage
 
 # Introduction: 
 
