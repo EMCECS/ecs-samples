@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nautilus-cluster-operator
+  namespace: nautilus-operator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: nautilus-cluster-operator
+  template:
+    metadata:
+      labels:
+        name: nautilus-cluster-operator
+    spec:
+      serviceAccountName: nautiluscluster-operator-sa
+      containers:
+        - name: nautilus-cluster-operator
+          image: nautilus/cluster-operator:test
+          ports:
+          - containerPort: 60000
+            name: metrics
+          command:
+          - cluster-operator
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: WATCH_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: "cluster-operator"
+      tolerations:
+      - key: "key"
+        operator: "Equal"
+        value: "value"
+        effect: "NoSchedule" 

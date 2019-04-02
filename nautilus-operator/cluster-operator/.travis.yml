@@ -1,0 +1,76 @@
+sudo: required
+
+language: go
+
+go:
+  - "1.11"
+
+env:
+  global:
+    - CHANGE_MINIKUBE_NONE_USER=true
+    - K8S_VERSION="v1.10.0"
+    - MINIKUBE_VERSION="v0.28.2"
+    - IMAGE_NAME=nautilus/cluster-operator
+    - IMAGE_TAG=test
+
+before_install:
+  - |
+      if ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md)|(\.MD)|(\.png)|(\.pdf)|^(doc/)|^(MAINTAINERS)|^(LICENSE)'; then
+        # Do not skip if it's a tagged build.
+        if [[ -z "$TRAVIS_TAG" ]]; then
+          echo "Only doc files were updated, not running the CI."
+          exit
+        fi
+      fi
+#  - docker run -d -p 2399:2399 quay.io/coreos/etcd:v3.3.10 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2399 -listen-client-urls http://0.0.0.0:2399
+
+# Skip downloading deps.
+install: true
+
+jobs:
+  include:
+    - go: "1.11"
+      sudo: required
+      env:
+        - "TEST_CLUSTER=kind"
+        - "INSTALL_METHOD=olm"
+      name: OLM on KinD (k8s-1.13)
+      script: ./test/e2e.sh $TEST_CLUSTER $INSTALL_METHOD
+    - &base-test
+      go: "1.11"
+      sudo: required
+      env:
+        - "TEST_CLUSTER=minikube"
+        - "INSTALL_METHOD=none"
+      name: Minikube (k8s-1.10)
+      script: ./test/e2e.sh $TEST_CLUSTER $INSTALL_METHOD
+    - <<: *base-test
+      env:
+        - "TEST_CLUSTER=openshift"
+        - "INSTALL_METHOD=none"
+      name: OpenShift-3.11 (k8s-1.11)
+    - <<: *base-test
+      env:
+        - "TEST_CLUSTER=kind"
+        - "INSTALL_METHOD=none"
+      name: KinD (k8s-1.13)
+    - stage: deploy
+      go: "1.11"
+      sudo: required
+      env:
+        - "TEST_CLUSTER=kind"
+        - "INSTALL_METHOD=none"
+      name: Publish Container Image
+      script:
+        - make image/cluster-operator
+      before_deploy:
+        - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+      deploy:
+        - provider: script
+          script: bash scripts/deploy.sh tagged
+          on:
+            tags: true
+        - provider: script
+          script: bash scripts/deploy.sh develop
+          on:
+            branch: master
