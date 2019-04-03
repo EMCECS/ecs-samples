@@ -990,6 +990,56 @@ func TestDeployTolerations(t *testing.T) {
 }
 
 func TestDeployNodeResources(t *testing.T) {
+//        doCleanup := true
+//        ctx := framework.NewTestCtx(t)
+//        defer func() {
+//                if doCleanup {
+//                        ctx.Cleanup()
+//                }
+//        }()
+
+//        namespace, err := ctx.GetNamespace()
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+//        f := framework.Global
+
+//        pravega, err := pravega_e2eutil.CreateCluster(t, f, ctx, pravega_e2eutil.NewDefaultCluster(namespace))
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+
+//        podSize := 5
+//        err = pravega_e2eutil.WaitForClusterToBecomeReady(t, f, ctx, pravega, podSize)
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+
+//        err = pravega_e2eutil.WriteAndReadData(t, f, ctx, pravega)
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+
+//        err = pravega_e2eutil.DeleteCluster(t, f, ctx, pravega)
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+
+//        doCleanup = false
+
+//        err = pravega_e2eutil.WaitForClusterToTerminate(t, f, ctx, pravega)
+//        if err != nil {
+//                t.Fatal(err)
+//        }
+
+//        err = pravega_e2eutil.RestartTier2(t, f, ctx, namespace)
+//        if err != nil {
+//               t.Fatal(err)
+//        }
+
+}
+
+func TestDeployNodeResources(t *testing.T) {
 	memLimit, _ := resource.ParseQuantity("1Gi")
 	memReq, _ := resource.ParseQuantity("702Mi")
 	stosCluster := &api.NautilusCluster{

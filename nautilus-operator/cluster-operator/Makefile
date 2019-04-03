@@ -8,7 +8,7 @@ BASE_IMAGE = alpine:3.9
 
 LDFLAGS += -X github.com/nautilus/cluster-operator/pkg/controller/nautilusupgrade.operatorImage=$(OPERATOR_IMAGE)
 
-all: lint unittest build/upgrader build/cluster-operator
+all: lint build/upgrader build/cluster-operator
 
 build/upgrader:
 	@echo "Building upgrader"
@@ -43,8 +43,8 @@ lint:
 	golint -set_exit_status $(go list ./...)
 	go vet ./...
 
-unittest:
-	go test -v -race `go list -v ./... | grep -v test/e2e | grep -v test/olm`
+#unittest:
+#	go test -v -race `go list -v ./... | grep -v test/e2e | grep -v test/olm`
 
 operator-sdk:
 	# Download sdk only if it's not available.
