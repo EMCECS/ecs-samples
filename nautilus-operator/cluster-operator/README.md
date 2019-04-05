@@ -1,557 +1,409 @@
-# Nautilus Operator
+# Nautilus cluster-operator
 
- [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0) [![GoDoc](https://godoc.org/github.com/nautilus/nautilus-operator?status.svg)](https://godoc.org/github.com/nautilus/nautilus-operator) [![Build Status](https://travis-ci.org/nautilus/nautilus-operator.svg?branch=master)](https://travis-ci.org/nautilus/nautilus-operator) [![Go Report](https://goreportcard.com/badge/github.com/nautilus/nautilus-operator)](https://goreportcard.com/report/github.com/nautilus/nautilus-operator)
+[![Build Status](https://travis-ci.org/nautilus/cluster-operator.svg?branch=master)](https://travis-ci.org/nautilus/cluster-operator)
+[![CircleCI](https://circleci.com/gh/nautilus/cluster-operator.svg?style=svg)](https://circleci.com/gh/nautilus/cluster-operator)
 
-### Project status: alpha
+The Nautilus Cluster Operator deploys and configures a Nautilus cluster on
+Kubernetes.
 
-The project is currently alpha. While no breaking API changes are currently planned, we reserve the right to address bugs and change the API before the project is declared stable.
+For quick installation of the cluster operator, use the [cluster operator helm
+chart](https://github.com/nautilus/charts/tree/master/stable/nautiluscluster-operator).
 
-## Table of Contents
+## Pre-requisites
 
- * [Overview](#overview)
- * [Requirements](#requirements)
- * [Usage](#usage)    
-    * [Installation of the Operator](#install-the-operator)
-    * [Deploy a sample Nautilus Cluster](#deploy-a-sample-nautilus-cluster)
-    * [Uninstall the Nautilus Cluster](#uninstall-the-nautilus-cluster)
-    * [Uninstall the Operator](#uninstall-the-operator)
- * [Configuration](#configuration)
-    * [Use non-default service accounts](#use-non-default-service-accounts)
-    * [Installing on a Custom Namespace with RBAC enabled](#installing-on-a-custom-namespace-with-rbac-enabled)
-    * [Tier 2: Google Filestore Storage](#use-google-filestore-storage-as-tier-2)
-    * [Tune Nautilus Configurations](#tune-nautilus-configuration)
- * [Development](#development)
-    * [Build the Operator Image](#build-the-operator-image)
-    * [Installation on GKE](#installation-on-google-kubernetes-engine)
-    * [Direct Access to Cluster](#direct-access-to-the-cluster)
-    * [Run the Operator Locally](#run-the-operator-locally)
-* [Releases](#releases)
-* [Troubleshooting](#troubleshooting)
-    * [Helm Error: no available release name found](#helm-error-no-available-release-name-found)
-    * [NFS volume mount failure: wrong fs type](#nfs-volume-mount-failure-wrong-fs-type)
-## Overview
+* Kubernetes 1.9+
+* Kubernetes must be configured to allow (configured by default in 1.10+):
+  * Privileged mode containers (enabled by default)
+  * Feature gate: MountPropagation=true.  This can be done by appending
+    `--feature-gates MountPropagation=true` to the kube-apiserver and kubelet
+    services.
 
-[Nautilus](http://nautilus.io) is an open source distributed storage service implementing Streams. It offers Stream as the main primitive for the foundation of reliable storage systems: *a high-performance, durable, elastic, and unlimited append-only byte stream with strict ordering and consistency*.
+Refer to the [Nautilus prerequisites docs](https://www.dellemc.com/en-us/collaterals/unauth/data-sheets/products/storage/h13117-emc-nautilus-appliance-ss.pdf)
+for more information.
 
-The Nautilus Operator manages Nautilus clusters deployed to Kubernetes and automates tasks related to operating a Nautilus cluster.
+## Setup/Development
 
-- [x] Create and destroy a Nautilus cluster
-- [x] Resize cluster
-- [ ] Rolling upgrades
+1. Install [operator-sdk](https://github.com/operator-framework/operator-sdk/tree/master#quick-start).
+2. Run `operator-sdk generate k8s` if there's a change in api type.
+3. Build operator container with `operator-sdk build nautilus/cluster-operator:<tag>`
+4. Apply the manifests in `deploy/` to install the operator
+   * Apply `namespace.yaml` to create the `nautilus-operator` namespace.
+   * Apply `service_account.yaml`, `role.yaml` and `role_binding.yaml` to create
+    a service account and to grant all the permissions.
+   * Apply `crds/*_crd.yaml` to define the custom resources.
+   * Apply `operator.yaml` to install the operator. Change the container image
+     in this file when installing a new operator.
+   * Apply `crds/*_nautiluscluster_cr.yaml` to create a `NautilusCluster`
+     custom resource.
 
-> Note that unchecked features are in the roadmap but not available yet.
+**NOTE**: Installing Nautilus on Minikube is not currently supported due to
+missing [kernel prerequisites](https://www.dellemc.com/en-us/collaterals/unauth/data-sheets/products/storage/h13117-emc-nautilus-appliance-ss.pdf).
 
-## Requirements
+For development, run the operator outside of the k8s cluster by running:
 
-- Kubernetes 1.8+
-- An existing Apache Zookeeper 3.5 cluster. This can be easily deployed using our [Zookeeper operator](https://github.com/nautilus/zookeeper-operator)
-
-## Usage
-
-### Install the Operator
-
-> Note: If you are running on Google Kubernetes Engine (GKE), please [check this first](#installation-on-google-kubernetes-engine).
-
-Run the following command to install the `NautilusCluster` custom resource definition (CRD), create the `nautilus-operator` service account, roles, bindings, and the deploy the Operator.
-
-```
-$ kubectl create -f deploy
+```bash
+make local-run
 ```
 
-Verify that the Nautilus Operator is running.
+Build operator container image:
 
-```
-$ kubectl get deploy
-NAME                 DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-nautilus-operator     1         1         1            1           40s
+```bash
+make image/cluster-operator OPERATOR_IMAGE=nautilus/cluster-operator:test
 ```
 
-### Deploy a sample Nautilus cluster
+This builds all the components and copies the binaries into the same container.
 
-Nautilus requires a long term storage provider known as Tier 2 storage. The following Tier 2 storage providers are supported:
+After creating a resource, query the resource:
 
-- Filesystem (NFS)
-- [Google Filestore](#using-google-filestore-storage-as-tier-2)
-- [DellEMC ECS](https://www.dellemc.com/sr-me/storage/ecs/index.htm)
-- HDFS (must support Append operation)
-
-The following example uses an NFS volume provisioned by the [NFS Server Provisioner](https://github.com/kubernetes/charts/tree/master/stable/nfs-server-provisioner) helm chart to provide Tier 2 storage.
-
-```
-$ helm install stable/nfs-server-provisioner
+```bash
+$ kubectl get nautiluscluster
+NAME                READY     STATUS    AGE
+example-nautilus   3/3       Running   4m
 ```
 
-Verify that the `nfs` storage class is now available.
+## Inspect a NautilusCluster Resource
 
+Get all the details about the cluster:
+
+```bash
+$ kubectl describe nautiluscluster/example-nautilus
+Name:         example-nautilus
+Namespace:    default
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"dellemc.com/v1","kind":"NautilusCluster","metadata":{"annotations":{},"name":"example-nautilus","namespace":"default"},"spec":{"...
+API Version:  dellemc.com/v1
+Kind:         NautilusCluster
+Metadata:
+  Creation Timestamp:  2018-07-21T12:57:11Z
+  Generation:          1
+  Resource Version:    10939030
+  Self Link:           /apis/dellemc.com/v1/namespaces/default/nautilusclusters/example-nautilus
+  UID:                 955b24a4-8ce5-11e8-956a-1866da35eee2
+Spec:
+  Join:  test07
+Status:
+  Node Health Status:
+  ...
+  ...
+  Nodes:
+    test09
+    test08
+    test07
+  Phase:  Running
+  Ready:  3/3
+Events:   <none>
 ```
-$ kubectl get storageclass
-NAME                 PROVISIONER                                             AGE
-nfs                  cluster.local/elevated-leopard-nfs-server-provisioner   34s
+
+## NautilusCluster Resource Configuration
+
+Once the Nautilus operator is running, a Nautilus cluster can be deployed by
+creating a Cluster Configuration. The parameters specified in the configuration
+will define how Nautilus is deployed, the rest of the installation details are
+handled by the operator.
+
+The following tables lists the configurable spec
+parameters of the NautilusCluster custom resource and their default values.
+
+Parameter | Description | Default
+--------- | ----------- | -------
+`secretRefName` | Reference name of nautilus secret |
+`secretRefNamespace` | Namespace of nautilus secret |
+`namespace` | Namespace where nautilus cluster resources are created | `nautilus`
+`images.nodeContainer` | Nautilus node container image | `nautilus/node:1.1.0`
+`images.initContainer` | Nautilus init container image | `nautilus/init:0.1`
+`images.csiNodeDriverRegistrarContainer` | CSI Node Driver Registrar Container image | `quay.io/k8scsi/csi-node-driver-registrar:v1.0.1`
+`images.csiClusterDriverRegistrarContainer` | CSI Cluster Driver Registrar Container image | `quay.io/k8scsi/csi-cluster-driver-registrar:v1.0.1`
+`images.csiExternalProvisionerContainer` | CSI External Provisioner Container image | `nautilus/csi-provisioner:v1.0.1`
+`images.csiExternalAttacherContainer` | CSI External Attacher Container image | `quay.io/k8scsi/csi-attacher:v1.0.1`
+`csi.enable` | Enable CSI setup | `false`
+`csi.enableProvisionCreds` | Enable CSI provision credentials | `false`
+`csi.enableControllerPublishCreds` | Enable CSI controller publish credentials | `false`
+`csi.enableNodePublishCreds` | Enable CSI node publish credentials | `false`
+`service.name` | Name of the Service used by the cluster | `nautilus`
+`service.type` | Type of the Service used by the cluster | `ClusterIP`
+`service.externalPort` | External port of the Service used by the cluster | `5705`
+`service.internalPort` | Internal port of the Service used by the cluster | `5705`
+`service.annotations` | Annotations of the Service used by the cluster |
+`ingress.enable` | Enable ingress for the cluster | `false`
+`ingress.hostname` | Hostname to be used in cluster ingress | `nautilus.local`
+`ingress.tls` | Enable TLS for the ingress | `false`
+`ingress.annotations` | Annotations of the ingress used by the cluster |
+`sharedDir` | Path to be shared with kubelet container when deployed as a pod | `/var/lib/kubelet/plugins/kubernetes.io~nautilus`
+`kvBackend.address` | Comma-separated list of addresses of external key-value store. (`1.2.3.4:2379,2.3.4.5:2379`) |
+`kvBackend.backend` | Name of the key-value store to use. Set to `etcd` for external key-value store. | `embedded`
+`pause` | Pause the operator for cluster maintenance | `false`
+`debug` | Enable debug mode for all the cluster nodes | `false`
+`disableFencing` | Disable Pod fencing | `false`
+`disableTelemetry` | Disable telemetry reports | `false`
+`nodeSelectorTerms` | Set node selector for nautilus pod placement |
+`tolerations` | Set pod tolerations for nautilus pod placement |
+`resources` | Set resource requirements for the containers |
+
+## Upgrading a Nautilus Cluster
+
+An existing Nautilus cluster can be upgraded to a new version of Nautilus by
+creating an Upgrade Configuration. The cluster-operator takes care of
+downloading the new container image and updating all the nodes with new version
+of Nautilus.
+An example of `NautilusUpgrade` resource is [nautilus_v1_nautilusupgrade_cr.yaml](/deploy/crds/nautilus_v1_nautilusupgrade_cr.yaml).
+
+Only offline upgrade is supported for now by cluster-operator. During the
+upgrade, Nautilus maintenance mode is enabled, the applications that use
+Nautilus volumes are scaled down and the whole Nautilus cluster is restarted
+with a new version. Once the Nautilus cluster becomes usable, the applications
+are scaled up to their previous configuration. Once the update is complete, make
+sure to delete the upgrade resource to put the Nautilus cluster in normal mode.
+This will disable the maintenance mode.
+
+Once an upgrade resource is created, events related to the upgrade can be
+viewed in the upgrade object description. All the status and errors, if any,
+encountered during the upgrade are posted as events.
+
+```bash
+$ kubectl describe nautilusupgrades example-nautilusupgrade
+Name:         example-nautilusupgrade
+Namespace:    default
+Labels:       <none>
+Annotations:  kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"dellemc.com/v1","kind":"NautilusUpgrade","metadata":{"annotations":{},"name":"example-nautilusupgrade","namespace":"default"},...
+API Version:  dellemc.com/v1
+Kind:         NautilusUpgrade
 ...
+Spec:
+  New Image:  nautilus/node:1.0.0
+Events:
+  Type    Reason           Age   From                Message
+  ----    ------           ----  ----                -------
+  Normal  PullImage         4m    nautilus-upgrader  Pulling the new container image
+  Normal  PauseClusterCtrl  2m    nautilus-upgrader  Pausing the cluster controller and enabling cluster maintenance mode
+  Normal  UpgradeInit       2m    nautilus-upgrader  Nautilus upgrade of cluster example-nautilus started
+  Normal  UpgradeComplete   0s    nautilus-upgrader  Nautilus upgraded to nautilus/node:1.0.0. Delete upgrade object to disable cluster maintenance mode
 ```
 
-> Note: This is ONLY intended as a demo and should NOT be used for production deployments.
+## NautilusUpgrade Resource Configuration
 
-Once the NFS server provisioner is installed, you can create a `PersistentVolumeClaim` that will be used as Tier 2 for Nautilus. Create a `pvc.yaml` file with the following content.
+The following table lists the configurable spec parameters of the
+NautilusUpgrade custom resource and their default values.
+
+Parameter | Description | Default
+--------- | ----------- | -------
+`newImage` | Nautilus node container image to upgrade to |
+
+## Cleanup Old Configurations
+
+Nautilus creates and saves its files at `/var/lib/nautilus` on the hosts. This
+also contains some configurations of the cluster. To do a fresh install of
+Nautilus, these files need to be deleted.
+
+__WARNING__: This will delete any existing data and won't be recoverable.
+
+__NOTE__: When using an external etcd, the data related to nautilus should also
+be removed.
+
+```bash
+ETCDCTL_API=3 /usr/local/bin/etcdctl --endpoints http://nautilus-etcd-server:2379 del --prefix nautilus
+```
+
+The cluster-operator provides a `Job`resource that can execute certain tasks on
+all nodes or on selected nodes. This can be used to easily perform cleanup
+task. An example would be to create a `Job` resource:
 
 ```yaml
-kind: PersistentVolumeClaim
-apiVersion: v1
+apiVersion: dellemc.com/v1
+kind: Job
 metadata:
-  name: nautilus-tier2
+  name: cleanup-job
 spec:
-  storageClassName: "nfs"
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 50Gi
+  image: nautilus/cleanup:v0.0.2
+  args: ["/var/lib/nautilus"]
+  mountPath: "/var/lib"
+  hostPath: "/var/lib"
+  completionWord: "done"
+  nodeSelectorTerms:
+    - matchExpressions:
+      - key: node-role.kubernetes.io/worker
+        operator: In
+        values:
+        - "true"
 ```
 
+When applied, this job will run `nautilus/cleanup` container on the nodes that
+have label `node-role.kubernetes.io/worker` with value `"true"`, mounting
+`/var/lib` and passing the argument `/var/lib/nautilus`. This will run
+`rm -rf /var/lib/nautilus` in the selected nodes and cleanup all the nautilus
+files. To run it on all the nodes, remove the `nodeSelectorTerms` attribute.
+On completion, the resource description shows that the task is completed and
+can be deleted.
+
+```bash
+$ kubectl describe jobs.dellemc.com cleanup-job
+Name:         cleanup-job
+Namespace:    default
+...
+...
+Spec:
+  Completion Word:  
+  Args:
+    /var/lib/nautilus
+  Host Path:            /var/lib
+  Image:                nautilus/cleanup:v0.0.2
+  ...
+Status:
+  Completed:  true
+Events:
+  Type    Reason        Age   From                       Message
+  ----    ------        ----  ----                       -------
+  Normal  JobCompleted  39s   nautiluscluster-operator  Job Completed. Safe to delete.
 ```
-$ kubectl create -f pvc.yaml
+
+Deleting the resource, will terminate all the pods that were created to run the
+task.
+
+Internally, this `Job` is backed by a controller that creates pods using a
+DaemonSet. Job containers have to be built in a specific way to achieve this
+behavior.
+
+In the above example, the cleanup container runs a shell script(`script.sh`):
+
+```bash
+#!/bin/ash
+
+set -euo pipefail
+
+# Gracefully handle the TERM signal sent when deleting the daemonset
+trap 'exit' TERM
+
+# This is the main command that's run by this script on
+# all the nodes.
+rm -rf $1
+
+# Let the monitoring script know we're done.
+echo "done"
+
+# this is a workaround to prevent the container from exiting
+# and k8s restarting the daemonset pod
+while true; do sleep 1; done
 ```
-Use the following YAML template to install a small development Nautilus Cluster (3 Bookies, 1 Controller, 3 Segment Stores). Create a `nautilus.yaml` file with the following content.
+
+And the container image is made with Dockerfile:
+
+```dockerfile
+FROM alpine:3.6
+COPY script.sh .
+RUN chmod u+x script.sh
+ENTRYPOINT ["./script.sh"]
+```
+
+The script, after running the main command, enters into a sleep state, instead
+of exiting. This is needed because we don't want the container to exit and start
+again and again. Once completed, it echos "done". This is read by the Job
+controller to figure out when the task is completed. Once all the pods have
+completed the task, the Job status is completed and it can be deleted.
+
+This can be extended to do other similar cluster management operations. This is
+also used internally in the cluster upgrade process.
+
+## Job (jobs.dellemc.com) Resource Configuration
+
+The following table lists the configurable spec parameters of the
+Job custom resource and their default values.
+
+Parameter | Description | Default
+--------- | ----------- | -------
+`image` | Container image that the job runs |
+`args` | Any arguments to be passed when the container is run |
+`hostPath` | Path on the host that is mounted on the job container |
+`mountPath` | Path on the job container where the hostPath is mounted |
+`completionWord` | The word that job controller looks for in the pod logs to determine if the task is completed |
+`labelSelector` | Labels that are added to the job pods and are used to select them. |
+`nodeSelectorTerms` | This can be used to select the nodes where the job runs. |
+
+## TLS Support
+
+To enable TLS, ensure that an ingress controller is installed in the cluster.
+Set `ingress.enable` and `ingress.tls` to `true`.
+Store the TLS cert and key as part of the nautilus secret as:
 
 ```yaml
-apiVersion: "nautilus.nautilus.io/v1alpha1"
+apiVersion: v1
+kind: Secret
+metadata:
+  name: "nautilus-api"
+...
+...
+data:
+  # echo -n '<secret>' | base64
+  ...
+  ...
+  # Add base64 encoded TLS cert and key.
+  tls.crt:
+  tls.key:
+```
+
+## CSI
+
+Nautilus also supports the [Container Storage Interface (CSI)](https://github.com/container-storage-interface/spec)
+to communicate with Kubernetes.
+
+Only versions 1.10+ are supported. CSI ensures forward compatibility with
+future releases of Kubernetes, as vendor-specific drivers will soon be
+deprecated from Kubernetes. However, some functionality is not yet supported.
+
+To enable CSI, set `csi.enable` to `true` in the `NautilusCluster` resource
+config.
+
+```yaml
+apiVersion: "dellemc.com/v1"
 kind: "NautilusCluster"
 metadata:
-  name: "nautilus"
+  name: "example-nautilus"
+  namespace: "default"
 spec:
-  zookeeperUri: [ZOOKEEPER_HOST]:2181
-
-  bookkeeper:
-    image:
-      repository: nautilus/bookkeeper
-      tag: 0.4.0
-      pullPolicy: IfNotPresent
-
-    replicas: 3
-
-    storage:
-      ledgerVolumeClaimTemplate:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: "standard"
-        resources:
-          requests:
-            storage: 10Gi
-
-      journalVolumeClaimTemplate:
-        accessModes: [ "ReadWriteOnce" ]
-        storageClassName: "standard"
-        resources:
-          requests:
-            storage: 10Gi
-
-    autoRecovery: true
-
-  nautilus:
-    controllerReplicas: 1
-    nodeReplicas: 3
-
-    cacheVolumeClaimTemplate:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: "standard"
-      resources:
-        requests:
-          storage: 20Gi
-
-    image:
-      repository: nautilus/nautilus
-      tag: 0.4.0
-      pullPolicy: IfNotPresent
-
-    tier2:
-      filesystem:
-        persistentVolumeClaim:
-          claimName: nautilus-tier2
+  secretRefName: "nautilus-api"
+  secretRefNamespace: "default"
+  csi:
+    enable: true
 ```
 
-where:
+### CSI Credentials
 
-- `[ZOOKEEPER_HOST]` is the host or IP address of your Zookeeper deployment.
+To enable CSI Credentials, ensure that CSI is enabled by setting `csi.enable` to
+`true`. Based on the type of credentials to enable, set the csi fields to
+`true`:
 
-Deploy the Nautilus cluster.
-
-```
-$ kubectl create -f nautilus.yaml
-```
-
-Verify that the cluster instances and its components are running.
-
-```
-$ kubectl get NautilusCluster
-NAME      AGE
-nautilus   27s
-```
-
-```
-$ kubectl get all -l nautilus_cluster=nautilus
-NAME                                DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-deploy/nautilus-nautilus-controller   1         1         1            1           1m
-
-NAME                                       DESIRED   CURRENT   READY     AGE
-rs/nautilus-nautilus-controller-7489c9776d   1         1         1         1m
-
-NAME                                DESIRED   CURRENT   UP-TO-DATE   AVAILABLE   AGE
-deploy/nautilus-nautilus-controller   1         1         1            1           1m
-
-NAME                                       DESIRED   CURRENT   READY     AGE
-rs/nautilus-nautilus-controller-7489c9776d   1         1         1         1m
-
-NAME                                DESIRED   CURRENT   AGE
-statefulsets/nautilus-bookie         3         3         1m
-statefulsets/nautilus-node   3         3         1m
-
-NAME                                             READY     STATUS    RESTARTS   AGE
-po/nautilus-bookie-0                              1/1       Running   0          1m
-po/nautilus-bookie-1                              1/1       Running   0          1m
-po/nautilus-bookie-2                              1/1       Running   0          1m
-po/nautilus-nautilus-controller-7489c9776d-lcw9x   1/1       Running   0          1m
-po/nautilus-node-0                        1/1       Running   0          1m
-po/nautilus-node-1                        1/1       Running   0          1m
-po/nautilus-node-2                        1/1       Running   0          1m
-
-NAME                             TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)              AGE
-svc/nautilus-bookie-headless      ClusterIP   None           <none>        3181/TCP             1m
-svc/nautilus-nautilus-controller   ClusterIP   10.3.255.239   <none>        10080/TCP,9090/TCP   1m
-```
-
-A `NautilusCluster` instance is only accessible WITHIN the cluster (i.e. no outside access is allowed) using the following endpoint in
-the NautilusClient.
-
-```
-tcp://<cluster-name>-nautilus-controller.<namespace>:9090
-```
-
-The `REST` management interface is available at:
-
-```
-http://<cluster-name>-nautilus-controller.<namespace>:10080/
-```
-
-[Check this](#direct-access-to-the-cluster) to enable direct access to the cluster for development purposes.
-
-### Uninstall the Nautilus cluster
-
-```
-$ kubectl delete -f nautilus.yaml
-$ kubectl delete -f pvc.yaml
-```
-
-### Uninstall the Operator
-
-> Note that the Nautilus clusters managed by the Nautilus operator will NOT be deleted even if the operator is uninstalled.
-
-To delete all clusters, delete all cluster CR objects before uninstalling the operator.
-
-```
-$ kubectl delete -f deploy
-```
-
-## Configuration
-
-### Use non-default service accounts
-
-You can optionally configure non-default service accounts for the Bookkeeper, Nautilus Controller, and Nautilus Segment Store pods.
-
-For BookKeeper, set the `serviceAccountName` field under the `bookkeeper` block.
-
-```
-...
-spec:
-  bookkeeper:
-    serviceAccountName: bk-service-account
-...
-```
-
-For Nautilus, set the `controllerServiceAccountName` and `nodeServiceAccountName` fields under the `nautilus` block.
-
-```
-...
-spec:
-  nautilus:
-    controllerServiceAccountName: ctrl-service-account
-    nodeServiceAccountName: ss-service-account
-...
-```
-
-If external access is enabled in your Nautilus cluster, Segment Store pods will require access to some Kubernetes API endpoints to obtain the external IP and port. Make sure that the service account you are using for the Segment Store has, at least, the following permissions.
-
-```
-kind: Role
-apiVersion: rbac.authorization.k8s.io/v1
+```yaml
+apiVersion: "dellemc.com/v1"
+kind: "NautilusCluster"
 metadata:
-  name: nautilus-components
-  namespace: "nautilus-namespace"
-rules:
-- apiGroups: ["nautilus.nautilus.io"]
-  resources: ["*"]
-  verbs: ["get"]
-- apiGroups: [""]
-  resources: ["pods", "services"]
-  verbs: ["get"]
----
-kind: ClusterRole
-apiVersion: rbac.authorization.k8s.io/v1
-metadata:
-  name: nautilus-components
-rules:
-- apiGroups: [""]
-  resources: ["nodes"]
-  verbs: ["get"]
+  name: "example-nautilus"
+  namespace: "default"
+spec:
+  ...
+  ...
+  csi:
+    enable: true
+    enableProvisionCreds: true
+    enableControllerPublishCreds: true
+    enableNodePublishCreds: true
+  ...
 ```
 
-Replace the `namespace` with your own namespace.
-
-### Installing on a Custom Namespace with RBAC enabled
-
-Create the namespace.
-
-```
-$ kubectl create namespace nautilus-io
-```
-
-Update the namespace configured in the `deploy/role_binding.yaml` file.
-
-```
-$ sed -i -e 's/namespace: default/namespace: nautilus-io/g' deploy/role_binding.yaml
-```
-
-Apply the changes.
-
-```
-$ kubectl -n nautilus-io apply -f deploy
-```
-
-Note that the Nautilus operator only monitors the `NautilusCluster` resources which are created in the same namespace, `nautilus-io` in this example. Therefore, before creating a `NautilusCluster` resource, make sure an operator exists in that namespace.
-
-```
-$ kubectl -n nautilus-io create -f example/cr.yaml
-```
-
-```
-$ kubectl -n nautilus-io get nautilusclusters
-NAME      AGE
-nautilus   28m
-```
-
-```
-$ kubectl -n nautilus-io get pods -l nautilus_cluster=nautilus
-NAME                                          READY     STATUS    RESTARTS   AGE
-nautilus-bookie-0                              1/1       Running   0          29m
-nautilus-bookie-1                              1/1       Running   0          29m
-nautilus-bookie-2                              1/1       Running   0          29m
-nautilus-nautilus-controller-6c54fdcdf5-947nw   1/1       Running   0          29m
-nautilus-nautilus-node-0                1/1       Running   0          29m
-nautilus-nautilus-node-1                1/1       Running   0          29m
-nautilus-nautilus-node-2                1/1       Running   0          29m
-```
-
-### Use Google Filestore Storage as Tier 2
-
-1. [Create a Google Filestore](https://console.cloud.google.com/filestore/instances).
-
-> Refer to https://cloud.google.com/filestore/docs/accessing-fileshares for more information
-
-
-2. Create a `pv.yaml` file with the `PersistentVolume` specification to provide Tier 2 storage.
+Specify the CSI credentials as part of the nautilus secret object as:
 
 ```yaml
 apiVersion: v1
-kind: PersistentVolume
+kind: Secret
 metadata:
-  name: nautilus-volume
-spec:
-  capacity:
-    storage: 1T
-  accessModes:
-  - ReadWriteMany
-  nfs:
-    path: /[FILESHARE]
-    server: [IP_ADDRESS]
-```
-
-where:
-
-- `[FILESHARE]` is the name of the fileshare on the Cloud Filestore instance (e.g. `vol1`)
-- `[IP_ADDRESS]` is the IP address for the Cloud Filestore instance (e.g. `10.123.189.202`)
-
-
-3. Deploy the `PersistentVolume` specification.
-
-```
-$ kubectl create -f pv.yaml
-```
-
-4. Create and deploy a `PersistentVolumeClaim` to consume the volume created.
-
-```yaml
-kind: PersistentVolumeClaim
-apiVersion: v1
-metadata:
-  name: nautilus-tier2
-spec:
-  storageClassName: ""
-  accessModes:
-    - ReadWriteMany
-  resources:
-    requests:
-      storage: 50Gi
-```
-
-```
-$ kubectl create -f pvc.yaml
-```
-
-Use the same `nautilus.yaml` above to deploy the Nautilus cluster.
-
-
-### Tune Nautilus configuration
-
-Nautilus has many configuration options for setting up metrics, tuning, etc. The available options can be found
-[here](https://github.com/nautilus/nautilus/blob/master/config/config.properties) and are
-expressed through the `nautilus/options` part of the resource specification. All values must be expressed as Strings.
-
-```yaml
+  name: "nautilus-api"
 ...
-spec:
-  nautilus:
-    options:
-      metrics.enableStatistics: "true"
-      metrics.statsdHost: "telegraph.default"
-      metrics.statsdPort: "8125"
 ...
-```
-
-## Development
-
-### Build the operator image
-
-Requirements:
-  - Go 1.10+
-
-Use the `make` command to build the Nautilus operator image.
-
-```
-$ make build
-```
-That will generate a Docker image with the format
-`<latest_release_tag>-<number_of_commits_after_the_release>` (it will append-dirty if there are uncommitted changes). The image will also be tagged as `latest`.
-
-Example image after running `make build`.
-
-The Nautilus Operator image will be available in your Docker environment.
-
-```
-$ docker images nautilus/nautilus-operator
-
-REPOSITORY                  TAG            IMAGE ID      CREATED          SIZE        
-
-nautilus/nautilus-operator    0.1.1-3-dirty  2b2d5bcbedf5  10 minutes ago   41.7MB    
-
-nautilus/nautilus-operator    latest         2b2d5bcbedf5  10 minutes ago   41.7MB
-
-```
-
-Optionally push it to a Docker registry.
-
-```
-docker tag nautilus/nautilus-operator [REGISTRY_HOST]:[REGISTRY_PORT]/nautilus/nautilus-operator
-docker push [REGISTRY_HOST]:[REGISTRY_PORT]/nautilus/nautilus-operator
-```
-
-where:
-
-- `[REGISTRY_HOST]` is your registry host or IP (e.g. `registry.example.com`)
-- `[REGISTRY_PORT]` is your registry port (e.g. `5000`)
-
-### Installation on Google Kubernetes Engine
-
-The Operator requires elevated privileges in order to watch for the custom resources.
-
-According to Google Container Engine docs:
-
-> Ensure the creation of RoleBinding as it grants all the permissions included in the role that we want to create. Because of the way Container Engine checks permissions when we create a Role or ClusterRole.
->
-> An example workaround is to create a RoleBinding that gives your Google identity a cluster-admin role before attempting to create additional Role or ClusterRole permissions.
->
-> This is a known issue in the Beta release of Role-Based Access Control in Kubernetes and Container Engine version 1.6.
-
-On GKE, the following command must be run before installing the Operator, replacing the user with your own details.
-
-```
-$ kubectl create clusterrolebinding your-user-cluster-admin-binding --clusterrole=cluster-admin --user=your.google.cloud.email@example.org
-```
-
-### Direct access to the cluster
-
-For debugging and development you might want to access the Nautilus cluster directly. For example, if you created the cluster with name `nautilus` in the `default` namespace you can forward ports of the Nautilus controller pod with name `nautilus-nautilus-controller-68657d67cd-w5x8b` as follows:
-
-```
-$ kubectl port-forward -n default nautilus-nautilus-controller-68657d67cd-w5x8b 9090:9090 10080:10080
-```
-## Run the Operator locally
-
-You can run the Operator locally to help with development, testing, and debugging tasks.
-
-The following command will run the Operator locally with the default Kubernetes config file present at `$HOME/.kube/config`. Use the `--kubeconfig` flag to provide a different path.
-
-```
-$ operator-sdk up local
-```
-## Releases  
-
-The latest Nautilus releases can be found on the [Github Release](https://github.com/nautilus/nautilus-operator/releases) project page.
-
-## Troubleshooting
-
-### Helm Error: no available release name found
-
-When installing a cluster for the first time using `kubeadm`, the initialization defaults to setting up RBAC controlled access, which messes with permissions needed by Tiller to do installations, scan for installed components, and so on. `helm init` works without issue, but `helm list`, `helm install` and other commands do not work.
-
-```
-$ helm install stable/nfs-server-provisioner
-Error: no available release name found
-```
-The following workaround can be applied to resolve the issue:
-
-1. Create a service account for the Tiller.
-```
-kubectl create serviceaccount --namespace kube-system tiller
-```
-2. Bind that service account to the `cluster-admin` ClusterRole.
-```
-kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
-```
-3. Add the service account to the Tiller deployment.
-
-```
-kubectl patch deploy --namespace kube-system tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}'
-```
-The above commands should resolve the errors and `helm install` should work correctly.
-
-### NFS volume mount failure: wrong fs type
-
-If you experience `wrong fs type` issues when pods are trying to mount NFS volumes like in the `kubectl describe po/nautilus-node-0` snippet below, make sure that all Kubernetes node have the `nfs-common` system package installed. You can just try to run the `mount.nfs` command to make sure NFS support is installed in your system.
-
-In PKS, make sure to use [`v1.2.3`](https://docs.pivotal.io/runtimes/pks/1-2/release-notes.html#v1.2.3) or newer. Older versions of PKS won't have NFS support installed in Kubernetes nodes.
-
-```
-Events:
-  Type     Reason       Age                        From                                           Message
-  ----     ------       ----                       ----                                           -------
-  Warning  FailedMount  10m (x222 over 10h)        kubelet, 53931b0d-18f4-49fd-a105-49b1fea3f468  Unable to mount volumes for pod "nautilus-node-0_nautilus-nautilus(79167f33-f73b-11e8-936a-005056aeca39)": timeout expired waiting for volumes to attach or mount for pod "nautilus-nautilus"/"nautilus-node-0". list of unmounted volumes=[tier2]. list of unattached volumes=[cache tier2 nautilus-segment-store-token-fvxql]
-  Warning  FailedMount  <invalid> (x343 over 10h)  kubelet, 53931b0d-18f4-49fd-a105-49b1fea3f468  (combined from similar events): MountVolume.SetUp failed for volume "pvc-6fa77d63-f73b-11e8-936a-005056aeca39" : mount failed: exit status 32
-Mounting command: systemd-run
-Mounting arguments: --description=Kubernetes transient mount for   /var/lib/kubelet/pods/79167f33-f73b-11e8-936a-005056aeca39/volumes/kubernetes.io~nfs/pvc-6fa77d63-f73b-11e8-936a-005056aeca39 --scope -- mount -t nfs -o vers=4.1 10.100.200.247:/export/pvc-6fa77d63-f73b-11e8-936a-005056aeca39 /var/lib/kubelet/pods/79167f33-f73b-11e8-936a-005056aeca39/volumes/kubernetes.io~nfs/pvc-6fa77d63-f73b-11e8-936a-005056aeca39
-Output: Running scope as unit run-rc77b988cdec041f6aa91c8ddd8455587.scope.
-mount: wrong fs type, bad option, bad superblock on 10.100.200.247:/export/pvc-6fa77d63-f73b-11e8-936a-005056aeca39,
-       missing codepage or helper program, or other error
-       (for several filesystems (e.g. nfs, cifs) you might
-       need a /sbin/mount.<type> helper program)
-
-       In some cases useful info is found in syslog - try
-       dmesg | tail or so.
+data:
+  # echo -n '<secret>' | base64
+  ...
+  ...
+  csiProvisionUsername:
+  csiProvisionPassword:
+  csiControllerPublishUsername:
+  csiControllerPublishPassword:
+  csiNodePublishUsername:
+  csiNodePublishPassword:
 ```
