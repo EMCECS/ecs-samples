@@ -1,4 +1,0 @@
-packageName: ecs
-channels:
-- name: stable
-  currentCSV: ecsoperator.v1.0.0

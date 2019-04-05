@@ -1,4 +1,0 @@
-packageName: nautilus
-channels:
-- name: stable
-  currentCSV: nautilusoperator.v1.0.0

@@ -1,76 +1,92 @@
 sudo: required
 
 language: go
-
+go_import_path: github.com/ecs/ecs-operator
 go:
-  - "1.11"
+  - '1.11'
 
 env:
   global:
-    - CHANGE_MINIKUBE_NONE_USER=true
-    - K8S_VERSION="v1.10.0"
-    - MINIKUBE_VERSION="v0.28.2"
-    - IMAGE_NAME=ecs/cluster-operator
-    - IMAGE_TAG=test
+    - secure: "X4zdixrmuh/D4WwJ6btu0fJROq7fTPO5n4/jeyoxTQvrpwikycwf3ZpXS94u43rHx1ovc8vweVIc4Kur7MFAJDmFpPz5adjD7cCjqaRHo+Sw4a/gdNKizFEmZEBFlelynJ+cYekfF3rIFRws+u/8yWUQnSPl4495Qq1NKjrDTqoB6ZrQDxYdIPPpLAit+Aj9a2zQ4xPHyOv02SmfgL22wQhOx8SF78VNmqVah6klC8j3tAemHJQSBmUQ2fPVBpqAy3YsI7mpF9aSdBOzr7Dk1/cajOx4M5WrAxDPZ7+fSKD97SjICKqtM6MuX63O6Tg86zzdoEdvTWvwBwjWpbI3iCytJOCD8vT1QBPd9bLwZI7K5dElrW990HGrBBS4GmKTFykEE6PCNvxDHu1pG4N0vmLhZ3Hh4evZxA8xSnHRyYTLOaDkSe/vurlmsRJiW0GOEa6Fyz+xrD5y4l5MDkPVvaEPzWFZQf8v+l3OvvDvmHmqup4ADXE/XBYbVraTn8wPcQnvk5ueCvJWBOd/E4keGFsGbqDxQpvQRG/8aHWv32lj2HHK6/qbihXvTfJfRbrWli2BV0LMBL/OBIiuL1JeXycYZG3AtbnwgJVXPzs8kpwrmxkRYvbb3Kc9HXu9x+ajeWDYb978Rq6/0DfXhKFIiLrgUOxR2SK6eHDTcfUY+us="
 
-before_install:
-  - |
-      if ! git diff --name-only $TRAVIS_COMMIT_RANGE | grep -qvE '(\.md)|(\.MD)|(\.png)|(\.pdf)|^(doc/)|^(MAINTAINERS)|^(LICENSE)'; then
-        # Do not skip if it's a tagged build.
-        if [[ -z "$TRAVIS_TAG" ]]; then
-          echo "Only doc files were updated, not running the CI."
-          exit
-        fi
-      fi
-#  - docker run -d -p 2399:2399 quay.io/coreos/etcd:v3.3.10 /usr/local/bin/etcd -advertise-client-urls http://0.0.0.0:2399 -listen-client-urls http://0.0.0.0:2399
-
-# Skip downloading deps.
-install: true
+stages:
+  - check
+  - unit
+  - e2e
+  - deploy
 
 jobs:
   include:
-    - go: "1.11"
-      sudo: required
-      env:
-        - "TEST_CLUSTER=kind"
-        - "INSTALL_METHOD=olm"
-      name: OLM on KinD (k8s-1.13)
-      script: ./test/e2e.sh $TEST_CLUSTER $INSTALL_METHOD
-    - &base-test
-      go: "1.11"
-      sudo: required
-      env:
-        - "TEST_CLUSTER=minikube"
-        - "INSTALL_METHOD=none"
-      name: Minikube (k8s-1.10)
-      script: ./test/e2e.sh $TEST_CLUSTER $INSTALL_METHOD
-    - <<: *base-test
-      env:
-        - "TEST_CLUSTER=openshift"
-        - "INSTALL_METHOD=none"
-      name: OpenShift-3.11 (k8s-1.11)
-    - <<: *base-test
-      env:
-        - "TEST_CLUSTER=kind"
-        - "INSTALL_METHOD=none"
-      name: KinD (k8s-1.13)
-    - stage: deploy
-      go: "1.11"
-      sudo: required
-      env:
-        - "TEST_CLUSTER=kind"
-        - "INSTALL_METHOD=none"
-      name: Publish Container Image
+    - stage: check
+      name: Gofmt and License checks
       script:
-        - make image/cluster-operator
-      before_deploy:
-        - docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
-      deploy:
-        - provider: script
-          script: bash scripts/deploy.sh tagged
-          on:
-            tags: true
-        - provider: script
-          script: bash scripts/deploy.sh develop
-          on:
-            branch: master
+        - make check
+
+    - stage: unit
+      name: Unit tests
+      script:
+        - make test-unit
+
+    - stage: e2e
+      name: End-to-end tests
+      if: type = pull_request OR branch = master OR tag IS present
+      services:
+        - docker
+      env:
+        - KUBECTL_VERSION=v1.12.0
+        - OPERATOR_SDK_VERSION=v0.4.0
+        - HELM_VERSION=v2.12.0
+        - DEP_VERSION=v0.5.0
+        - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+        - GOOGLE_APPLICATION_CREDENTIALS="$HOME/gcloud-service-key.json"
+        - GOOGLE_SERVICE_ACCOUNT=ecs-travis-service-account@ecs-dev.iam.gserviceaccount.com
+        - PROJECT_NAME=ecs-dev
+        - CLUSTER_NAME="ecs-operator-travis-$(date +'%Y%m%d%H%M%S')"
+        - CLUSTER_ZONE=us-central1-c
+        - CLUSTER_SIZE=5
+        - CLUSTER_NODE_TYPE=n1-standard-2
+      install:
+        - if [ ! -d "$HOME/google-cloud-sdk/bin" ]; then rm -rf $HOME/google-cloud-sdk; curl https://sdk.cloud.google.com | bash; fi
+        - source $HOME/google-cloud-sdk/path.bash.inc
+        - gcloud --quiet version
+        - gcloud --quiet components update
+        - curl -Lo kubectl https://storage.googleapis.com/kubernetes-release/release/$KUBECTL_VERSION/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+        - curl -Lo dep https://github.com/golang/dep/releases/download/$DEP_VERSION/dep-linux-amd64 && chmod +x dep && sudo mv dep /usr/local/bin/
+        - curl -Lo operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/$OPERATOR_SDK_VERSION/operator-sdk-$OPERATOR_SDK_VERSION-x86_64-linux-gnu && chmod +x operator-sdk && sudo mv operator-sdk /usr/local/bin/
+        - curl -Lo helm.tar.gz https://storage.googleapis.com/kubernetes-helm/helm-$HELM_VERSION-linux-amd64.tar.gz && tar xfz helm.tar.gz && sudo mv linux-amd64/{helm,tiller} /usr/local/bin/
+      before_script:
+        - echo $GCLOUD_SERVICE_KEY | base64 --decode -i > $HOME/gcloud-service-key.json
+        - gcloud auth activate-service-account --key-file $HOME/gcloud-service-key.json
+        - gcloud --quiet config set project $PROJECT_NAME
+        - gcloud --quiet config set container/use_application_default_credentials True
+        - gcloud --quiet container clusters create $CLUSTER_NAME --num-nodes=$CLUSTER_SIZE --zone=$CLUSTER_ZONE --machine-type=$CLUSTER_NODE_TYPE
+        - gcloud --quiet container clusters get-credentials $CLUSTER_NAME --zone=$CLUSTER_ZONE
+        - kubectl config view
+        - kubectl config current-context
+        - kubectl get nodes -o wide
+        - kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$GOOGLE_SERVICE_ACCOUNT
+        # Install Helm Tiller
+        - kubectl create serviceaccount --namespace kube-system tiller
+        - kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+        - helm init --service-account tiller --wait
+        # Install NFS provisioner
+        - helm install stable/nfs-server-provisioner
+        - kubectl -n default create -f test/e2e/resources/tier2.yaml
+        - JSONPATH='{.status.phase}'; until kubectl get pvc ecs-tier2 -o jsonpath="$JSONPATH" 2>&1 | grep -q "Bound"; do sleep 1; done
+        # Install ZooKeeper
+        - kubectl -n default create -f test/e2e/resources/zookeeper.yaml
+        - JSONPATH='{range .items[*]}{@.metadata.name}:{range @.status.conditions[*]}{@.type}={@.status};{end}{end}'; until kubectl get pods -l kind=ZookeeperMember -o jsonpath="$JSONPATH" 2>&1 | grep -q "Ready=True"; do sleep 1; done
+        # Show ECS dependencies
+        - kubectl -n default get pod,pvc,svc -o wide
+      script:
+        - make test-e2e
+      after_script:
+        - gcloud --quiet container clusters delete $CLUSTER_NAME --zone $CLUSTER_ZONE
+
+    - stage: deploy
+      name: Push Docker image
+      if: type != pull_request AND tag IS present
+      services:
+        - docker
+      script:
+        - make push

@@ -11,6 +11,10 @@ required = [
 ]
 
 [[override]]
+  name = "github.com/sirupsen/logrus"
+  version = "v1.2.0"
+
+[[override]]
   name = "k8s.io/code-generator"
   version = "kubernetes-1.12.3"
 
@@ -23,6 +27,10 @@ required = [
   version = "kubernetes-1.12.3"
 
 [[override]]
+  name = "k8s.io/apiserver"
+  version = "kubernetes-1.12.3"
+
+[[override]]
   name = "k8s.io/apimachinery"
   version = "kubernetes-1.12.3"
 
@@ -31,23 +39,27 @@ required = [
   version = "kubernetes-1.12.3"
 
 [[override]]
+  name = "k8s.io/cli-runtime"
+  version = "kubernetes-1.12.3"
+
+[[override]]
   name = "sigs.k8s.io/controller-runtime"
-  version = "v0.1.8"
+  version = "=v0.1.8"
+
+[[override]]
+  source = "https://github.com/fsnotify/fsnotify/archive/v1.4.7.tar.gz"
+  name = "gopkg.in/fsnotify.v1"
 
 [[constraint]]
   name = "github.com/operator-framework/operator-sdk"
   # The version rule is used for a specific release and the master branch for in between releases.
-  # branch = "master" #osdk_branch_annotation
-  version = "=v0.3.0" #osdk_version_annotation
-
-[[constraint]]
-  name = "github.com/ecs/go-api"
-  branch = "master"
+  # branch = "v0.4.x" #osdk_branch_annotation
+  version = "=v0.4.0" #osdk_version_annotation
 
 [prune]
   go-tests = true
   non-go = true
-  
+
   [[prune.project]]
     name = "k8s.io/code-generator"
     non-go = false

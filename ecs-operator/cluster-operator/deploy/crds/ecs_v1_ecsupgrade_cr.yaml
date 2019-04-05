@@ -1,6 +1,0 @@
-apiVersion: dellemc.com/v1
-kind: ECSUpgrade
-metadata:
-  name: example-ecsupgrade
-spec:
-  newImage: ecs/node:1.0.0-rc5

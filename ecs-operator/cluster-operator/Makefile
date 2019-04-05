@@ -1,58 +1,68 @@
-OPERATOR_IMAGE ?= ecs/cluster-operator:test
-GO_BUILD_CMD = go build -v
-GO_ENV = GOOS=linux CGO_ENABLED=0
-SDK_VERSION = v0.3.0
-MACHINE = $(shell uname -m)
-BUILD_IMAGE = golang:1.11.5
-BASE_IMAGE = alpine:3.9
+# Copyright (c) 2018 Dell Inc., or its subsidiaries. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+# http://www.apache.org/licenses/LICENSE-2.0
 
-LDFLAGS += -X github.com/ecs/cluster-operator/pkg/controller/ecsupgrade.operatorImage=$(OPERATOR_IMAGE)
+SHELL=/bin/bash -o pipefail
 
-all: lint unittest build/upgrader build/cluster-operator
+PROJECT_NAME=ecs-operator
+REPO=ecs/$(PROJECT_NAME)
+VERSION=$(shell git describe --always --tags --dirty | sed "s/\(.*\)-g`git rev-parse --short HEAD`/\1/")
+GIT_SHA=$(shell git rev-parse --short HEAD)
+TEST_IMAGE=$(REPO)-testimages:$(VERSION)
+GOOS=linux
+GOARCH=amd64
 
-build/upgrader:
-	@echo "Building upgrader"
-	$(GO_ENV) $(GO_BUILD_CMD) \
-		-o ./build/_output/bin/upgrader \
-		./cmd/upgrader
+.PHONY: all dep build check clean test
 
-build/cluster-operator:
-	@echo "Building cluster-operator"
-	$(GO_ENV) $(GO_BUILD_CMD) -ldflags "$(LDFLAGS)" \
-		-o ./build/_output/bin/cluster-operator \
-		./cmd/manager
+all: check test build
 
-generate:
-	operator-sdk generate k8s
+dep:
+	dep ensure -v
 
-image/cluster-operator: operator-sdk
-	docker build \
-		--build-arg BUILD_IMAGE=$(BUILD_IMAGE) \
-		--build-arg BASE_IMAGE=$(BASE_IMAGE) \
-		--build-arg OPERATOR_IMAGE=$(OPERATOR_IMAGE) \
-		. -f build/Dockerfile -t $(OPERATOR_IMAGE)
+build: build-go build-image
 
-local-run: build/upgrader
-	OPERATOR_NAME=cluster-operator operator-sdk up local
-	# OPERATOR_NAME=cluster-operator operator-sdk up local --go-ldflags "$(LDFLAGS)"
+build-go:
+	CGO_ENABLED=0 GOOS=$(GOOS) GOARCH=$(GOARCH) go build \
+	-ldflags "-X github.com/$(REPO)/pkg/version.Version=$(VERSION) -X github.com/$(REPO)/pkg/version.GitSHA=$(GIT_SHA)" \
+	-o bin/$(PROJECT_NAME) cmd/manager/main.go
+
+build-image:
+	docker build --build-arg VERSION=$(VERSION) --build-arg GIT_SHA=$(GIT_SHA) -t $(REPO):$(VERSION) .
+	docker tag $(REPO):$(VERSION) $(REPO):latest
+
+test: test-unit test-e2e
+
+test-unit:
+	go test $$(go list ./... | grep -v /vendor/ | grep -v /test/e2e )
+
+test-e2e: test-e2e-remote
+
+test-e2e-remote: login
+	operator-sdk build $(TEST_IMAGE) --enable-tests
+	docker push $(TEST_IMAGE)
+	operator-sdk test local ./test/e2e --namespace default --image $(TEST_IMAGE) --go-test-flags "-v -timeout 0"
+
+test-e2e-local:
+	operator-sdk test local ./test/e2e --namespace default --up-local --go-test-flags "-v -timeout 0"
+
+login:
+	@docker login -u "$(DOCKER_USER)" -p "$(DOCKER_PASS)"
+
+push: build login
+	docker push $(REPO):$(VERSION)
+	docker push $(REPO):latest
 
 clean:
-	rm -rf build/_output
+	rm -f bin/$(PROJECT_NAME)
 
-lint:
-	golint -set_exit_status $(go list ./...)
-	go vet ./...
+check: check-format check-license
 
-unittest:
-	go test -v -race `go list -v ./... | grep -v test/e2e | grep -v test/olm`
+check-format:
+	./scripts/check_format.sh
 
-operator-sdk:
-	# Download sdk only if it's not available.
-	@if [ ! -f build/operator-sdk ]; then \
-		curl -Lo build/operator-sdk https://github.com/operator-framework/operator-sdk/releases/download/$(SDK_VERSION)/operator-sdk-$(SDK_VERSION)-$(MACHINE)-linux-gnu && \
-		chmod +x build/operator-sdk; \
-	fi
-
-# Install operator on a host. Might fail on containers that don't have sudo.
-install-operator-sdk: operator-sdk
-	sudo cp build/operator-sdk /usr/local/bin/
+check-license:
+	./scripts/check_license.sh

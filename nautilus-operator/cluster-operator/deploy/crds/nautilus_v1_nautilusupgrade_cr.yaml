@@ -1,6 +1,0 @@
-apiVersion: dellemc.com/v1
-kind: NautilusUpgrade
-metadata:
-  name: example-nautilusupgrade
-spec:
-  newImage: nautilus/node:1.0.0-rc5

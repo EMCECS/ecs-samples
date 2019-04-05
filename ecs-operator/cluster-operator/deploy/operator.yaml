@@ -1,28 +1,27 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ecs-cluster-operator
-  namespace: ecs-operator
+  name: ecs-operator
 spec:
   replicas: 1
   selector:
     matchLabels:
-      name: ecs-cluster-operator
+      name: ecs-operator
   template:
     metadata:
       labels:
-        name: ecs-cluster-operator
+        name: ecs-operator
     spec:
-      serviceAccountName: ecscluster-operator-sa
+      serviceAccountName: ecs-operator
       containers:
-        - name: ecs-cluster-operator
-          image: ecs/cluster-operator:test
+        - name: ecs-operator
+          image: ecs/ecs-operator:latest
           ports:
           - containerPort: 60000
             name: metrics
           command:
-          - cluster-operator
-          imagePullPolicy: IfNotPresent
+          - ecs-operator
+          imagePullPolicy: Always
           env:
             - name: WATCH_NAMESPACE
               valueFrom:
@@ -33,9 +32,4 @@ spec:
                 fieldRef:
                   fieldPath: metadata.name
             - name: OPERATOR_NAME
-              value: "cluster-operator"
-      tolerations:
-      - key: "key"
-        operator: "Equal"
-        value: "value"
-        effect: "NoSchedule" 
+              value: "ecs-operator"

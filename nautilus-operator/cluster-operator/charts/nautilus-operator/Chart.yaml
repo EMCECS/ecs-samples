@@ -1,0 +1,14 @@
+name: nautilus-operator
+version: 0.1.0
+appVersion: 0.1.0
+description: |
+  nautilus operator deploys a custom resource for a nautilus cluster, and a
+  pod to provision and scale nautilus clusters.
+keywords:
+- nautilus
+- storage
+home: https://github.com/nautilus/nautilus-operator/blob/master/charts/nautilus-operator
+icon: https://avatars3.githubusercontent.com/u/25698199
+sources:
+- https://github.com/nautilus/charts/blob/master/nautilus-operator
+engine: gotpl

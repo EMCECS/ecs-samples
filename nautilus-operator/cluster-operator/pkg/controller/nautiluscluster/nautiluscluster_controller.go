@@ -1,50 +1,55 @@
+/**
+ * Copyright (c) 2018 Dell Inc., or its subsidiaries. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 package nautiluscluster
 
 import (
 	"context"
 	"fmt"
-	"log"
-	"strings"
 	"time"
 
-	nautilusv1 "github.com/nautilus/cluster-operator/pkg/apis/nautilus/v1"
-	"k8s.io/apimachinery/pkg/api/errors"
+	nautilusv1alpha1 "github.com/nautilus/nautilus-operator/pkg/apis/nautilus/v1alpha1"
+	"github.com/nautilus/nautilus-operator/pkg/controller/nautilus"
+	"github.com/nautilus/nautilus-operator/pkg/util"
+
+	appsv1 "k8s.io/api/apps/v1"
+	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/labels"
+
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/selection"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/controller"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/manager"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
 	"sigs.k8s.io/controller-runtime/pkg/source"
 
-	"github.com/nautilus/cluster-operator/pkg/nautilus"
-	"github.com/nautilus/cluster-operator/pkg/util/k8sutil"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/tools/record"
+	log "github.com/sirupsen/logrus"
 )
+
+// ReconcileTime is the delay between reconciliations
+const ReconcileTime = 30 * time.Second
 
 // Add creates a new NautilusCluster Controller and adds it to the Manager. The Manager will set fields on the Controller
 // and Start it when the Manager is Started.
 func Add(mgr manager.Manager) error {
-	// Get k8s version from client and set the version in ReconcileNautilusCluster.
-	clientset := kubernetes.NewForConfigOrDie(mgr.GetConfig())
-	k := k8sutil.NewK8SOps(clientset)
-	version, err := k.GetK8SVersion()
-	if err != nil {
-		return err
-	}
-	log.Println("k8s version:", version)
-	return add(mgr, newReconciler(mgr, strings.TrimLeft(version, "v")))
+	return add(mgr, newReconciler(mgr))
 }
 
 // newReconciler returns a new reconcile.Reconciler
-func newReconciler(mgr manager.Manager, k8sVersion string) reconcile.Reconciler {
-	return &ReconcileNautilusCluster{
-		client: mgr.GetClient(), scheme: mgr.GetScheme(), k8sVersion: k8sVersion, recorder: mgr.GetRecorder("nautiluscluster-operator"),
-	}
+func newReconciler(mgr manager.Manager) reconcile.Reconciler {
+	return &ReconcileNautilusCluster{client: mgr.GetClient(), scheme: mgr.GetScheme()}
 }
 
 // add adds a new Controller to mgr with r as the reconcile.Reconciler
@@ -56,7 +61,7 @@ func add(mgr manager.Manager, r reconcile.Reconciler) error {
 	}
 
 	// Watch for changes to primary resource NautilusCluster
-	err = c.Watch(&source.Kind{Type: &nautilusv1.NautilusCluster{}}, &handler.EnqueueRequestForObject{})
+	err = c.Watch(&source.Kind{Type: &nautilusv1alpha1.NautilusCluster{}}, &handler.EnqueueRequestForObject{})
 	if err != nil {
 		return err
 	}
@@ -70,263 +75,408 @@ var _ reconcile.Reconciler = &ReconcileNautilusCluster{}
 type ReconcileNautilusCluster struct {
 	// This client, initialized using mgr.Client() above, is a split client
 	// that reads objects from the cache and writes to the apiserver
-	client         client.Client
-	scheme         *runtime.Scheme
-	k8sVersion     string
-	recorder       record.EventRecorder
-	currentCluster *NautilusCluster
-}
-
-// SetCurrentClusterIfNone checks if there's any existing current cluster and
-// sets a new current cluster if it wasn't set before.
-func (r *ReconcileNautilusCluster) SetCurrentClusterIfNone(cluster *nautilusv1.NautilusCluster) {
-	if r.currentCluster == nil {
-		r.SetCurrentCluster(cluster)
-	}
-}
-
-// SetCurrentCluster sets the currently active cluster in the controller.
-func (r *ReconcileNautilusCluster) SetCurrentCluster(cluster *nautilusv1.NautilusCluster) {
-	r.currentCluster = NewNautilusCluster(cluster)
-}
-
-// ResetCurrentCluster resets the current cluster of the controller.
-func (r *ReconcileNautilusCluster) ResetCurrentCluster() {
-	r.currentCluster = nil
+	client client.Client
+	scheme *runtime.Scheme
 }
 
 // Reconcile reads that state of the cluster for a NautilusCluster object and makes changes based on the state read
 // and what is in the NautilusCluster.Spec
+// Note:
 // The Controller will requeue the Request to be processed again if the returned error is non-nil or
 // Result.Requeue is true, otherwise upon completion it will remove the work from the queue.
 func (r *ReconcileNautilusCluster) Reconcile(request reconcile.Request) (reconcile.Result, error) {
-	// log.Printf("Reconciling NautilusCluster %s/%s\n", request.Namespace, request.Name)
-
-	reconcilePeriod := 15 * time.Second
-	reconcileResult := reconcile.Result{RequeueAfter: reconcilePeriod}
+	log.Printf("Reconciling NautilusCluster %s/%s\n", request.Namespace, request.Name)
 
 	// Fetch the NautilusCluster instance
-	instance := &nautilusv1.NautilusCluster{}
-	err := r.client.Get(context.TODO(), request.NamespacedName, instance)
+	nautilusCluster := &nautilusv1alpha1.NautilusCluster{}
+	err := r.client.Get(context.TODO(), request.NamespacedName, nautilusCluster)
 	if err != nil {
 		if errors.IsNotFound(err) {
-			// Cluster instance not found. Delete the resources and reset the
-			// current cluster.
-			if r.currentCluster != nil {
-				if err := r.currentCluster.DeleteDeployment(); err != nil {
-					// Error deleting - requeue the request.
-					return reconcileResult, err
-				}
-			}
-			r.ResetCurrentCluster()
 			// Request object not found, could have been deleted after reconcile request.
 			// Owned objects are automatically garbage collected. For additional cleanup logic use finalizers.
 			// Return and don't requeue
+			log.Printf("NautilusCluster %s/%s not found. Ignoring since object must be deleted\n", request.Namespace, request.Name)
 			return reconcile.Result{}, nil
 		}
 		// Error reading the object - requeue the request.
-		return reconcileResult, err
+		log.Printf("failed to get NautilusCluster: %v", err)
+		return reconcile.Result{}, err
 	}
 
-	// Set as the current cluster if there's no current cluster.
-	r.SetCurrentClusterIfNone(instance)
-
-	// If the event doesn't belongs to the current cluster, do not reconcile.
-	// There must be only a single instance of nautilus in a cluster.
-	if !r.currentCluster.IsCurrentCluster(instance) {
-		err := fmt.Errorf("can't create more than one nautilus cluster")
-		r.recorder.Event(instance, corev1.EventTypeWarning, "FailedCreation", err.Error())
-		return reconcileResult, err
-	} else if r.currentCluster.cluster.GetUID() != instance.GetUID() {
-		// If the cluster name and namespace match with the current cluster, but
-		// the resource UIDs are different, maybe the current cluster reset
-		// failed when the previous cluster was deleted. The same cluster was
-		// created again and has a different UID. Create and assign a new
-		// current cluster.
-		log.Printf("replacing current cluster UID: %s with new cluster UID: %s", r.currentCluster.cluster.GetUID(), instance.GetUID())
-		r.SetCurrentCluster(instance)
+	// Set default configuration for unspecified values
+	changed := nautilusCluster.WithDefaults()
+	if changed {
+		log.Printf("Setting default settings for nautilus-cluster: %s", request.Name)
+		if err = r.client.Update(context.TODO(), nautilusCluster); err != nil {
+			return reconcile.Result{}, err
+		}
+		return reconcile.Result{Requeue: true}, nil
 	}
 
-	if err := r.reconcile(instance); err != nil {
-		return reconcileResult, err
+	err = r.run(nautilusCluster)
+	if err != nil {
+		log.Printf("failed to reconcile nautilus cluster (%s): %v", nautilusCluster.Name, err)
+		return reconcile.Result{}, err
 	}
 
-	return reconcileResult, nil
+	return reconcile.Result{RequeueAfter: ReconcileTime}, nil
 }
 
-func (r *ReconcileNautilusCluster) reconcile(m *nautilusv1.NautilusCluster) error {
-	if m.Spec.Pause {
-		// Do not reconcile, the operator is paused for the cluster.
-		return nil
-	}
-
-	join, err := r.generateJoinToken(m)
+func (r *ReconcileNautilusCluster) run(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	// Clean up zookeeper metadata
+	err = r.reconcileFinalizers(p)
 	if err != nil {
+		log.Printf("failed to clean up zookeeper: %v", err)
 		return err
 	}
 
-	if m.Spec.Join != join {
-		m.Spec.Join = join
-		// Update Nodes as well, because updating Nautilus with null Nodes
-		// results in invalid config.
-		m.Status.Nodes = strings.Split(join, ",")
-		if err := r.client.Update(context.Background(), m); err != nil {
-			return err
-		}
-		// Update current cluster.
-		r.SetCurrentCluster(m)
+	err = r.deployCluster(p)
+	if err != nil {
+		log.Printf("failed to deploy cluster: %v", err)
+		return err
 	}
 
-	// Update the spec values. This ensures that the default values are applied
-	// when fields are not set in the spec.
-	m.Spec.ResourceNS = m.Spec.GetResourceNS()
-	m.Spec.Images.NodeContainer = m.Spec.GetNodeContainerImage()
-	m.Spec.Images.InitContainer = m.Spec.GetInitContainerImage()
-
-	if m.Spec.CSI.Enable {
-		m.Spec.Images.CSINodeDriverRegistrarContainer = m.Spec.GetCSINodeDriverRegistrarImage(nautilus.CSIV1Supported(r.k8sVersion))
-		if nautilus.CSIV1Supported((r.k8sVersion)) {
-			m.Spec.Images.CSIClusterDriverRegistrarContainer = m.Spec.GetCSIClusterDriverRegistrarImage()
-		}
-		m.Spec.Images.CSIExternalProvisionerContainer = m.Spec.GetCSIExternalProvisionerImage(nautilus.CSIV1Supported(r.k8sVersion))
-		m.Spec.Images.CSIExternalAttacherContainer = m.Spec.GetCSIExternalAttacherImage(nautilus.CSIV1Supported(r.k8sVersion))
+	err = r.syncClusterSize(p)
+	if err != nil {
+		log.Printf("failed to sync cluster size: %v", err)
+		return err
 	}
 
-	if m.Spec.Ingress.Enable {
-		m.Spec.Ingress.Hostname = m.Spec.GetIngressHostname()
+	err = r.reconcileClusterStatus(p)
+	if err != nil {
+		log.Printf("failed to reconcile cluster status: %v", err)
+		return err
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) deployCluster(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	err = r.deployBookie(p)
+	if err != nil {
+		log.Printf("failed to deploy bookie: %v", err)
+		return err
 	}
 
-	m.Spec.Service.Name = m.Spec.GetServiceName()
-	m.Spec.Service.Type = m.Spec.GetServiceType()
-	m.Spec.Service.ExternalPort = m.Spec.GetServiceExternalPort()
-	m.Spec.Service.InternalPort = m.Spec.GetServiceInternalPort()
+	err = r.deployController(p)
+	if err != nil {
+		log.Printf("failed to deploy controller: %v", err)
+		return err
+	}
 
-	// Finalizers are set when an object should be deleted. Apply deploy only
-	// when finalizers is empty.
-	if len(m.GetFinalizers()) == 0 {
-		// // Check if there's a new version of the cluster config and create a new
-		// // deployment accordingly to update the resources that already exist.
-		// // TODO: Add more granular checks. Resource version check is not enough
-		// // to detect and apply changes. Maybe add an admission webhook to
-		// // perform validation when the cluster config is updated and handle the
-		// // resource update at an individual level. Updating all the resources
-		// // is dangerous.
-		// updateIfExists := false
-		// if r.currentCluster.GetResourceVersion() != m.GetResourceVersion() {
-		// 	log.Println("new cluster config detected")
-		// 	updateIfExists = true
-		// 	r.SetCurrentCluster(m)
-		// }
+	err = r.deployNode(p)
+	if err != nil {
+		log.Printf("failed to deploy segment store: %v", err)
+		return err
+	}
+	return nil
+}
 
-		if err := r.currentCluster.Deploy(r); err != nil {
-			// Ignore "Operation cannot be fulfilled" error. It happens when the
-			// actual state of object is different from what is known to the operator.
-			// Operator would resync and retry the failed operation on its own.
-			if !strings.HasPrefix(err.Error(), "Operation cannot be fulfilled") {
-				r.recorder.Event(m, corev1.EventTypeWarning, "FailedCreation", err.Error())
-			}
-			return err
-		}
-	} else {
-		// Delete the deployment once the finalizers are set on the cluster
-		// resource.
-		r.recorder.Event(m, corev1.EventTypeNormal, "Terminating", "Deleting all the resources...")
+func (r *ReconcileNautilusCluster) deployController(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	pdb := nautilus.MakeControllerPodDisruptionBudget(p)
+	controllerutil.SetControllerReference(p, pdb, r.scheme)
+	err = r.client.Create(context.TODO(), pdb)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
 
-		if err := r.currentCluster.DeleteDeployment(); err != nil {
-			return err
-		}
+	configMap := nautilus.MakeControllerConfigMap(p)
+	controllerutil.SetControllerReference(p, configMap, r.scheme)
+	err = r.client.Create(context.TODO(), configMap)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
 
-		r.ResetCurrentCluster()
-		// Reset finalizers and let k8s delete the object.
-		// When finalizers are set on an object, metadata.deletionTimestamp is
-		// also set. deletionTimestamp helps the garbage collector identify
-		// when to delete an object. k8s deletes the object only once the
-		// list of finalizers is empty.
-		m.SetFinalizers([]string{})
-		return r.client.Update(context.Background(), m)
+	deployment := nautilus.MakeControllerDeployment(p)
+	controllerutil.SetControllerReference(p, deployment, r.scheme)
+	err = r.client.Create(context.TODO(), deployment)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
+
+	service := nautilus.MakeControllerService(p)
+	controllerutil.SetControllerReference(p, service, r.scheme)
+	err = r.client.Create(context.TODO(), service)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
 	}
 
 	return nil
 }
 
-// generateJoinToken performs node selection based on NodeSelectorTerms if
-// specified, and forms a join token by combining the node IPs.
-func (r *ReconcileNautilusCluster) generateJoinToken(m *nautilusv1.NautilusCluster) (string, error) {
-	// Get a new list of all the nodes.
-	nodeList := nautilus.NodeList()
-	if err := r.client.List(context.Background(), &client.ListOptions{}, nodeList); err != nil {
-		return "", fmt.Errorf("failed to list nodes: %v", err)
+func (r *ReconcileNautilusCluster) deployNode(p *nautilusv1alpha1.NautilusCluster) (err error) {
+
+	headlessService := nautilus.MakeNodeHeadlessService(p)
+	controllerutil.SetControllerReference(p, headlessService, r.scheme)
+	err = r.client.Create(context.TODO(), headlessService)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
 	}
 
-	toleratedNodes := []corev1.Node{}
-	for _, node := range nodeList.Items {
-		// Skip nodes which have taints not tolerated by nautilus.
-		ok, _ := getMatchingTolerations(node.Spec.Taints, m.Spec.Tolerations)
-		if ok {
-			toleratedNodes = append(toleratedNodes, node)
+	if p.Spec.ExternalAccess.Enabled {
+		services := nautilus.MakeNodeExternalServices(p)
+		for _, service := range services {
+			controllerutil.SetControllerReference(p, service, r.scheme)
+			err = r.client.Create(context.TODO(), service)
+			if err != nil && !errors.IsAlreadyExists(err) {
+				return err
+			}
 		}
 	}
 
-	selectedNodes := []corev1.Node{}
+	pdb := nautilus.MakeNodePodDisruptionBudget(p)
+	controllerutil.SetControllerReference(p, pdb, r.scheme)
+	err = r.client.Create(context.TODO(), pdb)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
 
-	// Filter the node list when a node selector is applied.
-	if len(m.Spec.NodeSelectorTerms) > 0 {
-		for _, node := range toleratedNodes {
-			for _, term := range m.Spec.NodeSelectorTerms {
-				for _, exp := range term.MatchExpressions {
-					var ex selection.Operator
+	configMap := nautilus.MakeNodeConfigMap(p)
+	controllerutil.SetControllerReference(p, configMap, r.scheme)
+	err = r.client.Create(context.TODO(), configMap)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
 
-					// Convert the node selector operator into requirement
-					// selection operator.
-					switch exp.Operator {
-					case corev1.NodeSelectorOpIn:
-						ex = selection.Equals
-					case corev1.NodeSelectorOpNotIn:
-						ex = selection.NotEquals
-					}
+	statefulSet := nautilus.MakeNodeStatefulSet(p)
+	controllerutil.SetControllerReference(p, statefulSet, r.scheme)
+	for i := range statefulSet.Spec.VolumeClaimTemplates {
+		controllerutil.SetControllerReference(p, &statefulSet.Spec.VolumeClaimTemplates[i], r.scheme)
+	}
+	err = r.client.Create(context.TODO(), statefulSet)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
 
-					// Create a new Requirement to perform label matching.
-					req, err := labels.NewRequirement(exp.Key, ex, exp.Values)
-					if err != nil {
-						return "", fmt.Errorf("failed to create requirement: %v", err)
-					}
+	return nil
+}
 
-					if req.Matches(labels.Set(node.GetLabels())) {
-						selectedNodes = append(selectedNodes, node)
-					}
-				}
+func (r *ReconcileNautilusCluster) deployBookie(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	headlessService := nautilus.MakeBookieHeadlessService(p)
+	controllerutil.SetControllerReference(p, headlessService, r.scheme)
+	err = r.client.Create(context.TODO(), headlessService)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
+
+	pdb := nautilus.MakeBookiePodDisruptionBudget(p)
+	controllerutil.SetControllerReference(p, pdb, r.scheme)
+	err = r.client.Create(context.TODO(), pdb)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
+
+	configMap := nautilus.MakeBookieConfigMap(p)
+	controllerutil.SetControllerReference(p, configMap, r.scheme)
+	err = r.client.Create(context.TODO(), configMap)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
+
+	statefulSet := nautilus.MakeBookieStatefulSet(p)
+	controllerutil.SetControllerReference(p, statefulSet, r.scheme)
+	for i := range statefulSet.Spec.VolumeClaimTemplates {
+		controllerutil.SetControllerReference(p, &statefulSet.Spec.VolumeClaimTemplates[i], r.scheme)
+	}
+	err = r.client.Create(context.TODO(), statefulSet)
+	if err != nil && !errors.IsAlreadyExists(err) {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) syncClusterSize(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	err = r.syncBookieSize(p)
+	if err != nil {
+		return err
+	}
+
+	err = r.syncNodeSize(p)
+	if err != nil {
+		return err
+	}
+
+	err = r.syncControllerSize(p)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) syncBookieSize(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	sts := &appsv1.StatefulSet{}
+	name := util.StatefulSetNameForBookie(p.Name)
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: p.Namespace}, sts)
+	if err != nil {
+		return fmt.Errorf("failed to get stateful-set (%s): %v", sts.Name, err)
+	}
+
+	if *sts.Spec.Replicas != p.Spec.Bookkeeper.Replicas {
+		sts.Spec.Replicas = &(p.Spec.Bookkeeper.Replicas)
+		err = r.client.Update(context.TODO(), sts)
+		if err != nil {
+			return fmt.Errorf("failed to update size of stateful-set (%s): %v", sts.Name, err)
+		}
+
+		err = r.syncStatefulSetPvc(sts)
+		if err != nil {
+			return fmt.Errorf("failed to sync pvcs of stateful-set (%s): %v", sts.Name, err)
+		}
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) syncNodeSize(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	sts := &appsv1.StatefulSet{}
+	name := util.StatefulSetNameForNode(p.Name)
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: p.Namespace}, sts)
+	if err != nil {
+		return fmt.Errorf("failed to get stateful-set (%s): %v", sts.Name, err)
+	}
+
+	if *sts.Spec.Replicas != p.Spec.Nautilus.NodeReplicas {
+		sts.Spec.Replicas = &(p.Spec.Nautilus.NodeReplicas)
+		err = r.client.Update(context.TODO(), sts)
+		if err != nil {
+			return fmt.Errorf("failed to update size of stateful-set (%s): %v", sts.Name, err)
+		}
+
+		err = r.syncStatefulSetPvc(sts)
+		if err != nil {
+			return fmt.Errorf("failed to sync pvcs of stateful-set (%s): %v", sts.Name, err)
+		}
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) syncControllerSize(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	deploy := &appsv1.Deployment{}
+	name := util.DeploymentNameForController(p.Name)
+	err = r.client.Get(context.TODO(), types.NamespacedName{Name: name, Namespace: p.Namespace}, deploy)
+	if err != nil {
+		return fmt.Errorf("failed to get deployment (%s): %v", deploy.Name, err)
+	}
+
+	if *deploy.Spec.Replicas != p.Spec.Nautilus.ControllerReplicas {
+		deploy.Spec.Replicas = &(p.Spec.Nautilus.ControllerReplicas)
+		err = r.client.Update(context.TODO(), deploy)
+		if err != nil {
+			return fmt.Errorf("failed to update size of deployment (%s): %v", deploy.Name, err)
+		}
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) reconcileFinalizers(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	if p.DeletionTimestamp.IsZero() {
+		if !util.ContainsString(p.ObjectMeta.Finalizers, util.ZkFinalizer) {
+			p.ObjectMeta.Finalizers = append(p.ObjectMeta.Finalizers, util.ZkFinalizer)
+			if err = r.client.Update(context.TODO(), p); err != nil {
+				return fmt.Errorf("failed to add the finalizer (%s): %v", p.Name, err)
 			}
 		}
 	} else {
-		selectedNodes = toleratedNodes
-	}
-
-	nodeIPs := nautilus.GetNodeIPs(selectedNodes)
-	return strings.Join(nodeIPs, ","), nil
-}
-
-// Returns true and list of Tolerations matching all Taints if all are tolerated, or false otherwise.
-// Taken from: https://github.com/kubernetes/kubernetes/blob/07a5488b2a8f67add543da72e8819407d8314204/pkg/apis/core/v1/helper/helpers.go#L426-L449
-func getMatchingTolerations(taints []corev1.Taint, tolerations []corev1.Toleration) (bool, []corev1.Toleration) {
-	if len(taints) == 0 {
-		return true, []corev1.Toleration{}
-	}
-	if len(tolerations) == 0 && len(taints) > 0 {
-		return false, []corev1.Toleration{}
-	}
-	result := []corev1.Toleration{}
-	for i := range taints {
-		tolerated := false
-		for j := range tolerations {
-			if tolerations[j].ToleratesTaint(&taints[i]) {
-				result = append(result, tolerations[j])
-				tolerated = true
-				break
+		if util.ContainsString(p.ObjectMeta.Finalizers, util.ZkFinalizer) {
+			p.ObjectMeta.Finalizers = util.RemoveString(p.ObjectMeta.Finalizers, util.ZkFinalizer)
+			if err = r.client.Update(context.TODO(), p); err != nil {
+				return fmt.Errorf("failed to update Nautilus object (%s): %v", p.Name, err)
+			}
+			if err = r.cleanUpZookeeperMeta(p); err != nil {
+				return fmt.Errorf("failed to clean up metadata (%s): %v", p.Name, err)
 			}
 		}
-		if !tolerated {
-			return false, []corev1.Toleration{}
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) cleanUpZookeeperMeta(p *nautilusv1alpha1.NautilusCluster) (err error) {
+	if err = util.WaitForClusterToTerminate(r.client, p); err != nil {
+		return fmt.Errorf("failed to wait for cluster pods termination (%s): %v", p.Name, err)
+	}
+
+	if err = util.DeleteAllZnodes(p); err != nil {
+		return fmt.Errorf("failed to delete zookeeper znodes for (%s): %v", p.Name, err)
+	}
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) syncStatefulSetPvc(sts *appsv1.StatefulSet) error {
+	selector, err := metav1.LabelSelectorAsSelector(&metav1.LabelSelector{
+		MatchLabels: sts.Spec.Template.Labels,
+	})
+	if err != nil {
+		return fmt.Errorf("failed to convert label selector: %v", err)
+	}
+
+	pvcList := &corev1.PersistentVolumeClaimList{}
+	pvclistOps := &client.ListOptions{
+		Namespace:     sts.Namespace,
+		LabelSelector: selector,
+	}
+	err = r.client.List(context.TODO(), pvclistOps, pvcList)
+	if err != nil {
+		return err
+	}
+
+	for _, pvcItem := range pvcList.Items {
+		if util.PvcIsOrphan(pvcItem.Name, *sts.Spec.Replicas) {
+			pvcDelete := &corev1.PersistentVolumeClaim{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      pvcItem.Name,
+					Namespace: pvcItem.Namespace,
+				},
+			}
+
+			err = r.client.Delete(context.TODO(), pvcDelete)
+			if err != nil {
+				return fmt.Errorf("failed to delete pvc: %v", err)
+			}
 		}
 	}
-	return true, result
+	return nil
+}
+
+func (r *ReconcileNautilusCluster) reconcileClusterStatus(p *nautilusv1alpha1.NautilusCluster) error {
+	expectedSize := util.GetClusterExpectedSize(p)
+	listOps := &client.ListOptions{
+		Namespace:     p.Namespace,
+		LabelSelector: labels.SelectorFromSet(util.LabelsForNautilusCluster(p)),
+	}
+	podList := &corev1.PodList{}
+	err := r.client.List(context.TODO(), listOps, podList)
+	if err != nil {
+		return err
+	}
+
+	var (
+		readyMembers   []string
+		unreadyMembers []string
+	)
+
+	for _, p := range podList.Items {
+		if util.IsPodReady(&p) {
+			readyMembers = append(readyMembers, p.Name)
+		} else {
+			unreadyMembers = append(unreadyMembers, p.Name)
+		}
+	}
+
+	if len(readyMembers) == expectedSize {
+		p.Status.SetPodsReadyConditionTrue()
+	} else {
+		p.Status.SetPodsReadyConditionFalse()
+	}
+
+	p.Status.Replicas = int32(expectedSize)
+	p.Status.CurrentReplicas = int32(len(podList.Items))
+	p.Status.ReadyReplicas = int32(len(readyMembers))
+	p.Status.Members.Ready = readyMembers
+	p.Status.Members.Unready = unreadyMembers
+
+	err = r.client.Status().Update(context.TODO(), p)
+	if err != nil {
+		return fmt.Errorf("failed to update cluster status: %v", err)
+	}
+	return nil
 }

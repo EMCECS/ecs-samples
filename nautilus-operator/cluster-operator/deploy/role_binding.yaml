@@ -1,11 +1,25 @@
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: nautilus-operator
+subjects:
+- kind: ServiceAccount
+  name: nautilus-operator
+roleRef:
+  kind: Role
+  name: nautilus-operator
+  apiGroup: rbac.authorization.k8s.io
+
+---
+
 kind: ClusterRoleBinding
 apiVersion: rbac.authorization.k8s.io/v1beta1
 metadata:
-  name: nautiluscluster-operator-rolebinding
+  name: nautilus-operator
 subjects:
 - kind: ServiceAccount
-  name: nautiluscluster-operator-sa
-  namespace: nautilus-operator
+  name: nautilus-operator
+  namespace: default
 roleRef:
   kind: ClusterRole
   name: nautilus-operator

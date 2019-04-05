@@ -1,7 +1,7 @@
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: pravega-tier2
+  name: nautilus-tier2
 spec:
   storageClassName: "nfs"
   accessModes:
