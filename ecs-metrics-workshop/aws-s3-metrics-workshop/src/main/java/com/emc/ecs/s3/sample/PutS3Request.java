@@ -33,6 +33,16 @@ public class PutS3Request {
     }
     return hexString.toString();
     }
+
+    protected static String emptySha() {
+        try {
+            return bytesToHex(sha256(""));
+        } catch (Exception e)  {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     protected static byte[] HmacSHA256(String data, byte[] key) throws Exception {
         String algorithm="HmacSHA256";
         Mac mac = Mac.getInstance(algorithm);
@@ -53,31 +63,29 @@ public class PutS3Request {
         Map<String, String> headers = new HashMap<>();
         headers.put("x-amz-date", amz_date);
         headers.put("Authorization", authorization_header);
-        headers.put("x-amz-target", "GraniteServiceVersion20100801."+apiName);
-        headers.put("Content-Type", content_type);
+        headers.put("x-amz-content-sha256", emptySha());
         headers.put("Accept", "application/json");
-        headers.put("Content-Encoding", "amz-1.0");
         headers.put("Connection", "keep-alive");
-        headers.put("x-amz-acl", "public-read-write");
-        headers.put("Host", "examplebucket.s3.amazonaws.com");
         return headers;
     }
 
-
-    public static String getResponse(String httpsURL, Map<String, String> headers, String payload) throws Exception {
+    public static String getResponse(String methodName, String httpsURL, Map<String, String> headers, String payload) throws Exception {
             URL myurl = new URL(httpsURL);
             String response = null;
-            logger.info("Sending a post request to:"  + httpsURL);
+            logger.info("Sending a "  + methodName + " request to:"  + httpsURL);
             HttpsURLConnection con = (HttpsURLConnection)myurl.openConnection();
-            con.setRequestMethod("POST");
+            con.setRequestMethod(methodName);
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 logger.info("Header "+entry.getKey()+": " + entry.getValue());
                 con.setRequestProperty(entry.getKey(), entry.getValue());
             }
             con.setDoOutput(true);
             con.setDoInput(true);
+            if (payload.equals("") == false) {
             try (DataOutputStream output = new DataOutputStream(con.getOutputStream())) {
+                logger.info("payload="+payload);
                 output.writeBytes(payload);
+            }
             }
             try (DataInputStream input = new DataInputStream(con.getInputStream())) {
                 StringBuffer contents = new StringBuffer();
@@ -105,37 +113,12 @@ public class PutS3Request {
         }
         return dateString;
     }
-    protected static void createBucket() {
-       String host = "s3.amazonaws.com";
-       String region="us-east-1";
-       String endpoint="https://s3.amazonaws.com";
-      
-    }
-    public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {
-        String AWS_ACCESS_KEY_ID="MyAccessKeyId";
-        String AWS_SECRET_ACCESS_KEY="MyAccessSecret";
-        String service="s3";
-        String host="s3.amazonaws.com";
-        String region="us-east-1";
-        String endpoint="https://s3.amazonaws.com/examplebucket";
-        String AWS_request_parameters="Action=CreateBucket&Version=2010-08-01";
-        String amz_date = getDateString(); 
-        String date_stamp = amz_date.substring(0, amz_date.indexOf("T"));
-        String canonical_uri = "/";
-        String canonical_querystring = "";
-        String method = "POST";
-        String apiName = "CreateBucket";
-        String content_type = "application/x-amz-json-1.0";
-        String amz_target = "GraniteServiceVersion20100801."+apiName;
-        String canonical_headers = "content-type:" + content_type + "\n" + "host:" + host + "\n" + "x-amz-date:" + amz_date + "\n" + "x-amz-target:" + amz_target + "\n";
-        String signed_headers = "content-type;host;x-amz-date;x-amz-target";
-        String accessKey = AWS_ACCESS_KEY_ID;
-        String accessSecretKey = AWS_SECRET_ACCESS_KEY;
-        String date = "20130806";
-        String signing = "aws4_request";
+
+    protected static String createBucketParameters(String bucketName) {
         String request_parameters = "";
+/*
         request_parameters += "{";
-        request_parameters += "\"Version\": \"2010-08-01\",";
+        request_parameters += "\"Version\": \"2012-10-17\",";
         request_parameters += "\"Statement\": [";
         request_parameters += "{";
         request_parameters += "\"Sid\": \"statement1\",";
@@ -148,52 +131,137 @@ public class PutS3Request {
         request_parameters += "\"Condition\": {";
         request_parameters += "\"StringLike\": {";
         request_parameters += "\"s3:LocationConstraint\": \"us-east-1\"";
+        request_parameters += "},";
+        request_parameters += "\"StringEquals\": {";
+        request_parameters += "\"s3:x-amz-acl\":[\"public-read-write\"]";
         request_parameters += "}";
         request_parameters += "}";
         request_parameters += "}";
         request_parameters += "]";
         request_parameters += "}";
-        request_parameters = new String(request_parameters.getBytes("UTF-8"), "UTF-8");
-        logger.info("REQUEST_PARAMETERS="+request_parameters);
+*/
+        return request_parameters;
+    }
 
+    protected static String createBucket(String bucketName) {
+        String response = "";
+        String host=bucketName + ".s3.amazonaws.com";
+        String endpoint="https://s3.amazonaws.com/"+bucketName;
+        String method = "PUT";
+        String apiName = "CreateBucket";
+        String content_type = "application/x-amz-json-1.0";
+        String amz_date = getDateString();
+        String request_parameters = createBucketParameters(bucketName);
+        String authorization_header = getAuthorizationHeader(host, request_parameters, method, apiName);
+        Map<String, String> headers = getHeaders(amz_date, authorization_header, apiName, content_type);
         try {
-            String payload_hash = bytesToHex(sha256(request_parameters)); 
+            response = getResponse(method, endpoint, headers, request_parameters);
+        } catch (Exception e) {
+          logger.error("Exception:", e);
+        }
+        logger.info("response:"+response);
+        return response;
+    }
+
+    protected static String deleteBucket(String bucketName) {
+        String response = "";
+        String host = "s3.amazonaws.com";
+        String endpoint="https://s3.amazonaws.com/" + bucketName; // + host + "/";
+        String method = "DELETE";
+        String apiName = "DeleteBucket";
+        String content_type = "application/x-amz-json-1.0";
+        String amz_date = getDateString();
+        String authorization_header = getAuthorizationHeader(host, "", method, apiName);
+        Map<String, String> headers = getHeaders(amz_date, authorization_header, apiName, content_type);
+        try {
+            response = getResponse(method, endpoint, headers, "");
+        } catch (Exception e) {
+          logger.error("Exception:", e);
+        }
+        logger.info("response:"+response);
+        return response;
+    }
+
+    public static String getAuthorizationHeader(String host, String request_parameters, String method, String apiName) {
+        String service="s3";
+        String region="us-east-1";
+        String amz_date = getDateString();
+        logger.info("amz_date="+amz_date);
+        String date_stamp = amz_date.substring(0, amz_date.indexOf("T"));
+        String canonical_uri = "/";
+        String canonical_querystring = "";
+        String content_type = "application/x-amz-json-1.0";
+        String amz_target = "GraniteServiceVersion20100801."+apiName;
+        logger.info("host="+host);
+        String canonical_headers =  "host:" + host + "\n" + "x-amz-content-sha256:" + emptySha() + "\n"  + "x-amz-date:" + amz_date ;
+        String signed_headers = "host;x-amz-content-sha256;x-amz-date";
+        String accessKey = "your_access_key";
+        String accessSecretKey = "your_access_secret";
+        String date = "20130806";
+        String signing = "aws4_request";
+       try {
+            String payload_hash = bytesToHex(sha256(request_parameters));
             String canonical_request = method + "\n" + canonical_uri + "\n" + canonical_querystring + "\n" + canonical_headers + "\n" + signed_headers + "\n" + payload_hash;
             canonical_request = new String(canonical_request.getBytes("UTF-8"), "UTF-8");
             String algorithm = "AWS4-HMAC-SHA256";
             String credential_scope = date_stamp + "/" + region + "/" + service + "/" + "aws4_request";
+            logger.info("date_stamp="+date_stamp);
             String string_to_sign = algorithm + "\n" +  amz_date + "\n" +  credential_scope + "\n" +  bytesToHex(sha256(canonical_request));
             string_to_sign = new String(string_to_sign.getBytes("UTF-8"), "UTF-8");
             byte[] signing_key = getSignatureKey(accessSecretKey, date_stamp, region, service);
             String signature = bytesToHex(HmacSHA256(string_to_sign, signing_key));
-            logger.info("signature: {}", bytesToHex(signing_key));
-            String authorization_header = algorithm + " " + "Credential=" + accessKey + "/" + credential_scope + ", " +  "SignedHeaders=" + signed_headers + ", " + "Signature=" + signature;
-            logger.info("authorization_header="+authorization_header);
-            Map<String, String> headers = getHeaders(amz_date, authorization_header, apiName, content_type);
-            logger.info("Sending request with:" + request_parameters);
-            String response = getResponse(endpoint, headers, request_parameters);
-            logger.info("response:"+response);
-        } catch (Exception e) {
+            String authorization_header = algorithm + " " + "Credential=" + accessKey + "/" + credential_scope + "," +  "SignedHeaders=" + signed_headers + ", " + "Signature=" + signature;
+            return authorization_header;
+       } catch (Exception e) {
             e.printStackTrace();
-            logger.error("Exception:", e);
-        }
+            return null;
+       }
+    }
+
+    public static void main(String[] args) throws InvalidKeyException, NoSuchAlgorithmException, IllegalStateException, UnsupportedEncodingException {
+         createBucket("examplebucket");
+         deleteBucket("examplebucket");
     }
 }
 /*
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - x_amz_date = 20190501T113211Z
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - REQUEST_PARAMETERS={"Version": "2010-08-01","Statement": [{"Sid": "statement1","Effect": "Allow","Action": ["s3:CreateBucket"],"Resource": ["arn:aws:s3:::*"],"Condition": {"StringLike": {"s3:LocationConstraint": "us-east-1"}}}]}
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - signature: 10af6286fceb3822eee82253fd75411df979f0e8fe8d6d2eaa686d78a8a6dc4e
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - authorization_header=AWS4-HMAC-SHA256 Credential=<MyObfuscatedCredential>/20190501/us-east-1/s3/aws4_request, SignedHeaders=content-type;host;x-amz-date;x-amz-target, Signature=b00a18e1d41d1f16637c9ab6d2e5108a3a16a5c0398f830f0ae41b4ff697530d
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Sending request with:{"Version": "2010-08-01","Statement": [{"Sid": "statement1","Effect": "Allow","Action": ["s3:CreateBucket"],"Resource": ["arn:aws:s3:::*"],"Condition": {"StringLike": {"s3:LocationConstraint": "us-east-1"}}}]}
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Sending a post request to:https://s3.amazonaws.com/examplebucket
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Authorization: AWS4-HMAC-SHA256 Credential=<MyObfuscatedCredential>/20190501/us-east-1/s3/aws4_request, SignedHeaders=content-type;host;x-amz-date;x-amz-target, Signature=b00a18e1d41d1f16637c9ab6d2e5108a3a16a5c0398f830f0ae41b4ff697530d
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-target: GraniteServiceVersion20100801.CreateBucket
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-date: 20190501T113211Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - x_amz_date = 20190505T203151Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - x_amz_date = 20190505T203151Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - amz_date=20190505T203151Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - host=examplebucket.s3.amazonaws.com
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - date_stamp=20190505
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Sending a PUT request to:https://s3.amazonaws.com/examplebucket
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Authorization: AWS4-HMAC-SHA256 Credential=your_access_key/20190505/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=6e1cbaf4e9135c792bf84193235d8f2acc282b3d5f66ec003e9acc29a7613f8f
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-content-sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-date: 20190505T203151Z
 [main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Accept: application/json
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-acl: public-read-write
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Content-Encoding: amz-1.0
 [main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Connection: keep-alive
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Host: examplebucket.s3.amazonaws.com
-[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Content-Type: application/x-amz-json-1.0
-java.io.IOException: Server returned HTTP response code: 412 for URL: https://s3.amazonaws.com/examplebucket
+[main] ERROR com.emc.ecs.s3.sample.PutS3Request - Exception:
+java.io.IOException: Server returned HTTP response code: 403 for URL: https://s3.amazonaws.com/examplebucket
+        at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1894)
+        at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492)
+        at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:263)
+        at com.emc.ecs.s3.sample.PutS3Request.getResponse(PutS3Request.java:90)
+        at com.emc.ecs.s3.sample.PutS3Request.createBucket(PutS3Request.java:158)
+        at com.emc.ecs.s3.sample.PutS3Request.main(PutS3Request.java:224)
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - response:
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - x_amz_date = 20190505T203152Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - x_amz_date = 20190505T203152Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - amz_date=20190505T203152Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - host=s3.amazonaws.com
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - date_stamp=20190505
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Sending a DELETE request to:https://s3.amazonaws.com/examplebucket
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Authorization: AWS4-HMAC-SHA256 Credential=your_access_key/20190505/us-east-1/s3/aws4_request,SignedHeaders=host;x-amz-content-sha256;x-amz-date, Signature=7f7aca28c6fd6facecf7fefb55ac375c57059ca2085178668ea142d6027018c8
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-content-sha256: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header x-amz-date: 20190505T203152Z
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Accept: application/json
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - Header Connection: keep-alive
+[main] ERROR com.emc.ecs.s3.sample.PutS3Request - Exception:
+java.io.IOException: Server returned HTTP response code: 403 for URL: https://s3.amazonaws.com/examplebucket
+        at sun.net.www.protocol.http.HttpURLConnection.getInputStream0(HttpURLConnection.java:1894)
+        at sun.net.www.protocol.http.HttpURLConnection.getInputStream(HttpURLConnection.java:1492)
+        at sun.net.www.protocol.https.HttpsURLConnectionImpl.getInputStream(HttpsURLConnectionImpl.java:263)
+        at com.emc.ecs.s3.sample.PutS3Request.getResponse(PutS3Request.java:90)
+        at com.emc.ecs.s3.sample.PutS3Request.deleteBucket(PutS3Request.java:177)
+        at com.emc.ecs.s3.sample.PutS3Request.main(PutS3Request.java:225)
+[main] INFO com.emc.ecs.s3.sample.PutS3Request - response:
 */
