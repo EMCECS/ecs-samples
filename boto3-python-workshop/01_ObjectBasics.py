@@ -23,11 +23,11 @@ if __name__ == '__main__':
     # upload a file from disk
     # Callback (function) -- A method which takes a number of bytes transferred to be periodically called
     # during the upload you can use it to monitor progress or other things
-    # see example in 03_LargeObject
+    # see example in 03_LargeObject, download function
     response = s3.upload_file("GetConnection.py", testBucketName, 'diskFile', Callback=None)
     # upload a file-like object stored in RAM, the object must be in binary mode
     response = s3.upload_fileobj(fileInRam, testBucketName, 'RAMFile', Callback=None)
-    # get object
+    # get object, you can use Range= to get a part of the object
     response = s3.get_object(
         Bucket=testBucketName,
         Key="RAMFile",
