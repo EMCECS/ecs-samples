@@ -2,6 +2,7 @@ import GetConnection
 
 testBucketName = "testtest"
 testdata = "Hello World!"
+replace = "dell ecs!"
 testName = "testappend"
 
 # ecs support append update: update an object with offset/range
@@ -30,10 +31,10 @@ if __name__ == '__main__':
     event_system = s3.meta.events
     event_system.register_first('before-sign.s3.PutObject',
                                 lambda request, **kwargs: request.headers.add_header(
-                                    'Range', 'bytes=' + str(offset) + '-' + str(offset + len("dell ecs!") - 1)))
+                                    'Range', 'bytes=' + str(offset) + '-' + str(offset + len(replace) - 1)))
     response = s3.put_object(
         Bucket=testBucketName,
-        Body="dell ecs!",
+        Body=replace,
         Key=testName,
     )
     # please remember to unregister the event, otherwise all the PutObject will use the header
@@ -42,5 +43,5 @@ if __name__ == '__main__':
         Bucket=testBucketName,
         Key=testName,
     )
-    raw = response["Body"].read(amt=offset + len("dell ecs!"))
+    raw = response["Body"].read(amt=offset + len(replace))
     print("After append update: " + raw.decode())
