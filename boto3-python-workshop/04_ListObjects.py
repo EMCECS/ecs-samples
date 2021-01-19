@@ -14,13 +14,13 @@ if __name__ == '__main__':
         )
     # list with limited prefix
     response = s3.list_objects_v2(Bucket=testBucketName, Prefix="testo")
-    for i, object in enumerate(response["Contents"]):
+    for i, ob in enumerate(response["Contents"]):
         print("-------------------------------------")
         print("object " + str(i))
-        print("key: " + object["Key"])
-        print("ETag: " + object["ETag"])
-        print("Size: " + str(object["Size"]))
-        print("StorageClass: " + object["StorageClass"])
+        print("key: " + ob["Key"])
+        print("ETag: " + ob["ETag"])
+        print("Size: " + str(ob["Size"]))
+        print("StorageClass: " + ob["StorageClass"])
     # save the Token for the next listing
     NextToken = response['NextContinuationToken']
     # list after a specific key by either providing StartAfter or ContinuationToken(more efficient)
