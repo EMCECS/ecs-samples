@@ -50,13 +50,13 @@ if __name__ == '__main__':
         Bucket=testBucketName,
         MaxKeys=10,
     )
-    for i, object in enumerate(response["Contents"]):
+    for i, ob in enumerate(response["Contents"]):
         print("-------------------------------------")
         print("object " + str(i))
-        print("key: " + object["Key"])
-        print("ETag: " + object["ETag"])
-        print("Size: " + str(object["Size"]))
-        print("StorageClass: " + object["StorageClass"])
+        print("key: " + ob["Key"])
+        print("ETag: " + ob["ETag"])
+        print("Size: " + str(ob["Size"]))
+        print("StorageClass: " + ob["StorageClass"])
     # delete object
     response = s3.delete_object(
         Bucket=testBucketName,
