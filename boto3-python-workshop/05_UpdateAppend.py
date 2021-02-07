@@ -26,19 +26,17 @@ if __name__ == '__main__':
     # insert Range header through Boto3's event system.
     # https://boto3.amazonaws.com/v1/documentation/api/latest/guide/events.html
 
-    # def add_range_header(request, **kwargs):
-    #     request.headers.add_header('Range', 'bytes=' + str(offset) + '-' + str(offset + len("dell ecs") - 1))
+    def add_range_header(request, **kwargs):
+        request.headers.add_header('Range', 'bytes=' + str(offset) + '-' + str(offset + len("dell ecs") - 1))
     event_system = s3.meta.events
-    event_system.register_first('before-sign.s3.PutObject',
-                                lambda request, **kwargs: request.headers.add_header(
-                                    'Range', 'bytes=' + str(offset) + '-' + str(offset + len(replace) - 1)))
+    event_system.register_first('before-sign.s3.PutObject', add_range_header)
     response = s3.put_object(
         Bucket=testBucketName,
         Body=replace,
         Key=testName,
     )
     # please remember to unregister the event, otherwise all the PutObject will use the header
-    event_system.unregister('before-sign.s3.PutObject')
+    event_system.unregister('before-sign.s3.PutObject', add_range_header)
     response = s3.get_object(
         Bucket=testBucketName,
         Key=testName,
