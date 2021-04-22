@@ -1,0 +1,27 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ecs-tier2
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: "ecs.ecs.io/v1alpha1"
+kind: "ECSCluster"
+metadata:
+  name: "example"
+spec:
+  zookeeperUri: zk-client:2181
+  bookkeeper:
+    replicas: 3
+  ecs:
+    controllerReplicas: 1
+    nodeReplicas: 3
+    tier2:
+      filesystem:
+        persistentVolumeClaim:
+          claimName: ecs-tier2

@@ -1,0 +1,14 @@
+name: ecs-operator
+version: 0.1.0
+appVersion: 0.1.0
+description: |
+  ecs operator deploys a custom resource for a ecs cluster, and a
+  pod to provision and scale ecs clusters.
+keywords:
+- ecs
+- storage
+home: https://github.com/ecs/ecs-operator/blob/master/charts/ecs-operator
+icon: https://avatars3.githubusercontent.com/u/25698199
+sources:
+- https://github.com/ecs/charts/blob/master/ecs-operator
+engine: gotpl

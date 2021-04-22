@@ -1,0 +1,68 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: ecs-tier2
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: "ecs.ecs.io/v1alpha1"
+kind: "ECSCluster"
+metadata:
+  name: "ecs"
+spec:
+  zookeeperUri: zk-client:2181
+
+  externalAccess:
+    enabled: true
+    type: LoadBalancer
+
+  bookkeeper:
+    image:
+      repository: ecs/bookkeeper
+      tag: latest
+      pullPolicy: IfNotPresent
+
+    replicas: 3
+
+    storage:
+      ledgerVolumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 10Gi
+
+      journalVolumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 10Gi
+
+    autoRecovery: true
+
+  ecs:
+    controllerReplicas: 1
+    nodeReplicas: 3
+
+    cacheVolumeClaimTemplate:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 20Gi
+
+    image:
+      repository: ecs/ecs
+      tag: latest
+      pullPolicy: IfNotPresent
+
+    tier2:
+      filesystem:
+        persistentVolumeClaim:
+          claimName: ecs-tier2

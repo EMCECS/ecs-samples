@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "nautilusOp.fullname" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ template "nautilusOp.fullname" . }}
+  template:
+    metadata:
+      labels:
+        name: {{ template "nautilusOp.fullname" . }}
+    spec:
+      containers:
+      - name: {{ template "nautilusOp.fullname" . }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+        - name: "WATCH_NAMESPACE"
+          value: "{{ .Values.watch.namespace }}"

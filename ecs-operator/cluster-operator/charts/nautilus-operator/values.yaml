@@ -1,0 +1,8 @@
+image:
+  repository: ecs/ecs-operator
+  tag: 0.1.0
+  pullPolicy: Always
+
+# Namespace to watch for ECSCluster resources "" means ALL namespaces
+watch:
+  namespace: ""

@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ECS Static Website Test</title>
+    <script src="js/main.js"></script>
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+<h1>This is a static website</h1>
+<p>All of the images, stylesheets and links you see are hosted within a bucket and publicly readable.
+    Note that all references are relative.  This is because the namespace is included in the host name, which consumes
+    the wildcard portion of the SSL certificate.  Therefore the bucket must be in the path, which would mess up any
+    absolute references.</p>
+<p><a href="pages/page1.html">Page 1</a></p>
+<p><a href="pages/page2.html">Page 2</a></p>
+<div id="clickSource">Click Me!</div>
+<div id="clickTarget"></div>
+</body>
+</html>

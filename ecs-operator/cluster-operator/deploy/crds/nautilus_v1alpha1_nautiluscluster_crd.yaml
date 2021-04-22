@@ -1,0 +1,27 @@
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  name: ecsclusters.ecs.ecs.io
+spec:
+  group: ecs.ecs.io
+  names:
+    kind: ECSCluster
+    listKind: ECSClusterList
+    plural: ecsclusters
+    singular: ecscluster
+  additionalPrinterColumns:
+  - name: Members
+    type: integer
+    description: The number ecs members running
+    JSONPath: .status.replicas
+  - name: Ready Members
+    type: integer
+    description: The number ecs members ready
+    JSONPath: .status.readyReplicas
+  - name: Age
+    type: date
+    JSONPath: .metadata.creationTimestamp
+  scope: Namespaced
+  version: v1alpha1
+  subresources:
+    status: {}
