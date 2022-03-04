@@ -50,19 +50,40 @@ public class ECSS3Factory {
     /* a unique object name to store */
     public static final String S3_OBJECT = "workshop-object";
 
-    public static S3Client getS3Client() throws URISyntaxException {
-        // for client-side load balancing
-        //S3Config config = new S3Config(Protocol.HTTPS, S3_HOST1, S3_HOST2);
-        // ditto with multiple VDCs
-        //S3Config config = new S3Config(Protocol.HTTPS, new Vdc(S3_V1_HOST), new Vdc(S3_V2_HOST));
+    public static S3Client getS3Client() {
+        return S3ClientSingleton.getInstance();
+    }
 
-        S3Config config = new S3Config(new URI(S3_URI));
+    private static class S3ClientSingleton {
 
-        config.withIdentity(S3_ACCESS_KEY_ID).withSecretKey(S3_SECRET_KEY);
+        private S3ClientSingleton() {}
 
-        S3Client client = new S3JerseyClient(config);
+        private static class S3ClientHolder {
 
-        return client;
+            private static final S3Client INSTANCE;
+            static {
+                try {
+                    INSTANCE = new S3JerseyClient(getS3Config());
+                } catch (URISyntaxException e) {
+                    throw new ExceptionInInitializerError(e); // TODO: handle
+                }
+            }
+
+            private static S3Config getS3Config() throws URISyntaxException {
+                // for client-side load balancing
+                //S3Config config = new S3Config(Protocol.HTTPS, S3_HOST1, S3_HOST2);
+                // ditto with multiple VDCs
+                //S3Config config = new S3Config(Protocol.HTTPS, new Vdc(S3_V1_HOST), new Vdc(S3_V2_HOST));
+                return new S3Config(new URI(S3_URI))
+                            .withIdentity(S3_ACCESS_KEY_ID)
+                            .withSecretKey(S3_SECRET_KEY);
+            }
+        }
+
+        public static S3Client getInstance() {
+            return S3ClientHolder.INSTANCE;
+        }
+
     }
 
     /*
@@ -94,6 +115,7 @@ public class ECSS3Factory {
 
             System.out.println("Public Key: " + pubKeyStr);
             System.out.println("Private Key: " + privKeyStr);
+
         } catch (Exception e) {
             e.printStackTrace();
         }

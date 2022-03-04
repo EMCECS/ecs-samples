@@ -26,7 +26,8 @@ public class _17_BucketLifecycle {
         S3Client s3 = ECSS3Factory.getS3Client();
 
 
-        LifecycleRule rule = new LifecycleRule("rule-a", "abc", LifecycleRule.Status.Enabled, 1);
+        LifecycleRule rule = new LifecycleRule("rule-a", "abc", LifecycleRule.Status.Enabled)
+                .withExpirationDays(1);
         LifecycleConfiguration lc = new LifecycleConfiguration()
                 .withRules(rule);
 
