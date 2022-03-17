@@ -50,19 +50,23 @@ public class ECSS3Factory {
     /* a unique object name to store */
     public static final String S3_OBJECT = "workshop-object";
 
-    public static S3Client getS3Client() throws URISyntaxException {
+    private static S3Client s3client;
+
+    private ECSS3Factory(){}
+
+    public static synchronized S3Client getS3Client() throws URISyntaxException {
+
         // for client-side load balancing
         //S3Config config = new S3Config(Protocol.HTTPS, S3_HOST1, S3_HOST2);
         // ditto with multiple VDCs
         //S3Config config = new S3Config(Protocol.HTTPS, new Vdc(S3_V1_HOST), new Vdc(S3_V2_HOST));
 
-        S3Config config = new S3Config(new URI(S3_URI));
-
-        config.withIdentity(S3_ACCESS_KEY_ID).withSecretKey(S3_SECRET_KEY);
-
-        S3Client client = new S3JerseyClient(config);
-
-        return client;
+        if (s3client == null) {
+            S3Config config = new S3Config(new URI(S3_URI));
+            config.withIdentity(S3_ACCESS_KEY_ID).withSecretKey(S3_SECRET_KEY);
+            s3client = new S3JerseyClient(config);
+        }
+        return s3client;
     }
 
     /*
