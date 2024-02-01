@@ -24,6 +24,9 @@
     <logger name="com.sun.jersey.api.client" additivity="false">
         <appender-ref ref="infoAppender"/>
     </logger>
+    <logger name="org.glassfish.jersey" additivity="false">
+	<appender-ref ref="infoAppender"/>
+    </logger>
     <logger name="com.amazonaws.request" additivity="false">
         <appender-ref ref="infoAppender"/>
     </logger>
