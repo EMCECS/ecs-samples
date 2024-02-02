@@ -27,7 +27,8 @@ repositories {
 
 dependencies {
     // please change the version of object-client based on your application
-    // v3.x with Jersey 1.x, v4.x or later with Jersey 2.x
+    // here is v3.x with Jersey 1.x, v4.x or later with Jersey 2.x is also supported
+    // exp., implementation "com.emc.ecs:object-client:4.0.0-rc.1"
     implementation "com.emc.ecs:object-client:3.4.6"
     // Apache Commons Codec library is not needed in most cases.
     implementation 'commons-codec:commons-codec:1.15'
