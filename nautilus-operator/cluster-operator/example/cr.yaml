@@ -1,0 +1,27 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: nautilus-tier2
+spec:
+  storageClassName: "nfs"
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+---
+apiVersion: "nautilus.nautilus.io/v1alpha1"
+kind: "NautilusCluster"
+metadata:
+  name: "example"
+spec:
+  zookeeperUri: zk-client:2181
+  bookkeeper:
+    replicas: 3
+  nautilus:
+    controllerReplicas: 1
+    nodeReplicas: 3
+    tier2:
+      filesystem:
+        persistentVolumeClaim:
+          claimName: nautilus-tier2

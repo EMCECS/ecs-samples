@@ -1,0 +1,123 @@
+apiVersion: "nautilus.nautilus.io/v1alpha1"
+kind: "NautilusCluster"
+metadata:
+  name: "example"
+spec:
+  zookeeperUri: zk-client:2181
+
+  bookkeeper:
+    image:
+      repository: nautilus/bookkeeper
+      tag: 0.4.0
+      pullPolicy: IfNotPresent
+
+    replicas: 3
+    resources:
+      requests:
+        memory: "3Gi"
+        cpu: "1000m"
+      limits:
+        memory: "5Gi"
+        cpu: "2000m"
+
+    storage:
+      ledgerVolumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 10Gi
+
+      journalVolumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 10Gi
+
+      indexVolumeClaimTemplate:
+        accessModes: [ "ReadWriteOnce" ]
+        storageClassName: "standard"
+        resources:
+          requests:
+            storage: 10Gi
+
+    # Turns on automatic recovery
+    # see https://bookkeeper.apache.org/docs/latest/admin/autorecovery/
+    autoRecovery: true
+
+    # To enable bookkeeper metrics feature, take codahale for example here.
+    # See http://bookkeeper.apache.org/docs/4.7.0/admin/metrics/ for more metrics provider
+    # See http://bookkeeper.apache.org/docs/4.7.0/reference/config/#statistics for metrics provider configuration details
+    options:
+      enableStatistics: "true"
+      statsProviderClass: "org.apache.bookkeeper.stats.codahale.CodahaleMetricsProvider"
+      codahaleStatsGraphiteEndpoint: "graphite.example.com:2003"
+      # Default is 60
+      codahaleStatsOutputFrequencySeconds: 30
+
+  nautilus:
+    controllerReplicas: 1
+    controllerResources:
+      requests:
+        memory: "1Gi"
+        cpu: "1000m"
+      limits:
+        memory: "3Gi"
+        cpu: "2000m"
+
+    nodeReplicas: 3
+    nodeResources:
+      requests:
+        memory: "3Gi"
+        cpu: "1000m"
+      limits:
+        memory: "5Gi"
+        cpu: "2000m"
+
+    # Turn on Nautilus Debug Logging
+    debugLogging: false
+
+    image:
+      repository: nautilus/nautilus
+      tag: 0.4.0
+      pullPolicy: IfNotPresent
+
+    cacheVolumeClaimTemplate:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: "standard"
+      resources:
+        requests:
+          storage: 20Gi
+
+    tier2:
+      filesystem:
+        persistentVolumeClaim:
+          claimName: nautilus-tier2
+
+#      ecs:
+#        uri: http://10.247.10.52:9020
+#        bucket: shared
+#        root: "nautilus/example"
+#        namespace: nautilus
+#        credentials: ecs-credentials
+
+#      hdfs:
+#        uri: hdfs://10.240.10.52:8020/
+#        root: /example
+#        replicationFactor: 3
+
+    # See https://github.com/nautilus/nautilus/blob/3f5b65084ae17e74c8ef8e6a40e78e61fa98737b/config/config.properties
+    # for available configuration properties
+    options:
+      nautilusservice.containerCount: "4"
+      nautilusservice.cacheMaxSize: "17179869184"
+      nautilusservice.zkSessionTimeoutMs: "10000"
+      attributeIndex.readBlockSize: "1048576"
+      readIndex.storageReadAlignment: "1048576"
+      durableLog.checkpointMinCommitCount: "300"
+      bookkeeper.bkAckQuorumSize: "3"
+      metrics.dynamicCacheSize: "100000"
+      metrics.enableStatistics: "true"
+      metrics.statsdHost: "telegraph.default"
+      metrics.statsdPort: "8125"
